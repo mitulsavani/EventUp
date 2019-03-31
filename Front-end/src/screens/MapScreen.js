@@ -1,14 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import HomeTabs from './src/navigation/HomeTabs'
-import { createAppContainer } from 'react-navigation'
 
-const AppContainer = createAppContainer(HomeTabs);
-export default class App extends React.Component {
-  
+export default class MapScreen extends React.Component {
   render() {
     return (
-      <AppContainer/>
+      <View style={styles.container}>
+        <Text>MapScreen</Text>
+      </View>
     );
   }
 }
