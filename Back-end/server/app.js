@@ -40,16 +40,18 @@ const mysql_config = {
         } );
     }
 }
-
+//Define Global Variable
 global.DATABASE = new Database(mysql_config);
-
+//Test Database Connection
 DATABASE.connection.connect(function(err) {
     if (err) throw err;
-    console.log("Database Connected! ");
+    console.log("Database Connected Successfully!");
   });
 
+//Define Routes
 const apiRoutes = require('./src/routes/apiRoutes');
 
+//Define URL path to each route
 app.use('/api/', apiRoutes);
 
 module.exports = app;
