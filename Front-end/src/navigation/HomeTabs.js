@@ -6,7 +6,7 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 
 import EventsStack from './EventsStack';
 import MyEventsScreen from '../screens/MyEventsScreen'
-import MapScreen from '../screens/MapScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 
 const EventsTabIcon = ({ tintColor }) => (
@@ -58,9 +58,9 @@ export default createBottomTabNavigator({
     },
   },
   myEvents: {
-    screen: MapScreen,
+    screen: ProfileScreen,
     navigationOptions: {
-      tabBarLabel: 'Favorites',
+      tabBarLabel: 'Profile',
       tabBarIcon: AccountTabIcon,
     },
   },

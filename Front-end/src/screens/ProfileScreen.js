@@ -1,11 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default class MapScreen extends React.Component {
+export default class ProfileScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>MapScreen</Text>
+        <Text>Profile Screen</Text>
       </View>
     );
   }
