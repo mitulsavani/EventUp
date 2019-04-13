@@ -5,12 +5,12 @@ exports.register = (req, res, next) => {
     {FirstName: req.body.FirstName, LastName: req.body.LastName, Email: req.body.Email, Password: req.body.Password})
     .then(() => {
         res.send({
-            message: 'registration successful!'
+            message: 'success'
         });
     })
     .catch(err => {
         res.send({
-            message: 'registration unsuccessful',
+            message: 'error',
             error: err
         });
     })
@@ -21,16 +21,18 @@ exports.login = (req, res, next) => {
     .then(data => {
         //No User Found Check
         if(data == "") {
-            res.send(null);
+            res.send({
+                message: 'error'
+            });
         }
         res.send({
-            data: data
+            data: data,
+            message: 'success'
         })
     })
     .catch(err => {
         res.send({
-            message:'login unsuccessful',
-            error: err
+            message:'error'
         })
     })
 }
