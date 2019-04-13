@@ -1,8 +1,8 @@
 const db = require('../models/database.js');
 
 exports.register = (req, res, next) => {
-    db.query('INSERT INTO User VALUES ?', 
-    (req.body.firstName, req.body.lastName, req.body.email, req.body.password))
+    db.query('INSERT INTO User SET ?', 
+    {FirstName: req.body.FirstName, LastName: req.body.LastName, Email: req.body.Email, Password: req.body.Password})
     .then(() => {
         res.send({
             message: 'registration successful!'
@@ -17,7 +17,7 @@ exports.register = (req, res, next) => {
 }
 
 exports.login = (req, res, next) => {
-    db.query('SELECT * FROM User WHERE Email = ? AND Password = ?', [req.params.email,req.params.password])
+    db.query('SELECT * FROM User WHERE Email = ? AND Password = ?', [req.body.Email,req.body.Password])
     .then(data => {
         //No User Found Check
         if(data == "") {

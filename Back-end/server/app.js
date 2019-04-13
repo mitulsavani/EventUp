@@ -5,8 +5,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser'); 
 const db = require('./api/models/database.js');
 
-//Define Routes
-const userRoutes = require('./api/routes/apiRoutes');
+const userRoutes = require('./api/routes/users');
 
 //Test Database Connection
 db.connection.connect(function(err) {
