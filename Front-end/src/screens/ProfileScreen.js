@@ -3,6 +3,17 @@ import { StyleSheet, View, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
 
 export default class ProfileScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Profile',
+    headerTintColor: 'white',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+      color: 'white',
+    },
+    headerStyle: {
+      backgroundColor: '#39CA74',
+    },
+  };
 
   _signOutAsync = async () => {
     await AsyncStorage.clear();
