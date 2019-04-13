@@ -1,9 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import HomeTabs from './src/navigation/HomeTabs'
-import { createAppContainer } from 'react-navigation'
-
-const AppContainer = createAppContainer(HomeTabs);
+import { AppContainer } from './src/navigation/Router';
 export default class App extends React.Component {
   
   render() {
