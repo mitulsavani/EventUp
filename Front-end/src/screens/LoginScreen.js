@@ -64,35 +64,20 @@ class LoginScreen extends Component {
   }
 
 async loginAction() {
-    // const { email, password } = this.state;
-    // this.setState({ loading: true });
-
-    var details = {
-        "FirstName": "John",
-        "LastName": "Oliver",
-        "Email": "bsmith@gmail.com",
-        "Password": "password",
-    };
-
-    var formBody = [];
-
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-
-    formBody = formBody.join("&");
 
     try {
-       let response = await fetch(`https://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/register`, {
+       let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=utf-8',
         },
-        body: formBody
+        body: 
+          JSON.stringify({
+            "FirstName" : "Cory",
+            "LastName": "Luis",
+            "Email": "jOliver@gmail.com",
+            "Password": "password",
+          })
       });
 
       response.json().then(result => {
@@ -103,44 +88,9 @@ async loginAction() {
       this.setState({ loading: false, response: error })
       console.log("This is the error : ", error)
     }
-  
-    // Alert.alert(
-    //   'Alert!',
-    //   'You have successfully logged in',
-    //   [
-    //     { text: 'OK', 
-    //       onPress: this._signInAsync
-    //     }
-    //   ],
-      
-    //   { cancelable: false }
-    // );
-    // this.setState({ loading: false })
 
   }
 
-// Fetching using Axios  :
-
-  // componentDidMount() {
-  //   axios({
-  //     method: 'post',
-  //     url: 'https//ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/register',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json',
-  //     },
-  //     FirstName: "John",
-  //     LastName: "Oliver",
-  //     Email: "jsmith@gmail.com",
-  //     Password: "password"
-  //   })
-  //   .then(function (response) {
-  //     console.log("This is the response : ", response);
-  //   })
-  //   .catch(function (error) {
-  //     console.log("This is the error : ", error);
-  //   });
-  // }
 
   render() {
     const { email, password, loading, enabled } = this.state;
