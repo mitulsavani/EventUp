@@ -38,7 +38,8 @@ class SignupScreen extends Component {
     super(props);
 
     this.state = {
-      name: undefined,
+      firstName: undefined,
+      lastName: undefined,
       email: undefined,
       password: undefined,
       enabled: false,
@@ -46,7 +47,7 @@ class SignupScreen extends Component {
     }
 
     this.updateSignupField = key => text => this.updateSignupFieldState(key, text);
-    this.loginAction = this.loginAction.bind(this);
+    this.signupAction = this.signupAction.bind(this);
   }
 
   updateSignupFieldState(key, value) {
@@ -59,7 +60,13 @@ class SignupScreen extends Component {
     this.setState({ enabled: emailValidator(email) && password && password.length > 0 });
   }
 
-  async loginAction() {
+  async signupAction() {
+    const {  firstName, lastName, email, password } = this.state
+    const { navigate } = this.props.navigation
+
+    console.log("Sign Up Details : ", firstName, lastName, email, password);
+
+
     try {
       let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/register', {
        method: 'POST',
@@ -87,20 +94,38 @@ class SignupScreen extends Component {
   }
 
   render() {
-    const { name, email, password, loading, enabled } = this.state;
+    const { firstName, lastName, email, password, loading, enabled } = this.state;
 
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
         <View style={{ flex: 1, justifyContent: 'center' }}>
+        <TextInput
+            mode="outlined"
+            style={{ marginBottom: 10 }}
+            label="First Name"
+            placeholder="Enter your first name"
+            value={firstName}
+            theme={{ colors: { primary: PRIMARY_COLOR } }}
+            onChangeText={this.updateSignupField('firstName')}
+            autoFocus={true}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="email-address"
+            returnKeyType="next"
+            blurOnSubmit={false}
+            underlineColorAndroid="transparent"
+            ref={(input) => { this.emailInput = input; }}
+            onSubmitEditing={() => { this.passwordInput.focus() }}
+          />
           <TextInput
             mode="outlined"
             style={{ marginBottom: 10 }}
-            label="Name"
+            label="Last Name"
             placeholder="Enter your name"
-            value={name}
+            value={lastName}
             theme={{ colors: { primary: PRIMARY_COLOR } }}
-            onChangeText={this.updateSignupField('name')}
+            onChangeText={this.updateSignupField('lastName')}
             autoFocus={true}
             autoCapitalize="none"
             autoCorrect={false}
@@ -145,7 +170,7 @@ class SignupScreen extends Component {
             blurOnSubmit={false}
             underlineColorAndroid="transparent"
             ref={(input) => { this.passwordInput = input; }}
-            onSubmitEditing={enabled ? this.loginAction : undefined}
+            onSubmitEditing={enabled ? this.signupAction : undefined}
           />
           <Button
             title="Sign Up"
@@ -155,7 +180,7 @@ class SignupScreen extends Component {
             activeOpacity={0.8}
             disabled={!enabled}
             loading={loading}
-            onPress={this.loginAction}
+            onPress={this.signupAction}
           />
         </View>
         <View style={{ flex: 1 }} />

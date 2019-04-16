@@ -65,6 +65,12 @@ class LoginScreen extends Component {
 
 async loginAction() {
 
+  this.setState({ isLoading: true })
+  
+      const { email, password } = this.state
+      const { navigate } = this.props.navigation
+
+      console.log("Details : ", email, " ",password);
     try {
        let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/login', {
         method: 'POST',
@@ -73,8 +79,8 @@ async loginAction() {
         },
         body: 
           JSON.stringify({
-            "Email" : "jwong@gmail.com",
-            "Password" : "password"
+            "Email" : email,
+            "Password" : password
         })
       });
 
