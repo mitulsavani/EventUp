@@ -65,7 +65,7 @@ class LoginScreen extends Component {
 
 async loginAction() {
 
-  this.setState({ isLoading: true })
+  this.setState({ loading: true })
   
       const { email, password } = this.state
       const { navigate } = this.props.navigation
@@ -85,13 +85,25 @@ async loginAction() {
       });
 
       response.json().then(result => {
-        console.log("This is the response:", result)
+        //Login Successful
+        if (result.message =="success"){
+          console.log("Login Succesful");
+           this._signInAsync;
+        } 
+        //Login failed
+        else {
+          console.log("Login Failed");
+        }
+
       })
-      console.log("This is the response : ",response.json)
+
+
     } catch (error) {
-      this.setState({ loading: false, response: error })
-      console.log("This is the error : ", error)
+      this.setState({ loading: false, response: error });
+      console.log(error);
     }
+
+    this.setState({ loading: false })
 
   }
 

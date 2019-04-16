@@ -64,9 +64,6 @@ class SignupScreen extends Component {
     const {  firstName, lastName, email, password } = this.state
     const { navigate } = this.props.navigation
 
-    console.log("Sign Up Details : ", firstName, lastName, email, password);
-
-
     try {
       let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/register', {
        method: 'POST',
@@ -83,12 +80,19 @@ class SignupScreen extends Component {
      });
 
      response.json().then(result => {
-       console.log("This is the response:", result)
+      //Sign Up Successful
+       if (result.message == "success") {
+        console.log("Sign Up Succesful");
+       } 
+       //Sign Up Failed
+       else {
+        console.log("Sign Up Failed");
+       }
      })
-     console.log("This is the response : ",response.json)
+     
    } catch (error) {
      this.setState({ loading: false, response: error })
-     console.log("This is the error : ", error)
+     console.log(error)
    }
 
   }
