@@ -66,18 +66,16 @@ class LoginScreen extends Component {
 async loginAction() {
 
     try {
-       let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/register', {
+       let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
         },
         body: 
           JSON.stringify({
-            "FirstName" : "Cory",
-            "LastName": "Luis",
-            "Email": "jOliver@gmail.com",
-            "Password": "password",
-          })
+            "Email" : "jwong@gmail.com",
+            "Password" : "password"
+        })
       });
 
       response.json().then(result => {
