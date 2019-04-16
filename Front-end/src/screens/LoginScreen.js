@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, StatusBar, Alert, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
 import { TextInput } from 'react-native-paper';
+import axios from 'axios';
 
 // Shared Utils
 export const emailValidator = (email) => {
@@ -62,23 +63,84 @@ class LoginScreen extends Component {
     this.setState({ enabled: emailValidator(email) && password && password.length > 0 });
   }
 
-  loginAction() {
-    const { email, password } = this.state;
-    this.setState({ loading: true });
+async loginAction() {
+    // const { email, password } = this.state;
+    // this.setState({ loading: true });
 
-    Alert.alert(
-      'Alert!',
-      'You have successfully logged in',
-      [
-        { text: 'OK', 
-          onPress: this._signInAsync
-        }
-      ],
+    var details = {
+        "FirstName": "John",
+        "LastName": "Oliver",
+        "Email": "bsmith@gmail.com",
+        "Password": "password",
+    };
+
+    var formBody = [];
+
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+
+    formBody = formBody.join("&");
+
+    try {
+       let response = await fetch(`https://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'Accept': 'application/json',
+        },
+        body: formBody
+      });
+
+      response.json().then(result => {
+        console.log("This is the response:", result)
+      })
+      console.log("This is the response : ",response.json)
+    } catch (error) {
+      this.setState({ loading: false, response: error })
+      console.log("This is the error : ", error)
+    }
+  
+    // Alert.alert(
+    //   'Alert!',
+    //   'You have successfully logged in',
+    //   [
+    //     { text: 'OK', 
+    //       onPress: this._signInAsync
+    //     }
+    //   ],
       
-      { cancelable: false }
-    );
-    this.setState({ loading: false })
+    //   { cancelable: false }
+    // );
+    // this.setState({ loading: false })
+
   }
+
+// Fetching using Axios  :
+
+  // componentDidMount() {
+  //   axios({
+  //     method: 'post',
+  //     url: 'https//ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/register',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Accept': 'application/json',
+  //     },
+  //     FirstName: "John",
+  //     LastName: "Oliver",
+  //     Email: "jsmith@gmail.com",
+  //     Password: "password"
+  //   })
+  //   .then(function (response) {
+  //     console.log("This is the response : ", response);
+  //   })
+  //   .catch(function (error) {
+  //     console.log("This is the error : ", error);
+  //   });
+  // }
 
   render() {
     const { email, password, loading, enabled } = this.state;

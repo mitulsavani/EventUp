@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, StatusBar, Alert } from 'react-native';
 import { Button } from 'react-native-elements';
 import { TextInput } from 'react-native-paper';
+import axios from 'axios';
 
 // Shared Utils
 export const emailValidator = (email) => {
@@ -59,9 +60,9 @@ class SignupScreen extends Component {
   }
 
   loginAction() {
-    const { email, password } = this.state;
-    this.setState({ loading: true });
-
+    // const { email, password } = this.state;
+    // this.setState({ loading: true });
+    
     Alert.alert(
       'Alert!',
       'You have successfully logged in',
@@ -70,6 +71,39 @@ class SignupScreen extends Component {
       ],
       { cancelable: false }
     );
+
+    var details = {
+      "FirstName": "Bob",
+      "LastName": "Smith",
+      "Email": "bsmith@gmail.com",
+      "Password": "password"
+};
+
+    // var formBody = [];
+    
+    //     for (var property in details) {
+    //       var encodedKey = encodeURIComponent(property);
+    //       var encodedValue = encodeURIComponent(details[property]);
+    
+    //       formBody.push(encodedKey + "=" + encodedValue);
+    //     }
+    
+    //     formBody = formBody.join("&");
+     
+        // axios.post('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/register', {
+        //   FirstName: "Bob",
+        //   LastName: "Smith",
+        //   Email: "bsmith@gmail.com",
+        //   Password: "password"
+        // })
+        // .then(function (response) {
+        //   console.log("This is the response : ", response);
+        // })
+        // .catch(function (error) {
+        //   console.log("This is the error : ", error);
+        // });
+  
+
   }
 
   render() {
