@@ -75,10 +75,10 @@ class SignupScreen extends Component {
        },
        body: 
          JSON.stringify({
-           "FirstName" : "Cory",
-           "LastName": "Luis",
-           "Email": "jOliver@gmail.com",
-           "Password": "password",
+           "FirstName" : firstName,
+           "LastName": lastName,
+           "Email": email,
+           "Password": password,
          })
      });
 
