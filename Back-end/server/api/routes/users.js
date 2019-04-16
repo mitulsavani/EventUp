@@ -5,6 +5,6 @@ userController = require('../controllers/users.js');
 
 router.post('/register', userController.register);
 
-router.get('/login', userController.login);
+router.post('/login', userController.login);
 
 module.exports = router;
