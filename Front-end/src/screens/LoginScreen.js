@@ -59,7 +59,6 @@ class LoginScreen extends Component {
 
   checkEnabled() {
     const { email, password } = this.state;
-
     this.setState({ enabled: emailValidator(email) && password && password.length > 0 });
   }
 
@@ -72,7 +71,7 @@ async loginAction() {
 
       console.log("Details : ", email, " ",password);
     try {
-       let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/login', {
+        let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
@@ -87,24 +86,32 @@ async loginAction() {
       response.json().then(result => {
         //Login Successful
         if (result.message =="success"){
-          console.log("Login Succesful");
-           this._signInAsync;
+          Alert.alert(
+            'Alert!',
+            'You have successfully logged in',
+            [
+              { text: 'OK', onPress: () => this._signInAsync() }
+            ],
+            { cancelable: false }
+          );
         } 
         //Login failed
         else {
-          console.log("Login Failed");
+          Alert.alert(
+            'Alert!',
+            'Login Failed',
+            [
+              { text: 'OK' }
+            ],
+            { cancelable: false }
+          );
         }
-
       })
-
-
     } catch (error) {
       this.setState({ loading: false, response: error });
       console.log(error);
     }
-
     this.setState({ loading: false })
-
   }
 
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, StatusBar, Alert } from 'react-native';
+import { StyleSheet, View, StatusBar, Alert, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
 import { TextInput } from 'react-native-paper';
 import axios from 'axios';
@@ -50,13 +50,17 @@ class SignupScreen extends Component {
     this.signupAction = this.signupAction.bind(this);
   }
 
+  _signInAsync = async () => {
+    await AsyncStorage.setItem('userToken', 'abc');
+    this.props.navigation.navigate('App');
+  };
+
   updateSignupFieldState(key, value) {
     this.setState({ [key]: value }, this.checkEnabled);
   }
 
   checkEnabled() {
     const { email, password } = this.state;
-
     this.setState({ enabled: emailValidator(email) && password && password.length > 0 });
   }
 
@@ -82,19 +86,24 @@ class SignupScreen extends Component {
       response.json().then(result => {
         //Sign Up Successful
         if (result.message == "success") {
-          console.log("Sign Up Succesful");
+          Alert.alert(
+            'Alert!',
+            'You have successfully logged in',
+            [
+              { text: 'OK', onPress: () => this._signInAsync() }
+            ],
+            { cancelable: false }
+          );
         } 
         //Sign Up Failed
         else {
           console.log("Sign Up Failed");
         }
       })
-      
     } catch (error) {
-      this.setState({ loading: false, response: error })
-      console.log(error)
-    }
-
+        this.setState({ loading: false, response: error })
+        console.log(error)
+      }
     }
 
   render() {
@@ -113,32 +122,31 @@ class SignupScreen extends Component {
             theme={{ colors: { primary: PRIMARY_COLOR } }}
             onChangeText={this.updateSignupField('firstName')}
             autoFocus={true}
-            autoCapitalize="none"
+            autoCapitalize="words"
             autoCorrect={false}
-            keyboardType="email-address"
+            keyboardType="default"
             returnKeyType="next"
             blurOnSubmit={false}
             underlineColorAndroid="transparent"
-            ref={(input) => { this.emailInput = input; }}
-            onSubmitEditing={() => { this.passwordInput.focus() }}
+            ref={(input) => { this.firstnameInput = input; }}
+            onSubmitEditing={() => { this.lastnameInput.focus() }}
           />
           <TextInput
             mode="outlined"
             style={{ marginBottom: 10 }}
             label="Last Name"
-            placeholder="Enter your name"
+            placeholder="Enter your last name"
             value={lastName}
             theme={{ colors: { primary: PRIMARY_COLOR } }}
             onChangeText={this.updateSignupField('lastName')}
-            autoFocus={true}
-            autoCapitalize="none"
+            autoCapitalize="words"
             autoCorrect={false}
-            keyboardType="email-address"
+            keyboardType="default"
             returnKeyType="next"
             blurOnSubmit={false}
             underlineColorAndroid="transparent"
-            ref={(input) => { this.emailInput = input; }}
-            onSubmitEditing={() => { this.passwordInput.focus() }}
+            ref={(input) => { this.lastnameInput = input; }}
+            onSubmitEditing={() => { this.emailInput.focus() }}
           />
           <TextInput
             mode="outlined"
@@ -148,7 +156,6 @@ class SignupScreen extends Component {
             value={email}
             theme={{ colors: { primary: PRIMARY_COLOR } }}
             onChangeText={this.updateSignupField('email')}
-            autoFocus={true}
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="email-address"
