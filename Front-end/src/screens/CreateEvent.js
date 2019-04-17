@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { AppContainer } from './src/navigation/Router';
-export default class App extends React.Component {
-  
+
+export default class CreateEvent extends React.Component {
   render() {
     return (
-      <AppContainer/>
+      <View style={styles.container}>
+        <Text>CreateEvent</Text>
+      </View>
     );
   }
 }
