@@ -1,18 +1,22 @@
-# csc667-teamproject-team04
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-1. Change the name of the repo with the correct team number. <br>
+# EventUp
+###### CSC 667 Team Project Team 04
 
-__UPDATED:__ `csc667-sp19-Team04-mitulsavani`
+## Getting Started
 
-2. Invite all members to your repository.this is a test for WebHooks <br>
+* Download Expo app from the IOS or Android store
+<button class="btn btn-info" onclick="window.open('https://play.google.com/store/apps/details?id=host.exp.exponent');" target="_blank" style="margin-bottom:2em;">Android App</button>
+<br>
+<button class="btn btn-info" onclick="window.open('https://itunes.apple.com/us/app/expo-client/id982107779?mt=8');" target="_blank" style="margin-bottom:2em;">IOS App</button>
 
-ADDED: Cory Lewis, Vincent Santos, Chintan Puri <br>
-**Note: Please check your github linked email if you haven't received invitation yet**
+## Scan QR Code to load prototype
 
-### Todo:
-
-3. When ready, initialize your repository with the initial state of your project.
+<button class="btn btn-success" onclick="window.open('https://expo.io/@mitulsavani/EventUp');" target="_blank" style="margin-bottom:2em;">Scan QR Code</button>
+<br>
 
 
-### Note that the milestone folders have been moved to their branch named milestones. 
-### This is to keep them off the master/production branch so they are cleaner.
+
+
+> Updated on: 04/17/19, Cory Lewis
