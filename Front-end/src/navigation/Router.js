@@ -1,13 +1,50 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { createBottomTabNavigator } from 'react-navigation';
+import { createBottomTabNavigator, createAppContainer, createStackNavigator, createSwitchNavigator } from 'react-navigation';
 import PropTypes from 'prop-types';
 import { SimpleLineIcons } from '@expo/vector-icons';
 
-import EventsStack from './EventsStack';
 import MyEventsScreen from '../screens/MyEventsScreen'
-import MapScreen from '../screens/MapScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import LoginScreen from '../screens/LoginScreen';
+import SignupScreen from '../screens/SignupScreen';
+import EventsScreen from '../screens/EventsScreen';
+import DetailEventScreen from '../screens/DetailEventScreen';
+import AuthLoadingScreen  from '../screens/AuthLoadingScreen';
 
+
+const AuthStack =  createStackNavigator({
+  login: {
+    screen: LoginScreen,
+  },
+  signup: {
+    screen: SignupScreen,
+  },
+}, {
+  initialRouteName: 'login',
+  mode: 'mode'
+});
+
+const EventStack =  createStackNavigator({
+  events: {
+    screen: EventsScreen,
+  },
+  detailEvent: {
+    screen: DetailEventScreen,
+  },
+});
+
+const TicketStack = createStackNavigator({
+  myEvents: {
+    screen: MyEventsScreen
+  }
+});
+
+const ProfileStack = createStackNavigator({
+  profile: {
+    screen: ProfileScreen
+  }
+})
 
 const EventsTabIcon = ({ tintColor }) => (
   <SimpleLineIcons
@@ -42,25 +79,25 @@ AccountTabIcon.propTypes = {
   tintColor: PropTypes.string.isRequired,
 };
 
-export default createBottomTabNavigator({
+const TabNavigator = createBottomTabNavigator({
   allEvents: {
-    screen: EventsStack,
+    screen: EventStack,
     navigationOptions: {
       tabBarLabel: 'Events',
       tabBarIcon: EventsTabIcon,
     },
   },
   tickets: {
-    screen: MyEventsScreen,
+    screen: TicketStack,
     navigationOptions: {
       tabBarLabel: 'Tickets',
       tabBarIcon: TicketsTabIcon,
     },
   },
-  myEvents: {
-    screen: MapScreen,
+  profile: {
+    screen: ProfileStack,
     navigationOptions: {
-      tabBarLabel: 'Favorites',
+      tabBarLabel: 'Profile',
       tabBarIcon: AccountTabIcon,
     },
   },
@@ -86,3 +123,14 @@ export default createBottomTabNavigator({
     },
   },
 });
+
+export const AppContainer = createAppContainer(createSwitchNavigator(
+  {
+    AuthLoading: AuthLoadingScreen,
+    App: TabNavigator,
+    Auth: AuthStack,
+  },
+  {
+    initialRouteName: 'AuthLoading',
+  },
+));
