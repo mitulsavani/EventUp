@@ -12,9 +12,22 @@ exports.register = (req, res, next) => {
         else {
             db.query('INSERT INTO User SET ?', 
             {FirstName: req.body.FirstName, LastName: req.body.LastName, Email: req.body.Email, Password: hash})
-            .then(() => {
-                res.send({
-                    message: 'success'
+            .then(result => {
+                const token = jwt.sign(
+                    {
+                        id: result.insertId,
+                        FirstName: req.FirstName,
+                        LastName: req.LastName,
+                        Email: req.Email,
+                    },
+                    process.env.JWT_KEY,
+                    {
+                        expiresIn: '24h'
+                    }
+                )
+                res.status(200).json({
+                    message: 'Successful login',
+                    token: token
                 });
             })
             .catch(err => {
