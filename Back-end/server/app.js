@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const db = require('./api/models/database.js'); 
 
 const userRoutes = require('./api/routes/users');
+const eventRoutes = require('./api/routes/events');
 
 //Test Database Connection
 db.connection.connect(function(err) {
@@ -28,5 +29,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.use('/users', userRoutes);
+app.use('/events', eventRoutes);
 
 module.exports = app;
