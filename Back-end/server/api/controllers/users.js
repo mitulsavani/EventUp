@@ -42,7 +42,7 @@ exports.register = (req, res, next) => {
 
 exports.login = (req, res, next) => {
     db.query('SELECT * FROM User WHERE Email = ?', req.body.Email)
-    .then(user => {
+    .then(([user, fields]) => {
         //No User Found Check
         if(user == "") {
             res.status(404).json({
@@ -113,7 +113,7 @@ exports.revoke = (req, res, next) => {
 
 exports.getUsers = (req, res, next) => {
     db.query('SELECT * FROM User')
-    .then(users => {
+    .then(([users, fields]) => {
         const response = {
             UserCount: users.length,
             users: users
