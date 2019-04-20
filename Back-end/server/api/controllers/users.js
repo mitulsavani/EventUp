@@ -12,7 +12,7 @@ exports.register = (req, res, next) => {
         else {
             db.query('INSERT INTO User SET ?', 
             {FirstName: req.body.FirstName, LastName: req.body.LastName, Email: req.body.Email, Password: hash})
-            .then(result => {
+            .then(([result, fields]) => {
                 const token = jwt.sign(
                     {
                         id: result.insertId,
@@ -85,7 +85,7 @@ exports.login = (req, res, next) => {
 exports.RSVP = (req, res, next) => {
     db.query('INSERT INTO RSVP SET ?', 
     { UserId: req.body.UserId, EventId: req.body.EventId })
-    .then( () => {
+    .then(([result, fields]) => {
         res.status(200).json({
             message: "RSVP Successful"
         })
@@ -99,7 +99,7 @@ exports.RSVP = (req, res, next) => {
 
 exports.revoke = (req, res, next) => {
     db.query('DELETE FROM RSVP WHERE UserId = ? AND EventId = ?', [req.body.UserId, req.body.EventId])
-    .then( () => {
+    .then( ([result, fields]) => {
         res.status(200).json({
             message: "RSVP Deletion Successful"
         })
