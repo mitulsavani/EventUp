@@ -8,6 +8,10 @@ router.put('/register', userController.register);
 
 router.post('/login', userController.login);
 
-router.get('/', checkAuth, userController.getUsers);
+router.get('/', checkAuth, userController.getUsers); 
+
+router.post('/RSVP', userController.RSVP);
+
+router.delete('/RSVP', userController.revoke);
 
 module.exports = router; 

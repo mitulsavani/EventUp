@@ -80,7 +80,36 @@ exports.login = (req, res, next) => {
             message: err
         })
     })
+} 
+
+exports.RSVP = (req, res, next) => {
+    db.query('INSERT INTO RSVP SET ?', 
+    { UserId: req.body.UserId, EventId: req.body.EventId })
+    .then( () => {
+        res.status(200).json({
+            message: "RSVP Successful"
+        })
+    })
+    .catch( err => {
+        res.status(500).json({
+            message: err
+        })
+    })
 }
+
+exports.revoke = (req, res, next) => {
+    db.query('DELETE FROM RSVP WHERE UserId = ? AND EventId = ?', [req.body.UserId, req.body.EventId])
+    .then( () => {
+        res.status(200).json({
+            message: "RSVP Deletion Successful"
+        })
+    })
+    .catch( err => {
+        res.status(500).json({
+            message: err
+        })
+    })
+} 
 
 exports.getUsers = (req, res, next) => {
     db.query('SELECT * FROM User')
