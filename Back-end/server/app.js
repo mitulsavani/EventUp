@@ -8,12 +8,6 @@ const db = require('./api/models/database.js');
 const userRoutes = require('./api/routes/users');
 const eventRoutes = require('./api/routes/events');
 
-//Test Database Connection
-db.connection.connect(function(err) {
-    if (err) throw err;
-    console.log("Database Connected Successfully!");
-  });
-
 app.use((req, res, next) => { 
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
