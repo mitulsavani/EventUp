@@ -1,9 +1,42 @@
 const express = require('express');
-const app = express();    
+const app = express();  
 
-//morgan is used to console log requests from client
 const morgan = require('morgan'); 
-//body-parser is used to parse json bodies from client requests
 const bodyParser = require('body-parser'); 
+const db = require('./api/models/database.js'); 
+
+const userRoutes = require('./api/routes/users');
+
+var fs = require('fs');
+var util = require('util');
+var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
+var log_stdout = process.stdout;
+
+console.log = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
+
+//Test Database Connection
+db.connection.connect(function(err) {
+    if (err) throw err;
+    console.log("Database Connected Successfully!");
+  });
+
+app.use((req, res, next) => { 
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', '*');
+  if(req.method == 'OPTIONS'){ 
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+    return res.status(200).json({});
+  }
+  next();
+})
+  
+app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
+app.use('/users', userRoutes);
 
 module.exports = app;
