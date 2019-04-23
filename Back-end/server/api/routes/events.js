@@ -7,6 +7,8 @@ const upload = multer({ dest: 'uploads/'});
 checkAuth = require('../middleware/check-auth.js');
 eventController = require('../controllers/events.js');
 
+router.get('/', checkAuth, eventController.getAllEvents);
+
 router.post('/', checkAuth, upload.single('Image'), eventController.postEvent);
 
 router.delete('/:id', checkAuth, eventController.deleteEvent);

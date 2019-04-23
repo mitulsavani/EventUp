@@ -6,6 +6,7 @@ exports.register = (req, res, next) => {
     bcrypt.hash(req.body.Password, 10, (err, hash) => {
         if(err) {
             return res.status(500).json({
+                status: false,
                 error: err
             });
         }
@@ -26,12 +27,14 @@ exports.register = (req, res, next) => {
                     }
                 )
                 res.status(200).json({
+                    status: true,
                     message: 'Successful login',
                     token: token
                 });
             })
             .catch(err => {
                 res.send({
+                    status: false,
                     message: 'error',
                     error: err
                 });
@@ -46,6 +49,7 @@ exports.login = (req, res, next) => {
         //No User Found Check
         if(user == "") {
             res.status(404).json({
+                status: false,
                 message: 'User not found'
             });
         }
@@ -64,12 +68,14 @@ exports.login = (req, res, next) => {
                     }
                 )
                 res.status(200).json({
+                    status: true,
                     message: 'Successful login',
                     token: token
                 });
             }
             else {
                 return res.status(401).json({
+                    status: false,
                     message: 'Auth failed'
                 });
             }
@@ -77,6 +83,7 @@ exports.login = (req, res, next) => {
     })
     .catch(err => {
         res.send({
+            status: false,
             message: err
         })
     })
@@ -87,11 +94,13 @@ exports.RSVP = (req, res, next) => {
     { UserId: req.body.UserId, EventId: req.body.EventId })
     .then(([result, fields]) => {
         res.status(200).json({
+            status: true,
             message: "RSVP Successful"
         })
     })
     .catch( err => {
         res.status(500).json({
+            status: false,
             message: err
         })
     })
@@ -101,11 +110,13 @@ exports.revoke = (req, res, next) => {
     db.query('DELETE FROM RSVP WHERE UserId = ? AND EventId = ?', [req.body.UserId, req.body.EventId])
     .then( ([result, fields]) => {
         res.status(200).json({
+            status: true,
             message: "RSVP Deletion Successful"
         })
     })
     .catch( err => {
         res.status(500).json({
+            status: false,
             message: err
         })
     })
@@ -115,9 +126,16 @@ exports.getUsers = (req, res, next) => {
     db.query('SELECT * FROM User')
     .then(([users, fields]) => {
         const response = {
+            status: true,
             UserCount: users.length,
             users: users
         }
         res.status(200).json(response);
-    });
+    })
+    .catch( err => {
+        res.status(500).json({
+            status: false,
+            message: err
+        })
+    })
 }
