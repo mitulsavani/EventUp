@@ -15,9 +15,9 @@ export default class CreateEvent extends React.Component {
     this.state = {
       name: '',
       description: '',
-      ageRestriction: '',
-      userId: '',
-      categoryId: '',
+      ageRestriction: '1',
+      userId: 'sampleUserId',
+      categoryId: 'sampleCategoryId',
       locationId: '',
       image: null,
       startDate: '',
@@ -53,41 +53,39 @@ _pickImage = async () => {
 };
 
 
-uploadEvent() {
+async uploadEvent() {
 
-
-console.log("abc :", userId);
-  // try {
-  //   let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json; charset=utf-8',
-  //     'Authorization':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYwMzYxODgsImV4cCI6MTU1NjEyMjU4OH0.FTP2jcagh20lyl00c8e4fjeGF2yULtxnvyZey47U7GM'
-  //   },
-  //   body: 
-  //   JSON.stringify({
-  //     "Name" : name,
-  //     "Description" : description,
-  //     "AgeRestriction" : ageRestriction,
-  //     "UserId":userId,
-  //     "CategoryId" : categoryId,
-  //     "LocationId":locationId,
-  //     "Image":eventImage,
-  //     "StartDate": startDate,
-  //     "StartTime": startTime,
-  //     "EndTime": endTime,
-  // })
-  // });
+  try {
+    let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Authorization':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYwMzYxODgsImV4cCI6MTU1NjEyMjU4OH0.FTP2jcagh20lyl00c8e4fjeGF2yULtxnvyZey47U7GM'
+    },
+    body: 
+    JSON.stringify({
+      "Name" : this.state.name,
+      "Description" : this.state.description,
+      "AgeRestriction" : "1",
+      "UserId":"sampleUserId",
+      "CategoryId" : "1",
+      "LocationId":this.state.locationId,
+      "Image":null,
+      "StartDate": this.state.startDate,
+      "StartTime": this.state.startTime,
+      "EndTime": this.state.endTime,
+  })
+  });
   
-  // response.json().then(result => {
+  response.json().then(result => {
    
-  //  this.setState({users:result.data});
+   this.setState({users:result.data});
   
-  // })
-  // } catch (error) {
-  // this.setState({ loading: false, response: error });
-  // console.log(error);
-  // }
+  })
+  } catch (error) {
+  this.setState({ loading: false, response: error });
+  console.log(error);
+  }
   
 }
 
@@ -145,8 +143,7 @@ console.log("abc :", userId);
             numberOfLines={4}
             placeholder="Enter your password"
             
-           // theme={{ colors: { primary: PRIMARY_COLOR } }}          
-            secureTextEntry
+           // theme={{ colors: { primary: PRIMARY_COLOR } }}                      
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="default"
@@ -179,7 +176,7 @@ console.log("abc :", userId);
             placeholder="Enter your password"
             
            // theme={{ colors: { primary: PRIMARY_COLOR } }}            
-            secureTextEntry
+            
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="default"
@@ -196,7 +193,7 @@ console.log("abc :", userId);
             placeholder="Enter your password"
             
            // theme={{ colors: { primary: PRIMARY_COLOR } }}            
-            secureTextEntry
+            
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="default"
