@@ -14,4 +14,6 @@ router.post('/RSVP', userController.RSVP);
 
 router.delete('/RSVP', userController.revoke);
 
+router.post('/posts', userController.getPosts);
+
 module.exports = router; 

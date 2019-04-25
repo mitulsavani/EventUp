@@ -120,7 +120,25 @@ exports.revoke = (req, res, next) => {
             message: err
         })
     })
-} 
+}
+exports.getPosts = (req, res, next) => {
+    console.log(req.body.UserId);
+    db.query('SELECT * FROM Event WHERE UserId = ?', 
+    [req.body.UserId])
+    .then(([result, fields]) => {
+        res.status(200).json({
+            status: true,
+            data: result,
+            message: "All User Posts for signed in user"
+        })
+    })
+    .catch( err => {
+        res.status(500).json({
+            status: false,
+            message: err
+        })
+    })
+}
 
 exports.getUsers = (req, res, next) => {
     db.query('SELECT * FROM User')
