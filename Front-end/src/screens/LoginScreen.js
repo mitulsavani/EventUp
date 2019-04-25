@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { StyleSheet, View, StatusBar, Alert, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
 import { TextInput } from 'react-native-paper';
-import axios from 'axios';
 
 // Shared Utils
 export const emailValidator = (email) => {
@@ -196,4 +195,3 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
-
