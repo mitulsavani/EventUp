@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Text,
   Image,
   ScrollView,
   StyleSheet,
@@ -11,24 +12,31 @@ import { TextInput } from "react-native-paper";
 import { ImagePicker, Permissions } from "expo";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
+import { Dropdown } from 'react-native-material-dropdown';
+
+export const PRIMARY_COLOR = '#39CA74';
 
 export default class CreateEvent extends React.Component {
   constructor(props) {
     super(props);
+
+    this.onChangeText = this.onChangeText.bind(this);
+    this.locationRef = this.updateRef.bind(this, 'locationName');
+    this.categoryRef = this.updateRef.bind(this, 'categoryName');
 
     this.state = {
       title: "",
       description: "",
       ageRestriction: "1",
       userId: "1",
-      categoryId: "1",
-      locationId: "",
       image: null,
-      startDate: "",
+      startDate: new Date(),
       startTime: "",
       endTime: "",
+      locationName:"",
+      categoryName:"",
 
-      checked: null,
+      checked: false,
       isDatePickerVisible: false,
       isStartTimePickerVisible: false,
       isEndTimePickerVisible: false
@@ -38,7 +46,18 @@ export default class CreateEvent extends React.Component {
     this.uploadEvent = this.uploadEvent.bind(this);
   }
 
-  toggleAgeRestriction() {}
+  onChangeText(text) {
+    ['locationName', 'categoryName']
+      .map((name) => ({ name, ref: this[name] }))
+      .filter(({ ref }) => ref && ref.isFocused())
+      .forEach(({ name, ref }) => {
+        this.setState({ [name]: text });
+      });
+  }
+
+  updateRef(name, ref) {
+    this[name] = ref;
+  }
 
   showDatePicker = () => {
     this.setState({ isDatePickerVisible: true });
@@ -66,7 +85,6 @@ export default class CreateEvent extends React.Component {
   handleDatePicked = date => {
     var formattedDate = new Date(date).toLocaleDateString();
     formattedDate = format(date, "YYYY-MM-DD");
-    console.log("DATE L ", formattedDate);
     this.setState({ startDate: formattedDate });
     this.hideDatePicker();
   };
@@ -101,8 +119,7 @@ export default class CreateEvent extends React.Component {
   };
 
   async uploadEvent() {
-    const { title, description, startDate, startTime, endTime } = this.state;
-    
+    const { title, locationName, categoryName, description, startDate, startTime, endTime, checked } = this.state;
     // try {
     //   let response = await fetch(
     //     "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
@@ -139,7 +156,22 @@ export default class CreateEvent extends React.Component {
   }
 
   render() {
-    let { image } = this.state;
+    let { image} = this.state;
+    let locationData = [{
+      value: 'J Paul Leonard Library',
+    }, {
+      value: 'Thornton Hall',
+    }, {
+      value: 'Hensil Hall',
+    }];
+
+    let categoryData = [{
+      value: 'Study Group',
+    }, {
+      value: 'Health & Wellness',
+    }, {
+      value: 'Social',
+    }];
 
     return (
       <ScrollView>
@@ -161,19 +193,20 @@ export default class CreateEvent extends React.Component {
               underlineColorAndroid="transparent"
               onChangeText={this.updatePostField("title")}
             />
-            <TextInput
-              mode="outlined"
-              style={{ marginBottom: 10 }}
-              label="Location"
-              placeholder="Enter Location"
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="default"
-              returnKeyType="done"
-              blurOnSubmit={false}
-              underlineColorAndroid="transparent"
-              onChangeText={this.updatePostField("locationId")}
-            />
+
+      <Dropdown
+        ref={this.locationRef}
+        label='Location'  
+        data={locationData}
+        onChangeText={this.onChangeText}
+      />
+
+      <Dropdown
+        ref={this.categoryRef}
+        label='Category'
+        data={categoryData}
+        onChangeText={this.onChangeText}
+      />
 
             <TextInput
               mode="outlined"
@@ -191,48 +224,33 @@ export default class CreateEvent extends React.Component {
               onChangeText={this.updatePostField("description")}
             />
 
-            <TextInput //Replaced this with a pick a date button
-              mode="outlined"
-              style={{ marginBottom: 10 }}
-              label="Date"
-              placeholder="Enter Date"
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="default"
-              returnKeyType="done"
-              blurOnSubmit={false}
-              underlineColorAndroid="transparent"
-              onChangeText={this.updatePostField("startDate")}
-            />
             <View style={{ flexDirection: "row" }}>
-            <Text onPress={this.showStartTimePicker}>
-              {format("January 01, 2019 "+this.state.startTime,"hh:mm a")}
+            <Text style={{paddingTop: 30,paddingRight: 85, fontSize:18}}>
+              Date :
             </Text>
-
-              <TextInput
-                mode="outlined"
-                style={{ width: 100, marginHorizontal: 20, marginBottom: 10 }}
-                label="End Time"
-                placeholder="Enter End Time"
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="default"
-                returnKeyType="done"
-                blurOnSubmit={false}
-                underlineColorAndroid="transparent"
-                onChangeText={this.updatePostField("endTime")}
-              />
+            <Text style={{fontSize:18, marginTop:20, paddingLeft:10, paddingTop:10,paddingRight:10,paddingBottom:10, borderWidth:1, borderRadius:10, borderColor:'black'}} onPress={this.showDatePicker}>
+              {format(this.state.startDate,"MMMM D, YYYY")}
+            </Text>      
             </View>
-            <CheckBox
-              center
-              title="18+ Only"
-              checkedIcon="dot-circle-o"
-              uncheckedIcon="circle-o"
-              onIconPress={this.toggleAgeRestriction}
-              checked={this.state.checked}
-            />
 
-            <Button title="Pick a Date" onPress={this.showDatePicker} />
+            <View style={{ flexDirection: "row" }}>
+            <Text style={{paddingTop: 30,paddingRight: 75, fontSize:18}}>
+              Start Time :
+            </Text>
+            <Text style={{fontSize:18, marginTop:20, paddingLeft:10, paddingTop:10,paddingRight:10,paddingBottom:10, borderWidth:1, borderRadius:10, borderColor:'black'}} onPress={this.showStartTimePicker}>
+              {format("January 01, 2019 "+this.state.startTime,"hh:mm a")}
+            </Text>      
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+            <Text style={{paddingTop: 30,paddingRight: 85, fontSize:18}}>
+              End Time :
+            </Text>
+            <Text style={{fontSize:18, marginTop:20, marginBottom:20, paddingLeft:10, paddingTop:10,paddingRight:10,paddingBottom:10, borderWidth:1, borderRadius:10, borderColor:'black'}} onPress={this.showEndTimePicker}>
+              {format("January 01, 2019 "+this.state.endTime,"hh:mm a")}
+            </Text>      
+            </View>
+
             <DateTimePicker
               isVisible={this.state.isDatePickerVisible}
               onConfirm={this.handleDatePicked}
@@ -241,7 +259,6 @@ export default class CreateEvent extends React.Component {
               mode={"date"}
             />
 
-            <Button title="Pick a Start Time" onPress={this.showStartTimePicker} />
             <DateTimePicker
               isVisible={this.state.isStartTimePickerVisible}
               onConfirm={this.handleStartTimePicked}
@@ -250,13 +267,21 @@ export default class CreateEvent extends React.Component {
               mode={"time"}
             />
 
-            <Button title="Pick an End Time" onPress={this.showEndTimePicker} />
             <DateTimePicker
               isVisible={this.state.isEndTimePickerVisible}
               onConfirm={this.handleEndTimePicked}
               onCancel={this.hideEndTimePicker}
               is24Hour= {false}
               mode={"time"}
+            />
+            
+            <CheckBox              
+              center
+              title="18+ Only"
+              checkedIcon="dot-circle-o"
+              uncheckedIcon="circle-o"
+              onIconPress={() => this.setState({checked: !this.state.checked})}
+              checked={this.state.checked}
             />
 
             <View
@@ -267,8 +292,9 @@ export default class CreateEvent extends React.Component {
               }}
             >
               <Button
-                title="Pick an image from camera roll"
+                title="Pick an image for the event"
                 onPress={this._pickImage}
+                buttonStyle={{ marginTop: 30, height: 50, borderRadius: 5, backgroundColor: PRIMARY_COLOR }}
               />
               {image && (
                 <Image
@@ -279,10 +305,10 @@ export default class CreateEvent extends React.Component {
             </View>
 
             <Button
-              title="Post"
+              title="Create Event"
               titleStyle={{ fontSize: 20, marginTop: 5 }}
               containerStyle={{ marginTop: 20, marginBottom: 30 }}
-              buttonStyle={{ height: 50, borderRadius: 5 }}
+              buttonStyle={{ marginTop: 30, height: 50, borderRadius: 5, backgroundColor: PRIMARY_COLOR }}
               activeOpacity={0.8}
               onPress={this.uploadEvent}
             />
