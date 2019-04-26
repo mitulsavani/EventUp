@@ -72,7 +72,7 @@ export default class EventsScreen extends React.Component {
     }
   }
 
-  _rendeEvents = (item) => {
+  _renderEvents = (item) => {
     return(
     <View style={{ flexDirection: "row", paddingTop: 30 }}>
       <Image
@@ -90,7 +90,7 @@ export default class EventsScreen extends React.Component {
           <Button
             title="RSVP"
             type='outline'
-            titleStyle={{ fontSize: 12, color: '#E8787B' }}
+            titleStyle={{ fontSize: 12, color: 'white' }}
             containerStyle={styles.buttonContainerStyle}
             buttonStyle={styles.buttonStyling}
             onPress={() => console.log("RSVP pressed")}
@@ -98,8 +98,12 @@ export default class EventsScreen extends React.Component {
           <Button
             title="Share"
             type='outline'
-            titleStyle={{ fontSize: 12, color: '#E8787B' }}
-            containerStyle={styles.buttonContainerStyle}
+            titleStyle={{ fontSize: 12, color: 'white' }}
+            containerStyle={{
+                        marginTop: 20,
+                        marginBottom: 30,
+                        marginLeft: 20
+                      }}
             buttonStyle={styles.buttonStyling}
             onPress={()=>this.onShare(item, item.Name, item.StartTime)}
           />
@@ -117,63 +121,8 @@ export default class EventsScreen extends React.Component {
           <FlatList
             data={eventsData}
             showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View style={{ flexDirection: "row", paddingTop: 30 }}>
-                <View>
-                  <Image
-                    source={require("../img/image1.jpg")}
-                    style={styles.imageEx}
-                  />
-                </View>
-                <View style={{ flex: 1, paddingLeft: 30 }}>
-                  <Text style={styles.name}>{item.Name}</Text>
-                  <Text style={styles.email}>
-                   {format(item.StartDate,"MMMM D")}{" | "}
-                    {format("January 01, 2019 "+item.StartTime,"hh:mm a")}
-                  </Text>
-                  <Text style={styles.email}>{item.LocationName}</Text>
-                  <View style={{ flexDirection: "row" }}>
-                    <Button
-                      title="RSVP"
-                      titleStyle={{ fontSize: 12 }}
-                      containerStyle={{
-                        marginTop: 20,
-                        marginBottom: 30,
-                        marginLeft: 40
-                      }}
-                      buttonStyle={{
-                        width: 60,
-                        height: 40,
-                        borderRadius: 5,
-                        backgroundColor: "#39CA74"
-                      }}
-                      activeOpacity={0.8}
-                      onPress={() => console.log("Reset Password")}
-                    />
-                    <Button
-                      title="Share"
-                      titleStyle={{ fontSize: 12 }}
-                      containerStyle={{
-                        marginTop: 20,
-                        marginBottom: 30,
-                        marginLeft: 20
-                      }}
-                      buttonStyle={{
-                        width: 60,
-                        height: 40,
-                        borderRadius: 5,
-                        backgroundColor: "#39CA74"
-                      }}
-                      activeOpacity={0.8}
-                      onPress={() =>
-                        this.props.navigation.navigate("detailEvent")
-                      }
-                    />
-                  </View>
-                </View>
-              </View>
-            )}
-            keyExtractor={item => item.email}
+            renderItem={({ item }) => this._renderEvents(item)}
+            keyExtractor={(item, index) => index}
           />
         </View>
         <View style={{ position: "absolute", left: 290, right: 0, bottom: 30 }}>
@@ -205,6 +154,13 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120
   },
+
+  buttonContainerStyle: {
+    marginTop: 20,
+    marginBottom: 30,
+    marginLeft: 40
+  },
+  
   titleStyling: {
     fontFamily: "Verdana",
     fontSize: 18,
@@ -214,6 +170,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 40,
     borderRadius: 5,
-    borderColor: 'grey',
+    backgroundColor: '#39CA74',
   }
 });
