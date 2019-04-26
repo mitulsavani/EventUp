@@ -80,7 +80,7 @@ export default class EventsScreen extends React.Component {
                    {format(item.StartDate,"MMMM D")}{" | "}
                     {format("January 01, 2019 "+item.StartTime,"hh:mm a")}
                   </Text>
-                  <Text style={styles.email}>{item.LocationId}</Text>
+                  <Text style={styles.email}>{item.LocationName}</Text>
                   <View style={{ flexDirection: "row" }}>
                     <Button
                       title="RSVP"

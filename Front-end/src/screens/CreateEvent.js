@@ -106,7 +106,6 @@ export default class CreateEvent extends React.Component {
 
   async uploadEvent() {
     const { title, description, startDate, startTime, endTime } = this.state;
-console.log("Date Time", startTime, startDate, endTime);
     
     // try {
     //   let response = await fetch(
@@ -214,20 +213,10 @@ console.log("Date Time", startTime, startDate, endTime);
               onChangeText={this.updatePostField("startDate")}
             />
             <View style={{ flexDirection: "row" }}>
-              <TextInput
-                mode="outlined"
-                style={{ width: 100, marginBottom: 10 }}
-                label="Start Time"
-                placeholder="Enter State Time"
-                // theme={{ colors: { primary: PRIMARY_COLOR } }}
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="default"
-                returnKeyType="done"
-                blurOnSubmit={false}
-                underlineColorAndroid="transparent"
-                onChangeText={this.updatePostField("startTime")}
-              />
+            <Text onPress={this.showStartTimePicker}>
+              {format("January 01, 2019 "+this.state.startTime,"hh:mm a")}
+            </Text>
+
               <TextInput
                 mode="outlined"
                 style={{ width: 100, marginHorizontal: 20, marginBottom: 10 }}
