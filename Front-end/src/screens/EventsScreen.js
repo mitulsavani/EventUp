@@ -8,6 +8,7 @@ import {
   Image
 } from "react-native";
 import { Button } from "react-native-elements";
+import { format } from "date-fns";
 
 export default class EventsScreen extends React.Component {
   static navigationOptions = {
@@ -60,9 +61,14 @@ export default class EventsScreen extends React.Component {
         }
       );
 
+      
       response.json().then(result => {
-        console.log("Fetched this data : ", result);
+      //  console.log("Fetched this data : ", result);
+      for (event of result.data) {
+        console.log("Event : ", event);
 
+
+      }
         this.setState({ eventsData: result.data });
       });
     } catch (error) {
@@ -89,7 +95,7 @@ export default class EventsScreen extends React.Component {
                 <View style={{ flex: 1, paddingLeft: 30 }}>
                   <Text style={styles.name}>{item.Name}</Text>
                   <Text style={styles.email}>
-                    {item.StartDate}
+                    {format(item.StartDate, "MMMM D")}
                     {" | "}
                     {item.StartTime}
                   </Text>
