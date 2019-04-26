@@ -47,17 +47,12 @@ try {
   method: 'GET',
   headers: {
     'Content-Type': 'application/json; charset=utf-8',
-    'Authorization':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYxNDE5NzEsImV4cCI6MTU1NjIyODM3MX0.jprhNI6yj9rJrJFO-61aYnlWxFwM3Air3zgtCOvQ_Mc'
+    'Authorization':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYyMzkzNzcsImV4cCI6MTU1NjMyNTc3N30.PNBXvzOCB1Kky0STb5ILyGIgPbxS8FMkjUc_sFNEIGU'
   },
 });
 
 response.json().then(result => {
-// console.log("Fetched this data : ",result);
-for(eventObj of result.data) {
-  if(eventObj.Image != null) {
-  console.log("OBBJJJECT" , JSON.stringify(eventObj.Image) );
-  }
-}
+ console.log("Fetched this data : ",result);
 
  this.setState({eventsData:result.data});
 

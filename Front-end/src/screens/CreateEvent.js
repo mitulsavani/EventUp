@@ -3,7 +3,8 @@ import { AsyncStorage, Image, TouchableOpacity, DatePickerIOS, ScrollView, Style
 import { CheckBox, Button } from 'react-native-elements';
 import { TextInput } from 'react-native-paper';
 import { ImagePicker, Permissions } from 'expo';
-
+import DateTimePicker from "react-native-modal-datetime-picker";
+import { format } from 'date-fns'
 
 export default class CreateEvent extends React.Component {
 
@@ -16,15 +17,16 @@ export default class CreateEvent extends React.Component {
       name: '',
       description: '',
       ageRestriction: '1',
-      userId: 'sampleUserId',
-      categoryId: 'sampleCategoryId',
+      userId: '1',
+      categoryId: '1',
       locationId: '',
       image: null,
-      startDate: '',
+      startDate: "",
       startTime: '',
       endTime: '',
   
       checked : null,
+      isDateTimePickerVisible: false
     }
     this.updatePostField = key => text => this.updatePostFieldState(key, text);
     this.uploadEvent = this.uploadEvent.bind(this);
@@ -33,6 +35,26 @@ export default class CreateEvent extends React.Component {
 toggleAgeRestriction() {
 
 }
+
+showDateTimePicker = () => {
+  this.setState({ isDateTimePickerVisible: true });
+};
+
+hideDateTimePicker = () => {
+  this.setState({ isDateTimePickerVisible: false });
+};
+
+handleDatePicked = date => {
+  
+  var formattedDate = format(
+    date,
+    'YYYY-MM-DD'
+  )
+
+  this.setState({startDate: formattedDate});
+  this.hideDateTimePicker();
+};
+
 
 updatePostFieldState(key, value) {
   this.setState({ [key]: value });
@@ -45,8 +67,6 @@ _pickImage = async () => {
     aspect: [4, 3],
   });
 
-  console.log("IMAGEGGEG : ",result);
-
   if (!result.cancelled) {
     this.setState({ image: result });
   }
@@ -54,24 +74,26 @@ _pickImage = async () => {
 
 
 async uploadEvent() {
+  const { name, description, startDate } = this.state
 
   try {
     let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
-      'Authorization':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYwMzYxODgsImV4cCI6MTU1NjEyMjU4OH0.FTP2jcagh20lyl00c8e4fjeGF2yULtxnvyZey47U7GM'
+      'Authorization':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYyMzkzNzcsImV4cCI6MTU1NjMyNTc3N30.PNBXvzOCB1Kky0STb5ILyGIgPbxS8FMkjUc_sFNEIGU'
     },
+    
     body: 
     JSON.stringify({
-      "Name" : this.state.name,
-      "Description" : this.state.description,
+      "Name" : name,
+      "Description" : description,
       "AgeRestriction" : "1",
-      "UserId":"sampleUserId",
+      "UserId":"1",
       "CategoryId" : "1",
       "LocationId":this.state.locationId,
       "Image":null,
-      "StartDate": this.state.startDate,
+      "StartDate": startDate,
       "StartTime": this.state.startTime,
       "EndTime": this.state.endTime,
   })
@@ -79,7 +101,7 @@ async uploadEvent() {
   
   response.json().then(result => {
    
-   this.setState({users:result.data});
+   console.log(result);
   
   })
   } catch (error) {
@@ -151,9 +173,9 @@ async uploadEvent() {
             blurOnSubmit={false}
             underlineColorAndroid="transparent"           
             onChangeText={this.updatePostField('description')}
-          />
+          /> 
           
-          <TextInput
+          <TextInput //Replaced this with a pick a date button
             mode="outlined"
             style={{ marginBottom: 10 }}
             label="Date"
@@ -211,6 +233,13 @@ async uploadEvent() {
           uncheckedIcon='circle-o'
           onIconPress={this.toggleAgeRestriction}
           checked={this.state.checked}
+        />
+
+        <Button title="Pick a Date" onPress={this.showDateTimePicker} />
+        <DateTimePicker
+          isVisible={this.state.isDateTimePickerVisible}
+          onConfirm={this.handleDatePicked}
+          onCancel={this.hideDateTimePicker}
         />
 
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
