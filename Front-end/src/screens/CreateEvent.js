@@ -120,39 +120,58 @@ export default class CreateEvent extends React.Component {
 
   async uploadEvent() {
     const { title, locationName, categoryName, description, startDate, startTime, endTime, checked } = this.state;
-    // try {
-    //   let response = await fetch(
-    //     "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
-    //     {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json; charset=utf-8",
-    //         Authorization:
-    //           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYyMzkzNzcsImV4cCI6MTU1NjMyNTc3N30.PNBXvzOCB1Kky0STb5ILyGIgPbxS8FMkjUc_sFNEIGU"
-    //       },
+    let locationId = "0";
+    let categoryId = "0";
 
-    //       body: JSON.stringify({
-    //         Name: title,
-    //         Description: description,
-    //         AgeRestriction: "1",
-    //         UserId: "1",
-    //         CategoryId: "1",
-    //         LocationId: this.state.locationId,
-    //         Image: null,
-    //         StartDate: startDate,
-    //         StartTime: startTime,
-    //         EndTime: endTime
-    //       })
-    //     }
-    //   );
+    if (locationName == "") {
+      locationId = "1";
+    } else if (locationName == "") {
+      locationId = "2";
+    } else if (locationName == "") {
+      locationId = "3";
+    }
 
-    //   response.json().then(result => {
-    //     console.log(result);
-    //   });
-    // } catch (error) {
-    //   this.setState({ loading: false, response: error });
-    //   console.log(error);
-    // }
+    if (categoryName == "") {
+      categoryId = "1";
+    } else if (categoryName == "") {
+      categoryId = "2";
+   } else if (categoryName == "") {
+      categoryId = "3";
+   }
+
+    try {
+      let response = await fetch(
+        "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            Authorization:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYyMzkzNzcsImV4cCI6MTU1NjMyNTc3N30.PNBXvzOCB1Kky0STb5ILyGIgPbxS8FMkjUc_sFNEIGU"
+          },
+
+          body: JSON.stringify({
+            Name: title,
+            Description: description,
+            AgeRestriction: checked,
+            UserId: "1",
+            CategoryId: categoryId,
+            LocationId: locationId,
+            Image: null,
+            StartDate: startDate,
+            StartTime: startTime,
+            EndTime: endTime
+          })
+        }
+      );
+
+      response.json().then(result => {
+        console.log(result);
+      });
+    } catch (error) {
+      this.setState({ loading: false, response: error });
+      console.log(error);
+    }
   }
 
   render() {
