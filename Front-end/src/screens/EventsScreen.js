@@ -1,26 +1,26 @@
 import React from "react";
 import {
-  ScrollView,
   FlatList,
   StyleSheet,
   Text,
   View,
-  Image
+  Image,
+  Share
 } from "react-native";
 import { Button } from "react-native-elements";
 import { format } from "date-fns";
 
 export default class EventsScreen extends React.Component {
   static navigationOptions = {
-    title: "Events",
-    headerTintColor: "white",
-    headerTitleStyle: {
-      fontWeight: "bold",
-      color: "white"
-    },
-    headerStyle: {
-      backgroundColor: "#39CA74"
-    }
+      title: "Events",
+      headerTintColor: "white",
+      headerTitleStyle: {
+        fontWeight: "bold",
+        color: "white"
+      },
+      headerStyle: {
+        backgroundColor: "#39CA74"
+      },
   };
 
   constructor(props) {
@@ -52,6 +52,7 @@ export default class EventsScreen extends React.Component {
       
       response.json().then(result => {
       this.setState({ eventsData: result.data });
+      console.log(this.state.eventsData)
       });
     } catch (error) {
       this.setState({ loading: false, response: error });
@@ -59,12 +60,62 @@ export default class EventsScreen extends React.Component {
     }
   }
 
+  onShare = async (item, name, time) => {
+    const str = 'Event name: ' + name + '. Time: ' + time + '.';
+    try {
+      const result = await Share.share({
+        title: 'Checkout this event from EventUp',
+        message: str
+      });
+    } catch(error) {
+      alert(error.message)
+    }
+  }
+
+  _rendeEvents = (item) => {
+    return(
+    <View style={{ flexDirection: "row", paddingTop: 30 }}>
+      <Image
+        source={require("../img/image1.jpg")}
+        style={styles.imageEx}
+      />
+      <View style={{ flex: 1, paddingLeft: 30 }}>
+        <Text style={styles.titleStyling}>{item.Name}</Text>
+        <Text style={{color: '#333'}}>
+          {format(item.StartDate,"MMMM D")}{" | "}
+          {format("January 01, 2019 "+item.StartTime,"hh:mm a")}
+        </Text>
+        <Text style={{color: '#333'}}>{item.LocationName}</Text>
+        <View style={{ flexDirection: "row", justifyContent: 'space-around', alignSelf: 'flex-end', padding: 10}}>
+          <Button
+            title="RSVP"
+            type='outline'
+            titleStyle={{ fontSize: 12, color: '#E8787B' }}
+            containerStyle={styles.buttonContainerStyle}
+            buttonStyle={styles.buttonStyling}
+            onPress={() => console.log("RSVP pressed")}
+          />
+          <Button
+            title="Share"
+            type='outline'
+            titleStyle={{ fontSize: 12, color: '#E8787B' }}
+            containerStyle={styles.buttonContainerStyle}
+            buttonStyle={styles.buttonStyling}
+            onPress={()=>this.onShare(item, item.Name, item.StartTime)}
+          />
+        </View>
+      </View>
+    </View>
+    )
+  }
+
   render() {
+    const { eventsData } = this.state;
     return (
       <View style={{ flex: 1 }}>
         <View style={styles.container}>
           <FlatList
-            data={this.state.eventsData}
+            data={eventsData}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <View style={{ flexDirection: "row", paddingTop: 30 }}>
@@ -125,7 +176,6 @@ export default class EventsScreen extends React.Component {
             keyExtractor={item => item.email}
           />
         </View>
-
         <View style={{ position: "absolute", left: 290, right: 0, bottom: 30 }}>
           <Button
             title="Create"
@@ -137,7 +187,6 @@ export default class EventsScreen extends React.Component {
               borderRadius: 5,
               backgroundColor: "#39CA74"
             }}
-            activeOpacity={0.8}
             onPress={() => this.props.navigation.navigate("createEvent")}
           />
         </View>
@@ -150,30 +199,21 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 0,
     marginLeft: 20,
-
     backgroundColor: "#FFFFFF"
   },
   imageEx: {
     width: 120,
     height: 120
   },
-  h2text: {
-    marginTop: 10,
-    fontFamily: "Helvetica",
-    fontSize: 36,
-    fontWeight: "bold"
-  },
-  flatview: {
-    justifyContent: "center",
-    paddingTop: 30,
-    borderRadius: 2
-  },
-  name: {
+  titleStyling: {
     fontFamily: "Verdana",
     fontSize: 18,
     marginBottom: 5
   },
-  email: {
-    color: "gray"
+  buttonStyling: {
+    width: 60,
+    height: 40,
+    borderRadius: 5,
+    borderColor: 'grey',
   }
 });
