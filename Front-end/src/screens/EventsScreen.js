@@ -35,19 +35,6 @@ export default class EventsScreen extends React.Component {
 
   async componentDidMount() {
     this.setState({ isLoading: true });
-    //   try {
-    //     let response = await fetch('http://localhost:5200/eventsData');
-    //     let responseJsonData = await response.json();
-    //     this.setState({
-    //       eventsData: responseJsonData,
-    //       isLoading: false
-    //     })
-    //     return responseJsonData;
-    // }
-    // catch(e) {
-    // console.log(e)
-    // }
-
     try {
       let response = await fetch(
         "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
@@ -60,16 +47,9 @@ export default class EventsScreen extends React.Component {
           }
         }
       );
-
       
       response.json().then(result => {
-      //  console.log("Fetched this data : ", result);
-      for (event of result.data) {
-        console.log("Event : ", event);
-
-
-      }
-        this.setState({ eventsData: result.data });
+      this.setState({ eventsData: result.data });
       });
     } catch (error) {
       this.setState({ loading: false, response: error });
