@@ -33,7 +33,9 @@ export default class EventsScreen extends React.Component {
     };
   }
 
+
   async componentDidMount() {
+    //console.log("TODAY : ", new Date().toLocaleTimeString());
     this.setState({ isLoading: true });
     try {
       let response = await fetch(
@@ -75,9 +77,8 @@ export default class EventsScreen extends React.Component {
                 <View style={{ flex: 1, paddingLeft: 30 }}>
                   <Text style={styles.name}>{item.Name}</Text>
                   <Text style={styles.email}>
-                    {format(item.StartDate, "MMMM D")}
-                    {" | "}
-                    {item.StartTime}
+                   {format(item.StartDate,"MMMM D")}{" | "}
+                    {format("January 01, 2019 "+item.StartTime,"hh:mm a")}
                   </Text>
                   <Text style={styles.email}>{item.LocationId}</Text>
                   <View style={{ flexDirection: "row" }}>
