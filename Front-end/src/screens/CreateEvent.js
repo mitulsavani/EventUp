@@ -29,7 +29,10 @@ export default class CreateEvent extends React.Component {
       endTime: "",
 
       checked: null,
-      isDateTimePickerVisible: false
+      isDatePickerVisible: false,
+      isStartTimePickerVisible: false,
+      isEndTimePickerVisible: false
+
     };
     this.updatePostField = key => text => this.updatePostFieldState(key, text);
     this.uploadEvent = this.uploadEvent.bind(this);
@@ -37,20 +40,49 @@ export default class CreateEvent extends React.Component {
 
   toggleAgeRestriction() {}
 
-  showDateTimePicker = () => {
-    this.setState({ isDateTimePickerVisible: true });
+  showDatePicker = () => {
+    this.setState({ isDatePickerVisible: true });
   };
 
-  hideDateTimePicker = () => {
-    this.setState({ isDateTimePickerVisible: false });
+  showStartTimePicker = () => {
+    this.setState({ isStartTimePickerVisible: true });
+  };
+
+  showEndTimePicker = () => {
+    this.setState({ isEndTimePickerVisible: true });
+  };
+
+  hideDatePicker = () => {
+    this.setState({ isDatePickerVisible: false });
+  };
+  hideStartTimePicker = () => {
+    this.setState({ isStartTimePickerVisible: false });
+  };
+
+  hideEndTimePicker = () => {
+    this.setState({ isEndTimePickerVisible: false });
   };
 
   handleDatePicked = date => {
-    var formattedDate = format(date, "YYYY-MM-DD");
-
+    var formattedDate = new Date(date).toLocaleDateString();
+    formattedDate = format(date, "YYYY-MM-DD");
+    console.log("DATE L ", formattedDate);
     this.setState({ startDate: formattedDate });
-    this.hideDateTimePicker();
+    this.hideDatePicker();
   };
+
+  handleStartTimePicked = time => {
+    var localTime = new Date (time).toLocaleTimeString();    
+    this.setState({ startTime: localTime });
+    this.hideStartTimePicker();
+  };
+
+  handleEndTimePicked = time => {
+    var localTime = new Date (time).toLocaleTimeString();  
+    this.setState({ endTime: localTime });
+    this.hideEndTimePicker();
+  };
+
 
   updatePostFieldState(key, value) {
     this.setState({ [key]: value });
@@ -69,41 +101,42 @@ export default class CreateEvent extends React.Component {
   };
 
   async uploadEvent() {
-    const { title, description, startDate } = this.state;
+    const { title, description, startDate, startTime, endTime } = this.state;
+console.log("Date Time", startTime, startDate, endTime);
+    
+    // try {
+    //   let response = await fetch(
+    //     "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json; charset=utf-8",
+    //         Authorization:
+    //           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYyMzkzNzcsImV4cCI6MTU1NjMyNTc3N30.PNBXvzOCB1Kky0STb5ILyGIgPbxS8FMkjUc_sFNEIGU"
+    //       },
 
-    try {
-      let response = await fetch(
-        "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-            Authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYyMzkzNzcsImV4cCI6MTU1NjMyNTc3N30.PNBXvzOCB1Kky0STb5ILyGIgPbxS8FMkjUc_sFNEIGU"
-          },
+    //       body: JSON.stringify({
+    //         Name: title,
+    //         Description: description,
+    //         AgeRestriction: "1",
+    //         UserId: "1",
+    //         CategoryId: "1",
+    //         LocationId: this.state.locationId,
+    //         Image: null,
+    //         StartDate: startDate,
+    //         StartTime: startTime,
+    //         EndTime: endTime
+    //       })
+    //     }
+    //   );
 
-          body: JSON.stringify({
-            Name: title,
-            Description: description,
-            AgeRestriction: "1",
-            UserId: "1",
-            CategoryId: "1",
-            LocationId: this.state.locationId,
-            Image: null,
-            StartDate: startDate,
-            StartTime: this.state.startTime,
-            EndTime: this.state.endTime
-          })
-        }
-      );
-
-      response.json().then(result => {
-        console.log(result);
-      });
-    } catch (error) {
-      this.setState({ loading: false, response: error });
-      console.log(error);
-    }
+    //   response.json().then(result => {
+    //     console.log(result);
+    //   });
+    // } catch (error) {
+    //   this.setState({ loading: false, response: error });
+    //   console.log(error);
+    // }
   }
 
   render() {
@@ -209,11 +242,31 @@ export default class CreateEvent extends React.Component {
               checked={this.state.checked}
             />
 
-            <Button title="Pick a Date" onPress={this.showDateTimePicker} />
+            <Button title="Pick a Date" onPress={this.showDatePicker} />
             <DateTimePicker
-              isVisible={this.state.isDateTimePickerVisible}
+              isVisible={this.state.isDatePickerVisible}
               onConfirm={this.handleDatePicked}
-              onCancel={this.hideDateTimePicker}
+              onCancel={this.hideDatePicker}
+              is24Hour= {false}
+              mode={"date"}
+            />
+
+            <Button title="Pick a Start Time" onPress={this.showStartTimePicker} />
+            <DateTimePicker
+              isVisible={this.state.isStartTimePickerVisible}
+              onConfirm={this.handleStartTimePicked}
+              onCancel={this.hideStartTimePicker}
+              is24Hour= {false}
+              mode={"time"}
+            />
+
+            <Button title="Pick an End Time" onPress={this.showEndTimePicker} />
+            <DateTimePicker
+              isVisible={this.state.isEndTimePickerVisible}
+              onConfirm={this.handleEndTimePicked}
+              onCancel={this.hideEndTimePicker}
+              is24Hour= {false}
+              mode={"time"}
             />
 
             <View

@@ -33,7 +33,9 @@ export default class EventsScreen extends React.Component {
     };
   }
 
+
   async componentDidMount() {
+    //console.log("TODAY : ", new Date().toLocaleTimeString());
     this.setState({ isLoading: true });
     try {
       let response = await fetch(
