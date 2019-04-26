@@ -84,7 +84,7 @@ async loginAction() {
 
       response.json().then(result => {
         //Login Successful
-        if (result.message =="success"){
+        if (result.status){
           Alert.alert(
             'Alert!',
             'You have successfully logged in',

@@ -136,6 +136,6 @@ export const AppContainer = createAppContainer(createSwitchNavigator(
     Auth: AuthStack,
   },
   {
-    initialRouteName: 'EventsLoading',
+    initialRouteName: 'App',
   },
 ));
