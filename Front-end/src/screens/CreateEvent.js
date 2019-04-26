@@ -1,12 +1,8 @@
 import React from "react";
 import {
-  AsyncStorage,
   Image,
-  TouchableOpacity,
-  DatePickerIOS,
   ScrollView,
   StyleSheet,
-  Text,
   View,
   StatusBar
 } from "react-native";
@@ -124,7 +120,6 @@ export default class CreateEvent extends React.Component {
               style={{ marginBottom: 10 }}
               label="Title"
               placeholder="Enter Title"
-              //theme={{ colors: { primary: PRIMARY_COLOR } }}
               autoFocus={true}
               autoCapitalize="none"
               autoCorrect={false}
@@ -139,7 +134,6 @@ export default class CreateEvent extends React.Component {
               style={{ marginBottom: 10 }}
               label="Location"
               placeholder="Enter Location"
-              // theme={{ colors: { primary: PRIMARY_COLOR } }}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="default"
@@ -156,7 +150,6 @@ export default class CreateEvent extends React.Component {
               multiline={true}
               numberOfLines={4}
               placeholder="Enter Description"
-              // theme={{ colors: { primary: PRIMARY_COLOR } }}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="default"
@@ -171,7 +164,6 @@ export default class CreateEvent extends React.Component {
               style={{ marginBottom: 10 }}
               label="Date"
               placeholder="Enter Date"
-              // theme={{ colors: { primary: PRIMARY_COLOR } }}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="default"
@@ -186,7 +178,6 @@ export default class CreateEvent extends React.Component {
                 style={{ width: 100, marginBottom: 10 }}
                 label="Start Time"
                 placeholder="Enter State Time"
-                // theme={{ colors: { primary: PRIMARY_COLOR } }}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="default"
@@ -200,7 +191,6 @@ export default class CreateEvent extends React.Component {
                 style={{ width: 100, marginHorizontal: 20, marginBottom: 10 }}
                 label="End Time"
                 placeholder="Enter End Time"
-                // theme={{ colors: { primary: PRIMARY_COLOR } }}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="default"
@@ -251,12 +241,9 @@ export default class CreateEvent extends React.Component {
               containerStyle={{ marginTop: 20, marginBottom: 30 }}
               buttonStyle={{ height: 50, borderRadius: 5 }}
               activeOpacity={0.8}
-              //disabled={!enabled}
-              //loading={loading}
               onPress={this.uploadEvent}
             />
           </View>
-
           <View style={{ flex: 1 }} />
         </View>
       </ScrollView>
@@ -268,7 +255,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-
     marginHorizontal: 30,
     marginTop: 40
   }
