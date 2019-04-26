@@ -43,6 +43,7 @@ export default class EventsScreen extends React.Component {
         {
           method: "GET",
           headers: {
+
             "Content-Type": "application/json; charset=utf-8",
             Authorization:
               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYyMzkzNzcsImV4cCI6MTU1NjMyNTc3N30.PNBXvzOCB1Kky0STb5ILyGIgPbxS8FMkjUc_sFNEIGU"
@@ -76,7 +77,7 @@ export default class EventsScreen extends React.Component {
     return(
     <View style={{ flexDirection: "row", paddingTop: 30 }}>
       <Image
-        source={require("../img/image1.jpg")}
+        source={require("../img/sample_image.jpg")}
         style={styles.imageEx}
       />
       <View style={{ flex: 1, paddingLeft: 30 }}>
