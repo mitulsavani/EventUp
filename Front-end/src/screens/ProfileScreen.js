@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Button } from "react-native-elements";
 import { format } from "date-fns";
+import moment from "moment";
 
 export default class ProfileScreen extends React.Component {
 
@@ -59,7 +60,6 @@ export default class ProfileScreen extends React.Component {
       
       response.json().then(result => {      
       this.setState({ eventsData: result.data });
-      console.log("THIS IS THE DATA : ", this.state.eventsData);
       });
     } catch (error) {
       this.setState({ loading: false, response: error });
@@ -86,7 +86,7 @@ export default class ProfileScreen extends React.Component {
       <View style={{ flex: 1, paddingLeft: 30 }}>
         <Text style={styles.titleStyling}>{item.Name}</Text>
         <Text style={{color: '#333'}}>
-          {format(item.StartDate,"MMMM D")}{" | "}
+          {moment.utc(item.StartDate).format("MMMM DD")}{" | "}
           {format("January 01, 2019 "+item.StartTime,"hh:mm a")}
         </Text>
         <Text style={{color: '#333'}}>{item.LocationName}</Text>      
