@@ -36,7 +36,7 @@ export default class ProfileScreen extends React.Component {
     };
   }
 
-  async componentDidMount() {
+  async componentDidMount() { 
     this.setState({ isLoading: true });
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -99,17 +99,17 @@ export default class ProfileScreen extends React.Component {
   render() {
     const { eventsData } = this.state;
     return (      
-    //   <Button
-    //       title="Sign Out"
-    //       titleStyle={{ fontSize: 20, marginTop: 5 }}
-    //       containerStyle={{ marginTop: 20, marginBottom: 30 }}
-    //       buttonStyle={{ height: 50, borderRadius: 5, backgroundColor: '#39CA74' }}
-    //       activeOpacity={0.8}
-    //       onPress={this._signOutAsync}
-    //     />
-
-    // );
       <View style={{ flex: 1 }}>
+            <View style={{ alignItems: 'center'}}>
+          <Button
+            title="Sign Out"
+            type='clear'
+            titleStyle={{ fontSize: 20, color: '#E8787B'}}
+            containerStyle={{ padding: 10 }}
+            buttonStyle={{ borderRadius: 20, padding: 10 }}
+            onPress={this._signOutAsync}
+          />
+        </View>
         <View style={styles.container}>
           <FlatList
             data={eventsData}
