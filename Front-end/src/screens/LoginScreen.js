@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { StyleSheet, View, StatusBar, Alert, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
 import { TextInput } from 'react-native-paper';
+import axios from 'axios';
+
 
 // Shared Utils
 export const emailValidator = (email) => {
@@ -47,10 +49,27 @@ class LoginScreen extends Component {
     this.loginAction = this.loginAction.bind(this);
   }
 
-  _signInAsync = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
+  _signInAsync = async (token,userId) => {
+    try {  
+      await AsyncStorage.setItem('userToken', token);
+      await AsyncStorage.setItem('userId', userId);
+    } catch(e) {
+      console.log("AsyncStorage failed to store token:", e);
+    }
+
     this.props.navigation.navigate('App');
   };
+
+  _retrieveTokenAsync = async() => {
+    try {
+
+      const token = await AsyncStorage.getItem('userToken');
+      
+      console.log("token: ", token);
+    } catch(e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
+    }
+  }
 
   updateLoginFieldState(key, value) {
     this.setState({ [key]: value }, this.checkEnabled);
@@ -65,53 +84,55 @@ async loginAction() {
 
   this.setState({ loading: true })
   
-      const { email, password } = this.state
-      const { navigate } = this.props.navigation
+  const { email, password } = this.state
+  const { navigate } = this.props.navigation
 
-      console.log("Details : ", email, " ",password);
-    try {
-        let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: 
-          JSON.stringify({
-            "Email" : email,
-            "Password" : password
-        })
-      });
-
-      response.json().then(result => {
-        //Login Successful
-        if (result.status){
-          Alert.alert(
-            'Alert!',
-            'You have successfully logged in',
-            [
-              { text: 'OK', onPress: () => this._signInAsync() }
-            ],
-            { cancelable: false }
-          );
-        } 
-        //Login failed
-        else {
-          Alert.alert(
-            'Alert!',
-            'Login Failed',
-            [
-              { text: 'OK' }
-            ],
-            { cancelable: false }
-          );
-        }
+  console.log("Details : ", email, " ",password);
+  
+  try {
+      let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      body: 
+        JSON.stringify({
+          "Email" : email,
+          "Password" : password
       })
-    } catch (error) {
-      this.setState({ loading: false, response: error });
-      console.log(error);
-    }
-    this.setState({ loading: false })
+    });
+
+    response.json().then(result => {
+      //Login Successful
+      if (result.message == "success" || result.message == "Successful login"){        
+        Alert.alert(
+          'Alert!',
+          'You have successfully logged in',
+          [
+            { text: 'OK', onPress: () => this._signInAsync(result.token,result.id.toString()) }
+          ],
+          { cancelable: false }
+        );
+      } 
+      //Login failed
+      else {
+        Alert.alert(
+          'Alert!',
+          'Login Failed',
+          [
+            { text: 'OK' }
+          ],
+          { cancelable: false }
+        );
+      }
+    })
+  } catch (error) {
+    this.setState({ loading: false, response: error });
+    console.log(error);
   }
+
+  this.setState({ loading: false })
+}
 
 
   render() {

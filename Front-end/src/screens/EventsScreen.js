@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  AsyncStorage,
   FlatList,
   StyleSheet,
   Text,
@@ -9,8 +10,11 @@ import {
 } from "react-native";
 import { Button } from "react-native-elements";
 import { format } from "date-fns";
+import moment from "moment";
 
 export default class EventsScreen extends React.Component {
+
+  
   static navigationOptions = {
       title: "Events",
       headerTintColor: "white",
@@ -33,32 +37,42 @@ export default class EventsScreen extends React.Component {
     };
   }
 
+ 
 
   async componentDidMount() {
-    //console.log("TODAY : ", new Date().toLocaleTimeString());
+    
     this.setState({ isLoading: true });
+    
     try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
+
+    try {
+
       let response = await fetch(
         "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
         {
           method: "GET",
           headers: {
-
             "Content-Type": "application/json; charset=utf-8",
-            Authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYyMzkzNzcsImV4cCI6MTU1NjMyNTc3N30.PNBXvzOCB1Kky0STb5ILyGIgPbxS8FMkjUc_sFNEIGU"
+            Authorization: token
           }
         }
       );
-      
+
       response.json().then(result => {
-      this.setState({ eventsData: result.data });
-      console.log(this.state.eventsData)
+      this.setState({ eventsData: result.data });      
       });
     } catch (error) {
       this.setState({ loading: false, response: error });
       console.log(error);
     }
+  }
+    catch(e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
+    }
+
+
   }
 
   onShare = async (item, name, time) => {
@@ -83,7 +97,7 @@ export default class EventsScreen extends React.Component {
       <View style={{ flex: 1, paddingLeft: 30 }}>
         <Text style={styles.titleStyling}>{item.Name}</Text>
         <Text style={{color: '#333'}}>
-          {format(item.StartDate,"MMMM D")}{" | "}
+          {item.StartDate}{" | "}
           {format("January 01, 2019 "+item.StartTime,"hh:mm a")}
         </Text>
         <Text style={{color: '#333'}}>{item.LocationName}</Text>

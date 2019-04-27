@@ -1,5 +1,7 @@
 import React from "react";
 import {
+  Alert,
+  AsyncStorage,
   Text,
   Image,
   ScrollView,
@@ -26,9 +28,7 @@ export default class CreateEvent extends React.Component {
 
     this.state = {
       title: "",
-      description: "",
-      ageRestriction: "1",
-      userId: "1",
+      description: "",      
       image: null,
       startDate: new Date(),
       startTime: "",
@@ -120,14 +120,19 @@ export default class CreateEvent extends React.Component {
 
   async uploadEvent() {
     const { title, locationName, categoryName, description, startDate, startTime, endTime, checked } = this.state;
-    let locationId = "0";
-    let categoryId = "0";
+    let locationId = "1";
+    let categoryId = "1";
+    let ageRestriction = "0"
+    if (checked) {
+      ageRestriction = "1";
+    }
+console.log("Dateee :", startDate);
 
-    if (locationName == "") {
+    if (locationName == "J Paul Leonard Library") {
       locationId = "1";
-    } else if (locationName == "") {
+    } else if (locationName == "Thornton Hall") {
       locationId = "2";
-    } else if (locationName == "") {
+    } else if (locationName == "Hensil Hall") {
       locationId = "3";
     }
 
@@ -139,6 +144,11 @@ export default class CreateEvent extends React.Component {
       categoryId = "3";
    }
 
+
+   try {
+    const token = await AsyncStorage.getItem('userToken');
+    const userId = await AsyncStorage.getItem('userId');
+    
     try {
       let response = await fetch(
         "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
@@ -147,14 +157,14 @@ export default class CreateEvent extends React.Component {
           headers: {
             "Content-Type": "application/json; charset=utf-8",
             Authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NTYyMzkzNzcsImV4cCI6MTU1NjMyNTc3N30.PNBXvzOCB1Kky0STb5ILyGIgPbxS8FMkjUc_sFNEIGU"
+              token
           },
 
           body: JSON.stringify({
             Name: title,
             Description: description,
-            AgeRestriction: checked,
-            UserId: "1",
+            AgeRestriction: ageRestriction,
+            UserId: userId,
             CategoryId: categoryId,
             LocationId: locationId,
             Image: null,
@@ -166,12 +176,32 @@ export default class CreateEvent extends React.Component {
       );
 
       response.json().then(result => {
+        
         console.log(result);
+        Alert.alert(
+          'Alert!',
+          'Event Created Successfully',
+          [
+            { text: 'OK', onPress: () => console.log('Event Created') }
+          ],
+          { cancelable: false }
+        );
       });
     } catch (error) {
-      this.setState({ loading: false, response: error });
+      this.setState({ loading: false, response: error });      
       console.log(error);
+      Alert.alert(
+        'Alert!',
+        'Failed to Create an Event',
+        [
+          { text: 'OK', onPress: () => console.log('Failed to Create an Event') }
+        ],
+        { cancelable: false }
+      );
     }
+  } catch(e) {
+    console.log("AsyncStorage failed to retrieve token:", e);
+  }
   }
 
   render() {

@@ -12,7 +12,6 @@ import EventsScreen from '../screens/EventsScreen';
 import CreateEventScreen from '../screens/CreateEvent';
 import DetailEventScreen from '../screens/DetailEventScreen';
 import AuthLoadingScreen  from '../screens/AuthLoadingScreen';
-import FetchDataFile  from '../screens/FetchData';
 
 const AuthStack =  createStackNavigator({
   login: {
@@ -136,6 +135,6 @@ export const AppContainer = createAppContainer(createSwitchNavigator(
     Auth: AuthStack,
   },
   {
-    initialRouteName: 'App',
+    initialRouteName: 'AuthLoading',
   },
 ));
