@@ -137,7 +137,7 @@ export default class EventsScreen extends React.Component {
             data={eventsData}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => this._renderEvents(item)}
-            keyExtractor={(item, index) => index}
+            keyExtractor={(item, index) => index.toString()}
           />
         </View>
         <View style={{ position: "absolute", left: 290, right: 0, bottom: 30 }}>
