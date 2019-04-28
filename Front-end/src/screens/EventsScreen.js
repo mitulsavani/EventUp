@@ -37,10 +37,7 @@ export default class EventsScreen extends React.Component {
     };
   }
 
- 
-
   async componentDidMount() {
-    
     this.setState({ isLoading: true });
     
     try {
@@ -61,18 +58,17 @@ export default class EventsScreen extends React.Component {
       );
 
       response.json().then(result => {
-      this.setState({ eventsData: result.data });      
+      this.setState({ eventsData: result.data, isLoading: false });  
+      console.log(this.state.eventsData)    
       });
     } catch (error) {
-      this.setState({ loading: false, response: error });
+      this.setState({ response: error });
       console.log(error);
     }
   }
     catch(e) {
       console.log("AsyncStorage failed to retrieve token:", e);
     }
-
-
   }
 
   onShare = async (item, name, time) => {
@@ -129,7 +125,7 @@ export default class EventsScreen extends React.Component {
   }
 
   render() {
-    const { eventsData } = this.state;
+    const { eventsData, isLoading } = this.state;
 
     return (
       <View style={{ flex: 1 }}>

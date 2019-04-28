@@ -15,6 +15,7 @@ import { ImagePicker, Permissions } from "expo";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
 import { Dropdown } from 'react-native-material-dropdown';
+import moment from "moment";
 
 export const PRIMARY_COLOR = '#39CA74';
 
@@ -93,7 +94,8 @@ export default class CreateEvent extends React.Component {
   };
 
   handleStartTimePicked = time => {
-    var localTime = new Date (time).toLocaleTimeString();    
+    var localTime = new Date (time).toLocaleTimeString(); 
+    localTime = moment(localTime, ["h:mm A"]).format("HH:mm:ss");   
     console.log("Start Time :", localTime);
     this.setState({ startTime: localTime });
     this.hideStartTimePicker();
@@ -101,6 +103,8 @@ export default class CreateEvent extends React.Component {
 
   handleEndTimePicked = time => {
     var localTime = new Date (time).toLocaleTimeString();  
+    localTime = moment(localTime, ["h:mm A"]).format("HH:mm:ss"); 
+    console.log("End Time :", localTime);  
     this.setState({ endTime: localTime });
     this.hideEndTimePicker();
   };
@@ -144,12 +148,12 @@ console.log("Time :", startTime);
       categoryId = "1";
     } else if (categoryName == "") {
       categoryId = "2";
-   } else if (categoryName == "") {
+    } else if (categoryName == "") {
       categoryId = "3";
-   }
+    }
 
 
-   try {
+    try {
     const token = await AsyncStorage.getItem('userToken');
     const userId = await AsyncStorage.getItem('userId');
 
@@ -186,7 +190,7 @@ console.log("Time :", startTime);
           'Alert!',
           'Event Created Successfully',
           [
-            { text: 'OK', onPress: () => console.log('Event Created') }
+            { text: 'OK', onPress: () => this.props.navigation.navigate('events') }
           ],
           { cancelable: false }
         );
