@@ -97,7 +97,7 @@ export default class EventsScreen extends React.Component {
       <View style={{ flex: 1, paddingLeft: 30 }}>
         <Text style={styles.titleStyling}>{item.Name}</Text>
         <Text style={{color: '#333'}}>
-          {item.StartDate}{" | "}
+        {moment.utc(item.StartDate).format("MMMM DD")}{" | "}
           {format("January 01, 2019 "+item.StartTime,"hh:mm a")}
         </Text>
         <Text style={{color: '#333'}}>{item.LocationName}</Text>
@@ -130,6 +130,7 @@ export default class EventsScreen extends React.Component {
 
   render() {
     const { eventsData } = this.state;
+
     return (
       <View style={{ flex: 1 }}>
         <View style={styles.container}>

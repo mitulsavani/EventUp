@@ -83,14 +83,18 @@ export default class CreateEvent extends React.Component {
   };
 
   handleDatePicked = date => {
+    console.log("Date Picker :", date);
     var formattedDate = new Date(date).toLocaleDateString();
+    console.log("Format Date Picker :", formattedDate);
     formattedDate = format(date, "YYYY-MM-DD");
+
     this.setState({ startDate: formattedDate });
     this.hideDatePicker();
   };
 
   handleStartTimePicked = time => {
     var localTime = new Date (time).toLocaleTimeString();    
+    console.log("Start Time :", localTime);
     this.setState({ startTime: localTime });
     this.hideStartTimePicker();
   };
@@ -126,7 +130,7 @@ export default class CreateEvent extends React.Component {
     if (checked) {
       ageRestriction = "1";
     }
-console.log("Dateee :", startDate);
+console.log("Time :", startTime);
 
     if (locationName == "J Paul Leonard Library") {
       locationId = "1";
@@ -148,7 +152,7 @@ console.log("Dateee :", startDate);
    try {
     const token = await AsyncStorage.getItem('userToken');
     const userId = await AsyncStorage.getItem('userId');
-    
+
     try {
       let response = await fetch(
         "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
