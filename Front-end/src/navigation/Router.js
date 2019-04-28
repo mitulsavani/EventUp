@@ -9,9 +9,9 @@ import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import EventsScreen from '../screens/EventsScreen';
+import CreateEventScreen from '../screens/CreateEvent';
 import DetailEventScreen from '../screens/DetailEventScreen';
 import AuthLoadingScreen  from '../screens/AuthLoadingScreen';
-
 
 const AuthStack =  createStackNavigator({
   login: {
@@ -32,6 +32,9 @@ const EventStack =  createStackNavigator({
   detailEvent: {
     screen: DetailEventScreen,
   },
+  createEvent: {
+    screen: CreateEventScreen,
+  }
 });
 
 const TicketStack = createStackNavigator({
@@ -127,6 +130,7 @@ const TabNavigator = createBottomTabNavigator({
 export const AppContainer = createAppContainer(createSwitchNavigator(
   {
     AuthLoading: AuthLoadingScreen,
+    EventsLoading: EventsScreen,
     App: TabNavigator,
     Auth: AuthStack,
   },

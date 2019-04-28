@@ -1,18 +1,15 @@
-# csc667-teamproject-team04
+# EventUp
+###### CSC 667 Team Project Team 04
 
-1. Change the name of the repo with the correct team number. <br>
+## Getting Started
 
-__UPDATED:__ `csc667-sp19-Team04-mitulsavani`
+* Download Expo app from the IOS or Android store
+[Android App](https://play.google.com/store/apps/details?id=host.exp.exponent "Link to App"),
+[IOS App](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8 "Link to App")
 
-2. Invite all members to your repository.this is a test for WebHooks <br>
+## Scan QR Code to load prototype
 
-ADDED: Cory Lewis, Vincent Santos, Chintan Puri <br>
-**Note: Please check your github linked email if you haven't received invitation yet**
-
-### Todo:
-
-3. When ready, initialize your repository with the initial state of your project.
+[Scan QR Code](https://expo.io/@mitulsavani/EventUp "Link to App")
 
 
-### Note that the milestone folders have been moved to their branch named milestones. 
-### This is to keep them off the master/production branch so they are cleaner.
+> Updated on: 04/17/19, Cory Lewis
