@@ -2,12 +2,13 @@ const db = require('../models/database.js');
 const jwt = require('jsonwebtoken');
 
 exports.getAllEvents = (req, res, next) => {
-    db.query('SELECT * FROM Event').then( ([result, fields]) => {
+    console.log('route tested');
+    db.query('SELECT Event.*, Category.Name AS CategoryName, Location.Name AS LocationName FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category ON Event.CategoryId = Category.id').then( ([result, fields]) => {
         res.status(200).json({
             status: true,
             data: result
         });
-    }).catch(err => {
+    }).catch(err => {   
         res.status(500).json({
             status: false,
             message : "Event Query Failed",

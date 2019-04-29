@@ -28,7 +28,8 @@ exports.register = (req, res, next) => {
                 )
                 res.status(200).json({
                     status: true,
-                    message: 'Successful login',
+                    id: result.insertId,
+                    message: 'Registered Successfully',
                     token: token
                 });
             })
@@ -68,6 +69,7 @@ exports.login = (req, res, next) => {
                     }
                 )
                 res.status(200).json({
+                    id: user[0].id,
                     status: true,
                     message: 'Successful login',
                     token: token
