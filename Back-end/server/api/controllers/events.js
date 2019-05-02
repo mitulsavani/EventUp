@@ -39,6 +39,22 @@ exports.postEvent = (req, res, next) => {
     })
 } 
 
+exports.getEvent = (req, res, next) => {
+    db.query('SELECT * FROM Event WHERE id = ?', [req.params.id])
+    .then( (data) => {
+        res.status(200).json({
+            status: true,
+            event: data[0]
+        })
+    })
+    .catch( err => {
+        res.status(500).json({
+            status: false,
+            message: err
+        })
+    })
+}
+
 exports.deleteEvent = (req, res, next) => {
     db.query('DELETE FROM Event WHERE id = ?', [req.params.id])
     .then( () => {

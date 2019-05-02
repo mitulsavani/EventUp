@@ -22,4 +22,6 @@ router.post('/', checkAuth, upload.single('Image'), eventController.postEvent);
 
 router.delete('/:id', checkAuth, eventController.deleteEvent);
 
+router.get('/:id', checkAuth, eventController.getEvent);
+
 module.exports = router; 
