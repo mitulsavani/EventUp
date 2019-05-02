@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
   },
   
   titleStyling: {
-    fontFamily: "Verdana",
     fontSize: 18,
     marginBottom: 5
   },
