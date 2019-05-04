@@ -24,9 +24,6 @@
     ],
     "ios": {
       "supportsTablet": true
-    },
-    "infoPlist": {
-      "NSCalendarUsageDescription": "The app creates events in the calendar"
     }
   }
 }

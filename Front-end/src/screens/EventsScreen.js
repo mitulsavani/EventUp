@@ -11,6 +11,7 @@ import {
 import { Button } from "react-native-elements";
 import { format } from "date-fns";
 import moment from "moment";
+import { Permissions, Calendar } from 'expo';
 
 export default class EventsScreen extends React.Component {
 
@@ -83,6 +84,43 @@ export default class EventsScreen extends React.Component {
     }
   }
 
+  onAddCalendarEvent = async (item) => {
+    try {
+      //Prompt the user to provide access to the calendar
+      const { Permissions } = Expo;
+      const { status } = await Permissions.askAsync(Permissions.CALENDAR);
+
+      //If permission was granted, create the event
+      if(status === 'granted')
+      {
+        var eventID = await Calendar.createEventAsync(Calendar.DEFAULT, {
+          // "endDate": item.endDate,
+          // "startDate": item.startDate,
+          // "title": item.Name
+
+          startDate: new Date('2019-05-05'),
+          endDate: new Date('2019-05-06'),
+          title: "PUSH",
+          timeZone: "GMT-7"
+        })
+        .then( event => {
+          console.log('Created event');
+          alert('Event created')
+        })
+        .catch( error => {
+          console.log("Problem creating event: ", error);
+          alert('Event could not be created')
+        });
+      } else {
+        //If the user denies permission to edit the calendar, notify the user that they can't create an event
+        alert('You must provide access to your calendar to create an event')
+        console.log('Permission to edit the calendar was denied');
+      }
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
   _renderEvents = (item) => {
     return(
     <View style={{ flexDirection: "row", paddingTop: 30 }}>
@@ -116,7 +154,19 @@ export default class EventsScreen extends React.Component {
                         marginLeft: 20
                       }}
             buttonStyle={styles.buttonStyling}
-            onPress={()=>this.onShare(item, item.Name, item.StartTime)}
+            onPress={()=>this.onShare(item)}
+          />
+          <Button
+            title="Test"
+            type='outline'
+            titleStyle={{ fontSize: 12, color: 'white' }}
+            containerStyle={{
+                        marginTop: 20,
+                        marginBottom: 30,
+                        marginLeft: 20
+                      }}
+            buttonStyle={styles.buttonStyling}
+            onPress={()=>this.onAddCalendarEvent(item)}
           />
         </View>
       </View>
