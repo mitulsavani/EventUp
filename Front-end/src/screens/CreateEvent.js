@@ -267,7 +267,7 @@ console.log("Time :", startTime);
 
             <TextInput
               mode="outlined"
-              style={{ marginBottom: 10, height: 200, position: "fixed" }}
+              style={{ marginBottom: 10, height: 200 }}
               label="Description"
               multiline={true}
               numberOfLines={4}

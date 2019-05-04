@@ -36,7 +36,7 @@ export default class ProfileScreen extends React.Component {
     };
   }
 
-  async componentDidMount() { 
+  async componentDidMount() {
     this.setState({ isLoading: true });
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -144,7 +144,6 @@ const styles = StyleSheet.create({
   },
   
   titleStyling: {
-    fontFamily: "Verdana",
     fontSize: 18,
     marginBottom: 5
   },
@@ -152,6 +151,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 40,
     borderRadius: 5,
-    backgroundColor: '#39CA74',
+    backgroundColor: '#39CA74'
   }
 });
