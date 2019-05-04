@@ -11,7 +11,7 @@ import {
 import { Button } from "react-native-elements";
 import { format } from "date-fns";
 import moment from "moment";
-import { Permissions, Calendar } from 'expo';
+import { Permissions, Calendar, Localization, Alarm } from 'expo';
 
 export default class EventsScreen extends React.Component {
 
@@ -87,7 +87,6 @@ export default class EventsScreen extends React.Component {
   onAddCalendarEvent = async (item) => {
     try {
       //Prompt the user to provide access to the calendar
-      const { Permissions } = Expo;
       const { status } = await Permissions.askAsync(Permissions.CALENDAR);
 
       //If permission was granted, create the event
@@ -102,7 +101,9 @@ export default class EventsScreen extends React.Component {
           title: item.Name,
           startDate: new Date(dateString + "T" + item.StartTime),
           endDate: new Date(dateString + "T" + item.EndTime),
-          location: item.LocationName
+          timeZone: Localization.timeZone,
+          location: item.LocationName,
+          alarms: [ { relativeOffset: -1440 } ]
         })
         .then( event => {
           console.log('Created event');
