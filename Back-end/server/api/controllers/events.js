@@ -2,8 +2,10 @@ const db = require('../models/database.js');
 const jwt = require('jsonwebtoken');
 
 exports.getAllEvents = (req, res, next) => {
-    console.log('route tested');
-    db.query('SELECT Event.*, Category.Name AS CategoryName, Location.Name AS LocationName FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category ON Event.CategoryId = Category.id').then( ([result, fields]) => {
+    db.query('SELECT Event.*, '+
+    'Category.Name AS CategoryName, Location.Name AS LocationName'+
+    ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
+    'ON Event.CategoryId = Category.id').then( ([result, fields]) => {
         res.status(200).json({
             status: true,
             data: result
@@ -40,7 +42,11 @@ exports.postEvent = (req, res, next) => {
 } 
 
 exports.getEvent = (req, res, next) => {
-    db.query('SELECT * FROM Event WHERE id = ?', [req.params.id])
+    db.query('SELECT Event.*, '+
+    'Category.Name AS CategoryName, Location.Name AS LocationName'+
+    ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
+    'ON Event.CategoryId = Category.id'+
+    ' WHERE Event.id = ?', [req.params.id])
     .then( (data) => {
         res.status(200).json({
             status: true,
