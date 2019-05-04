@@ -71,8 +71,8 @@ export default class EventsScreen extends React.Component {
     }
   }
 
-  onShare = async (item, name, time) => {
-    const str = 'Event name: ' + name + '. Time: ' + format("January 01, 2019 "+item.StartTime,"hh:mm a") + '.';
+  onShare = async (item) => {
+    const str = 'Event name: ' + item.Name + '. Time: ' + format("January 01, 2019 " + item.StartTime ,"hh:mm a") + '.';
     try {
       const result = await Share.share({
         title: 'Checkout this event from EventUp',
