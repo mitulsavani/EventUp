@@ -93,15 +93,16 @@ export default class EventsScreen extends React.Component {
       //If permission was granted, create the event
       if(status === 'granted')
       {
-        var eventID = await Calendar.createEventAsync(Calendar.DEFAULT, {
-          // "endDate": item.endDate,
-          // "startDate": item.startDate,
-          // "title": item.Name
+        var dateString = item.StartDate.substring(0, 10);
 
-          startDate: new Date('2019-05-05'),
-          endDate: new Date('2019-05-06'),
-          title: "PUSH",
-          timeZone: "GMT-7"
+        console.log(dateString + "T" + item.StartTime);
+        console.log(dateString + "T" + item.EndTime);
+
+        var eventID = await Calendar.createEventAsync(Calendar.DEFAULT, {
+          title: item.Name,
+          startDate: new Date(dateString + "T" + item.StartTime),
+          endDate: new Date(dateString + "T" + item.EndTime),
+          location: item.LocationName
         })
         .then( event => {
           console.log('Created event');
