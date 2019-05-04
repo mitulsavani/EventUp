@@ -124,10 +124,13 @@ exports.revoke = (req, res, next) => {
     })
 }
 exports.getPosts = (req, res, next) => {
-    console.log(req.body.UserId);
-    db.query('SELECT * FROM Event WHERE UserId = ?', 
-    [req.body.UserId])
+    db.query('SELECT Event.*, '+
+    'Category.Name AS CategoryName, Location.Name AS LocationName'+
+    ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
+    'ON Event.CategoryId = Category.id'+
+    ' WHERE Event.UserId = ?',[req.body.UserId])
     .then(([result, fields]) => {
+        console.log(result);
         res.status(200).json({
             status: true,
             data: result,
