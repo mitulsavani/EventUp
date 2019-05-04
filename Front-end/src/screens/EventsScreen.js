@@ -97,7 +97,7 @@ export default class EventsScreen extends React.Component {
           {format("January 01, 2019 "+item.StartTime,"hh:mm a")}
         </Text>
         <Text style={{color: '#333'}}>{item.LocationName}</Text>
-        <View style={{ flexDirection: "row", justifyContent: 'space-around', alignSelf: 'flex-end', padding: 10}}>
+        <View style={{ flexDirection: "row", justifyContent: 'space-between', alignSelf: 'flex-end', padding: 10}}>
           <Button
             title="RSVP"
             type='outline'
@@ -137,7 +137,8 @@ export default class EventsScreen extends React.Component {
             keyExtractor={(item, index) => index.toString()}
           />
         </View>
-        <View style={{ position: "absolute", left: 290, right: 0, bottom: 30 }}>
+
+        <View style={{ position: "absolute", right: 10, bottom: 30 }}>
           <Button
             title="Create"
             titleStyle={{ fontSize: 12 }}
