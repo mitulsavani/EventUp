@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   mapImageContainer: {
     padding: 10,
     width: "100%",
-    height: 275
+    height: 200
   },
   // location information end
   
