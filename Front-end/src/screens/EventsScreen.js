@@ -13,9 +13,6 @@ import { Button } from "react-native-elements";
 import { format } from "date-fns";
 import moment from "moment";
 
-import { Permissions, Calendar, Localization, Alarm } from 'expo';
-import DetailEventScreen from "./DetailEventScreen";
-
 export default class EventsScreen extends React.Component {
   static navigationOptions = {
     title: "Events",
@@ -71,9 +68,13 @@ export default class EventsScreen extends React.Component {
     }
   }
 
-
-  onShare = async (item) => {
-    const str = 'Event name: ' + item.Name + '. Time: ' + format("January 01, 2019 " + item.StartTime ,"hh:mm a") + '.';
+  onShare = async item => {
+    const str =
+      "Event name: " +
+      item.Name +
+      ". Time: " +
+      format("January 01, 2019 " + item.StartTime, "hh:mm a") +
+      ".";
 
     try {
       const result = await Share.share({
@@ -85,15 +86,13 @@ export default class EventsScreen extends React.Component {
     }
   };
 
-
-  onAddCalendarEvent = async (item) => {
+  onAddCalendarEvent = async item => {
     try {
       //Prompt the user to provide access to the calendar
       const { status } = await Permissions.askAsync(Permissions.CALENDAR);
 
       //If permission was granted, create the event
-      if(status === 'granted')
-      {
+      if (status === "granted") {
         var dateString = item.StartDate.substring(0, 10);
 
         console.log(dateString + "T" + item.StartTime);
@@ -105,76 +104,40 @@ export default class EventsScreen extends React.Component {
           endDate: new Date(dateString + "T" + item.EndTime),
           timeZone: Localization.timeZone,
           location: item.LocationName,
-          alarms: [ { relativeOffset: -1440 } ]
+          alarms: [{ relativeOffset: -1440 }]
         })
-        .then( event => {
-          console.log('Created event');
-          alert('Event created')
-        })
-        .catch( error => {
-          console.log("Problem creating event: ", error);
-          alert('Event could not be created')
-        });
+          .then(event => {
+            console.log("Created event");
+            alert("Event created");
+          })
+          .catch(error => {
+            console.log("Problem creating event: ", error);
+            alert("Event could not be created");
+          });
       } else {
         //If the user denies permission to edit the calendar, notify the user that they can't create an event
-        alert('You must provide access to your calendar to create an event')
-        console.log('Permission to edit the calendar was denied');
+        alert("You must provide access to your calendar to create an event");
+        console.log("Permission to edit the calendar was denied");
       }
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  _renderEvents = (item) => {
-    return(
-    <View style={{ flexDirection: "row", paddingTop: 30 }}>
-      <Image
-        source={require("../img/sample_image.jpg")}
-        style={styles.imageEx}
-      />
-      <View style={{ flex: 1, paddingLeft: 30 }}>
-        <Text style={styles.titleStyling}>{item.Name}</Text>
-        <Text style={{color: '#333'}}>
-        {moment.utc(item.StartDate).format("MMMM DD")}{" | "}
-          {format("January 01, 2019 "+item.StartTime,"hh:mm a")}
-        </Text>
-        <Text style={{color: '#333'}}>{item.LocationName}</Text>
-        <View style={{ flexDirection: "row", justifyContent: 'space-between', alignSelf: 'flex-end', padding: 10}}>
-          <Button
-            title="RSVP"
-            type='outline'
-            titleStyle={{ fontSize: 12, color: 'white' }}
-            containerStyle={styles.buttonContainerStyle}
-            buttonStyle={styles.buttonStyling}
-            onPress={() => console.log("RSVP pressed")}
-          />
-          <Button
-            title="Share"
-            type='outline'
-            titleStyle={{ fontSize: 12, color: 'white' }}
-            containerStyle={{
-                        marginTop: 20,
-                        marginBottom: 30,
-                        marginLeft: 20
-                      }}
-            buttonStyle={styles.buttonStyling}
-            onPress={()=>this.onShare(item)}
-          />
-          <Button
-            title="Test"
-            type='outline'
-            titleStyle={{ fontSize: 12, color: 'white' }}
-            containerStyle={{
-                        marginTop: 20,
-                        marginBottom: 30,
-                        marginLeft: 20
-                      }}
-            buttonStyle={styles.buttonStyling}
-            onPress={()=>this.onAddCalendarEvent(item)}
-
+  _renderEvents = item => {
+    return (
+      <TouchableOpacity
+        style={styles.cardContainer}
+        key={item}
+        onPress={() => this.props.navigation.navigate("detailEvent", { item })}
+        activeOpacity={0.8}
+      >
+        <View style={{ flex: 1, marginLeft: 10 }}>
+          <Image
+            source={require("../img/sample_image.jpg")}
+            style={styles.imageEx}
           />
         </View>
-
         <View style={{ flex: 1 }}>
           <View style={{ marginTop: 15 }}>
             <Text style={styles.titleStyling}>{item.Name}</Text>
@@ -193,14 +156,6 @@ export default class EventsScreen extends React.Component {
               padding: 10
             }}
           >
-            <Button
-              title="RSVP"
-              type="outline"
-              titleStyle={{ fontSize: 12, color: "white" }}
-              containerStyle={styles.buttonContainerStyle}
-              buttonStyle={styles.buttonStyling}
-              onPress={() => console.log("Why did you press me?")}
-            />
             <Button
               title="Share"
               type="outline"
@@ -268,7 +223,6 @@ const styles = StyleSheet.create({
   titleStyling: {
     fontFamily: "Verdana",
     fontSize: 18
-
   },
   buttonStyling: {
     width: 60,
