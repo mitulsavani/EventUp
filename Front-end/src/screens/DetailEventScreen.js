@@ -12,6 +12,7 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 import { Button } from "react-native-elements";
 import moment from "moment";
 import { format } from "date-fns";
+import MapView from 'react-native-maps'
 
 export default class DetailEventScreen extends React.Component {
   static navigationOptions = {
@@ -141,16 +142,16 @@ export default class DetailEventScreen extends React.Component {
               {event.LocationName}
             </Text>
             <View style={styles.mapImageContainer}>
-              <Image
-                source={{
-                  uri: "http://joomly.net/frontend/web/images/googlemap/map.png"
-                }}
-                style={{
-                  height: 200,
-                  width: "100%"
-                }}
-                resizeMode="cover"
-              />
+            <MapView
+                  style={{flex: 1}}
+                  region={{
+                    latitude: 42.882004,
+                    longitude: 74.582748,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421
+                  }}
+                  showsUserLocation={true}
+                />
             </View>
           </View>
           {/* locationContainer End */}
@@ -173,7 +174,7 @@ export default class DetailEventScreen extends React.Component {
     const { isLoading } = this.state;
     return (
       <View style={styles.mainContainer}>
-        {isLoading ? this.loadingView() : this.contentView()}
+        {isLoading ? this.loadingView() : this.contentView() }
       </View>
     );
   }
