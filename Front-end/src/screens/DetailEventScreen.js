@@ -158,7 +158,7 @@ export default class DetailEventScreen extends React.Component {
                   {latitude: 42.882004,
                   longitude: 74.582748}
                 }
-                onPress= { createOpenLink({ latitude: 42.882004, longitude: 74.582748}) }
+                onPress= { createOpenLink({start: "New York City, New York, NY", travelType: "drive", end: "SOHO, New York, NY"}) }
             />
             </MapView>
             </View>
