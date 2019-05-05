@@ -90,7 +90,7 @@ export default class DetailEventScreen extends React.Component {
         })
           .then(event => {
             console.log("Created event");
-            alert("Event created");
+            alert("Added Event to your Calendar");
           })
           .catch(error => {
             console.log("Problem creating event: ", error);
