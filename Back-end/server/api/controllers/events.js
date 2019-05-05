@@ -42,23 +42,36 @@ exports.postEvent = (req, res, next) => {
 } 
 
 exports.getEvent = (req, res, next) => {
-    db.query('SELECT Event.*, '+
-    'Category.Name AS CategoryName, Location.Name AS LocationName'+
-    ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
-    'ON Event.CategoryId = Category.id'+
-    ' WHERE Event.id = ?', [req.params.id])
-    .then( (data) => {
-        res.status(200).json({
-            status: true,
-            event: data[0]
+    // console.log(req.params.UserId +" --- "+ req.params.id);
+    // db.query('SELECT COUNT(1)'+
+    // 'FROM RSVP'+
+    // 'WHERE UserId = ? AND EventId = ?;',req.params.UserId, req.params.id).then((isRSVP) => {
+
+        // db.query('SELECT Event.*, '+
+        // 'Category.Name AS CategoryName, Location.Name AS LocationName'+
+        // ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
+        // 'ON Event.CategoryId = Category.id'+
+        // ' WHERE Event.id = ?', [req.params.id])
+
+        db.query('SELECT Event.*, '+
+        'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude'+
+        ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
+        'ON Event.CategoryId = Category.id'+
+        ' WHERE Event.id = ?', [req.params.id])
+        .then( (data) => {
+            res.status(200).json({
+                status: true,
+                event: data[0],
+                //isRSVP:isRSVP
+            })
         })
-    })
-    .catch( err => {
-        res.status(500).json({
-            status: false,
-            message: err
+        .catch( err => {
+            res.status(500).json({
+                status: false,
+                message: err
+            })
         })
-    })
+    //})
 }
 
 exports.deleteEvent = (req, res, next) => {
