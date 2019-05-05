@@ -20,6 +20,7 @@
     "react-native-maps": "^0.24.2",
     "react-native-material-dropdown": "^0.11.1",
     "react-native-modal-datetime-picker": "^7.4.0",
+    "react-native-open-maps": "^0.3.3",
     "react-native-paper": "^2.15.2",
     "react-navigation": "^3.5.1"
   },

@@ -12,7 +12,8 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 import { Button } from "react-native-elements";
 import moment from "moment";
 import { format } from "date-fns";
-import MapView from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps';
+import openMap, { createOpenLink } from 'react-native-open-maps';
 
 export default class DetailEventScreen extends React.Component {
   static navigationOptions = {
@@ -143,15 +144,23 @@ export default class DetailEventScreen extends React.Component {
             </Text>
             <View style={styles.mapImageContainer}>
             <MapView
-                  style={{flex: 1}}
-                  region={{
-                    latitude: 42.882004,
-                    longitude: 74.582748,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421
-                  }}
-                  showsUserLocation={true}
-                />
+              style={{flex: 1}}
+              region={{
+                latitude: 42.882004,
+                longitude: 74.582748,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+              }}
+              showsUserLocation={true}
+            >
+            <MapView.Marker
+                coordinate= {
+                  {latitude: 42.882004,
+                  longitude: 74.582748}
+                }
+                onPress= { createOpenLink({ latitude: 42.882004, longitude: 74.582748}) }
+            />
+            </MapView>
             </View>
           </View>
           {/* locationContainer End */}
