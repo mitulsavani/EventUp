@@ -8,6 +8,7 @@ exports.getAllEvents = (req, res, next) => {
     'ON Event.CategoryId = Category.id').then( ([result, fields]) => {
         res.status(200).json({
             status: true,
+            message: "All events queried",
             data: result
         });
     }).catch(err => {   
@@ -61,7 +62,8 @@ exports.getEvent = (req, res, next) => {
         .then( (data) => {
             res.status(200).json({
                 status: true,
-                event: data[0],
+                event: data[0], 
+                message: "retrieved successfully"
                 //isRSVP:isRSVP
             })
         })
