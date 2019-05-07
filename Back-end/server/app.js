@@ -8,6 +8,7 @@ const db = require('./api/models/database.js');
 const userRoutes = require('./api/routes/users');
 const eventRoutes = require('./api/routes/events');
 const messageRoutes = require('./api/routes/messages');
+const categoryRoutes = require('./api/routes/categories');
 
 app.use((req, res, next) => { 
   res.header('Access-Control-Allow-Origin', '*');
@@ -28,5 +29,6 @@ app.use('/uploads', express.static('uploads'));
 app.use('/users', userRoutes);
 app.use('/events', eventRoutes);
 app.use('/messages', messageRoutes);
+app.use('/categories', categoryRoutes);
 
 module.exports = app;
