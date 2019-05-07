@@ -9,6 +9,7 @@ const userRoutes = require('./api/routes/users');
 const eventRoutes = require('./api/routes/events');
 const messageRoutes = require('./api/routes/messages');
 const categoryRoutes = require('./api/routes/categories');
+const locationRoutes = require('./api/routes/locations');
 
 app.use((req, res, next) => { 
   res.header('Access-Control-Allow-Origin', '*');
@@ -30,5 +31,6 @@ app.use('/users', userRoutes);
 app.use('/events', eventRoutes);
 app.use('/messages', messageRoutes);
 app.use('/categories', categoryRoutes);
+app.use('/locations', locationRoutes);
 
 module.exports = app;
