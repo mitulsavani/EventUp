@@ -1,4 +1,5 @@
 const db = require('../models/database.js');
+let checkAuth = require('../middleware/check-auth.js');
 
 exports.send = (req, res, next) => {
     db.query('INSERT INTO Message SET ?', 

@@ -7,5 +7,4 @@ messageController = require('../controllers/messages.js');
 router.post('/send',checkAuth, messageController.send);
 router.get('/:EventId',checkAuth, messageController.receive);
 
-
 module.exports = router; 
