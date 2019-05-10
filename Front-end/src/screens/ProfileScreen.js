@@ -8,7 +8,7 @@ import {
   Image,
   Share
 } from "react-native";
-import { Button } from "react-native-elements";
+import { Avatar, Button } from "react-native-elements";
 import { format } from "date-fns";
 import moment from "moment";
 
@@ -24,6 +24,15 @@ export default class ProfileScreen extends React.Component {
     headerStyle: {
       backgroundColor: '#39CA74',
     },
+    headerRight: (
+      <Button
+        onPress={this._signOutAsync}
+        title="Sign Out"
+        color="#fff"
+        type='clear'
+        titleStyle={{ fontSize: 16, color: '#FFFFFF'}}
+      />    
+    ), 
   };
 
   constructor(props) {
@@ -100,16 +109,22 @@ export default class ProfileScreen extends React.Component {
     const { eventsData } = this.state;
     return (      
       <View style={{ flex: 1 }}>
-            <View style={{ alignItems: 'center'}}>
-          <Button
-            title="Sign Out"
-            type='clear'
-            titleStyle={{ fontSize: 20, color: '#E8787B'}}
-            containerStyle={{ padding: 10 }}
-            buttonStyle={{ borderRadius: 20, padding: 10 }}
-            onPress={this._signOutAsync}
-          />
+
+
+        <View style={{ alignItems: 'center'}}>
+
+        <Avatar 
+        size="large" 
+        rounded 
+        title="CP"
+        marginTop={30}
+        marginBottom={30}
+         />
         </View>
+
+        <Text style={styles.baseText}>
+       My Events
+      </Text>
         <View style={styles.container}>
           <FlatList
             data={eventsData}
@@ -127,6 +142,13 @@ export default class ProfileScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  
+  baseText: {
+    fontSize: 32, 
+    marginLeft: 10,
+    fontWeight: 'bold',
+  },
+
   container: {
     marginTop: 0,
     marginLeft: 20,
