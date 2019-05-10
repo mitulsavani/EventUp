@@ -37,6 +37,7 @@ export default class CreateEvent extends React.Component {
       locationName:"",
       categoryName:"",
       locationData:[],
+      categoryData:[],
 
       checked: false,
       isDatePickerVisible: false,
@@ -128,7 +129,8 @@ export default class CreateEvent extends React.Component {
   };
 
  async componentDidMount() {
-   var locationNames = new Array(25); 
+   var locationNames = new Array();
+   var categoryNames = new Array(); 
   try {
     const token = await AsyncStorage.getItem('userToken');
     const userId = await AsyncStorage.getItem('userId');
@@ -155,6 +157,31 @@ export default class CreateEvent extends React.Component {
     this.setState({ response: error });
     console.log(error);
   }
+
+  try {
+    let response = await fetch(
+      "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/categories",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Authorization: token
+        }
+      }
+    );
+
+    response.json().then(result => {
+      result.data.forEach(function(category) {
+        categoryNames.push({value:category.Name});
+      });
+      this.setState({ categoryData:categoryNames });
+      
+    });
+  } catch (error) {
+    this.setState({ response: error });
+    console.log(error);
+  }
+
 }catch (e) {
     console.log("AsyncStorage failed to retrieve token:", e);
   }
@@ -235,15 +262,9 @@ console.log("Time :", startTime);
   }
 
   render() {
-    let { image, locationData } = this.state;
+    let { image, locationData, categoryData } = this.state;
     
-    let categoryData = [{
-      value: 'Study Group',
-    }, {
-      value: 'Health & Wellness',
-    }, {
-      value: 'Social',
-    }];
+
 
     
     return (
