@@ -12,6 +12,8 @@ router.get('/', checkAuth, userController.getUsers);
 
 router.post('/RSVP', userController.RSVP);
 
+router.get('/RSVP', userController.getRSVP);
+
 router.delete('/RSVP', userController.revoke);
 
 router.post('/posts', userController.getPosts);

@@ -92,20 +92,28 @@ exports.login = (req, res, next) => {
 } 
 
 exports.RSVP = (req, res, next) => {
-    db.query('INSERT INTO RSVP SET ?', 
-    { UserId: req.body.UserId, EventId: req.body.EventId })
-    .then(([result, fields]) => {
-        res.status(200).json({
-            status: true,
-            message: "RSVP Successful"
+    // db.query('SELECT RSVP.*, COUNT(*) FROM RSVP'+
+    // 'WHERE RSVP.UserId = ? AND RSVP.EventId = ? '
+    // ,[req.body.UserId, req.body.UserId]).then(([count,_]) =>{
+    //     if(count > 0){
+    //         console.log("gotcha bitch :" + count);
+    //     }
+    //     console.log("oop :" + count);
+        db.query('INSERT INTO RSVP SET ?', 
+        { UserId: req.body.UserId, EventId: req.body.EventId })
+        .then(([result, fields]) => {
+            res.status(200).json({
+                status: true,
+                message: "RSVP Successful"
+            })
         })
-    })
-    .catch( err => {
-        res.status(500).json({
-            status: false,
-            message: err
+        .catch( err => {
+            res.status(500).json({
+                status: false,
+                message: err
+            })
         })
-    })
+    //})
 }
 
 exports.revoke = (req, res, next) => {
@@ -136,6 +144,29 @@ exports.getPosts = (req, res, next) => {
             data: result,
             message: "All User Posts for signed in user"
         })
+    })
+    .catch( err => {
+        res.status(500).json({
+            status: false,
+            message: err
+        })
+    })
+}
+
+exports.getRSVP = (req, res, next) =>{
+    db.query('SELECT Event.*, '+
+    'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude'+
+        ' FROM Event JOIN RSVP ON Event.id = RSVP.EventId'+
+        ' JOIN Location ON Event.LocationId = Location.id JOIN Category '+
+        'ON Event.CategoryId = Category.id'+
+        ' WHERE RSVP.UserId = ?', [req.body.UserId])
+        .then(([data,_]) => {
+        const response = {
+            status: true,
+            message: "all RSVP records queried",
+            data: data
+        }
+        res.status(200).json(response);
     })
     .catch( err => {
         res.status(500).json({
