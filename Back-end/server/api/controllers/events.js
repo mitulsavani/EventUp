@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 exports.getAllEvents = (req, res, next) => {
     db.query('SELECT Event.*, '+
-    'Category.Name AS CategoryName, Location.Name AS LocationName'+
+    'Category.Name AS CategoryName, Location.Name AS LocationName, Location.Longitude, Location.Latitude'+
     ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
     'ON Event.CategoryId = Category.id').then( ([result, fields]) => {
         res.status(200).json({
