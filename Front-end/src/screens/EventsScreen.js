@@ -12,7 +12,6 @@ import {
 import { Button } from "react-native-elements";
 import { format } from "date-fns";
 import moment from "moment";
-import DetailEventScreen from "./DetailEventScreen";
 
 export default class EventsScreen extends React.Component {
   static navigationOptions = {
@@ -69,13 +68,14 @@ export default class EventsScreen extends React.Component {
     }
   }
 
-  onShare = async (item, name, time) => {
+  onShare = async item => {
     const str =
       "Event name: " +
-      name +
+      item.Name +
       ". Time: " +
       format("January 01, 2019 " + item.StartTime, "hh:mm a") +
       ".";
+
     try {
       const result = await Share.share({
         title: "Checkout this event from EventUp",
@@ -83,6 +83,44 @@ export default class EventsScreen extends React.Component {
       });
     } catch (error) {
       alert(error.message);
+    }
+  };
+
+  onAddCalendarEvent = async item => {
+    try {
+      //Prompt the user to provide access to the calendar
+      const { status } = await Permissions.askAsync(Permissions.CALENDAR);
+
+      //If permission was granted, create the event
+      if (status === "granted") {
+        var dateString = item.StartDate.substring(0, 10);
+
+        console.log(dateString + "T" + item.StartTime);
+        console.log(dateString + "T" + item.EndTime);
+
+        var eventID = await Calendar.createEventAsync(Calendar.DEFAULT, {
+          title: item.Name,
+          startDate: new Date(dateString + "T" + item.StartTime),
+          endDate: new Date(dateString + "T" + item.EndTime),
+          timeZone: Localization.timeZone,
+          location: item.LocationName,
+          alarms: [{ relativeOffset: -1440 }]
+        })
+          .then(event => {
+            console.log("Created event");
+            alert("Event created");
+          })
+          .catch(error => {
+            console.log("Problem creating event: ", error);
+            alert("Event could not be created");
+          });
+      } else {
+        //If the user denies permission to edit the calendar, notify the user that they can't create an event
+        alert("You must provide access to your calendar to create an event");
+        console.log("Permission to edit the calendar was denied");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -100,7 +138,6 @@ export default class EventsScreen extends React.Component {
             style={styles.imageEx}
           />
         </View>
-
         <View style={{ flex: 1 }}>
           <View style={{ marginTop: 15 }}>
             <Text style={styles.titleStyling}>{item.Name}</Text>
@@ -119,14 +156,6 @@ export default class EventsScreen extends React.Component {
               padding: 10
             }}
           >
-            <Button
-              title="RSVP"
-              type="outline"
-              titleStyle={{ fontSize: 12, color: "white" }}
-              containerStyle={styles.buttonContainerStyle}
-              buttonStyle={styles.buttonStyling}
-              onPress={() => console.log("Why did you press me?")}
-            />
             <Button
               title="Share"
               type="outline"
@@ -158,7 +187,8 @@ export default class EventsScreen extends React.Component {
             keyExtractor={(item, index) => index.toString()}
           />
         </View>
-        <View style={{ position: "absolute", left: 290, right: 0, bottom: 30 }}>
+
+        <View style={{ position: "absolute", right: 10, bottom: 30 }}>
           <Button
             title="Create"
             titleStyle={{ fontSize: 12 }}

@@ -14,6 +14,7 @@ import moment from "moment";
 import { format } from "date-fns";
 import MapView, { Marker } from 'react-native-maps';
 import openMap, { createOpenLink } from 'react-native-open-maps';
+import { Permissions, Calendar, Localization, Alarm } from "expo";
 
 export default class DetailEventScreen extends React.Component {
   static navigationOptions = {
@@ -70,6 +71,44 @@ export default class DetailEventScreen extends React.Component {
     );
   };
 
+  onAddCalendarEvent = async item => {
+    try {
+      //Prompt the user to provide access to the calendar
+      const { status } = await Permissions.askAsync(Permissions.CALENDAR);
+
+      //If permission was granted, create the event
+      if (status === "granted") {
+        var dateString = item.StartDate.substring(0, 10);
+
+        console.log(dateString + "T" + item.StartTime);
+        console.log(dateString + "T" + item.EndTime);
+
+        var eventID = await Calendar.createEventAsync(Calendar.DEFAULT, {
+          title: item.Name,
+          startDate: new Date(dateString + "T" + item.StartTime),
+          endDate: new Date(dateString + "T" + item.EndTime),
+          timeZone: Localization.timeZone,
+          location: item.LocationName,
+          alarms: [{ relativeOffset: -1440 }]
+        })
+          .then(event => {
+            console.log("Created event");
+            alert("Added Event to your Calendar");
+          })
+          .catch(error => {
+            console.log("Problem creating event: ", error);
+            alert("Event could not be created");
+          });
+      } else {
+        //If the user denies permission to edit the calendar, notify the user that they can't create an event
+        alert("You must provide access to your calendar to create an event");
+        console.log("Permission to edit the calendar was denied");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   contentView = () => {
     const { isLoading, event } = this.state;
 
@@ -95,7 +134,11 @@ export default class DetailEventScreen extends React.Component {
             </Text>
             <Text style={styles.byTextStyle}>{event.CategoryName}</Text>
 
-            <View style={styles.detailContainer}>
+            <TouchableOpacity
+              style={styles.detailContainer}
+              onPress={() => this.onAddCalendarEvent(event)}
+              activeOpacity={0.8}
+            >
               <SimpleLineIcons name="calendar" size={25} />
               <View style={styles.subDetailColumnContainer}>
                 <Text style={styles.detailMainText}>
@@ -105,7 +148,7 @@ export default class DetailEventScreen extends React.Component {
                   {format("January 01, 2019 " + event.StartTime, "hh:mm a")}
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
 
             <View style={styles.detailContainer}>
               <SimpleLineIcons name="location-pin" size={25} />
@@ -285,7 +328,7 @@ const styles = StyleSheet.create({
     height: 200
   },
   // location information end
-  
+
   purchaseContainer: {
     width: "100%",
     height: 50,
@@ -297,5 +340,4 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "#E8787B"
   }
-  
 });
