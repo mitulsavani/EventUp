@@ -190,14 +190,15 @@ export default class EventsScreen extends React.Component {
 
         <View style={{ position: "absolute", right: 10, bottom: 30 }}>
           <Button
-            title="Create"
+            title="Create "
             titleStyle={{ fontSize: 12 }}
-            containerStyle={{}}
-            buttonStyle={{
+      
+            
+            buttonStyle={{ 
               width: 60,
               height: 40,
               borderRadius: 5,
-              backgroundColor: "#39CA74"
+              backgroundColor: "#463077"
             }}
             onPress={() => this.props.navigation.navigate("createEvent")}
           />

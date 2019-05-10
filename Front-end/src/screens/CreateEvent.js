@@ -36,6 +36,7 @@ export default class CreateEvent extends React.Component {
       endTime: "",
       locationName:"",
       categoryName:"",
+      locationData:[],
 
       checked: false,
       isDatePickerVisible: false,
@@ -126,6 +127,40 @@ export default class CreateEvent extends React.Component {
     }
   };
 
+ async componentDidMount() {
+   var locationNames = new Array(25); 
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    const userId = await AsyncStorage.getItem('userId');
+  try {
+    let response = await fetch(
+      "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/locations",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Authorization: token
+        }
+      }
+    );
+
+    response.json().then(result => {
+      result.data.forEach(function(location) {
+        locationNames.push({value:location.Name});
+      });
+      this.setState({ locationData:locationNames });
+      
+    });
+  } catch (error) {
+    this.setState({ response: error });
+    console.log(error);
+  }
+}catch (e) {
+    console.log("AsyncStorage failed to retrieve token:", e);
+  }
+}
+
+
   async uploadEvent() {
     const { title, locationName, categoryName, description, startDate, startTime, endTime, checked } = this.state;
     let locationId = "1";
@@ -167,19 +202,6 @@ console.log("Time :", startTime);
             Authorization:
               token
           },
-
-          body: JSON.stringify({
-            Name: title,
-            Description: description,
-            AgeRestriction: ageRestriction,
-            UserId: userId,
-            CategoryId: categoryId,
-            LocationId: locationId,
-            Image: null,
-            StartDate: startDate,
-            StartTime: startTime,
-            EndTime: endTime
-          })
         }
       );
 
@@ -213,15 +235,8 @@ console.log("Time :", startTime);
   }
 
   render() {
-    let { image} = this.state;
-    let locationData = [{
-      value: 'J Paul Leonard Library',
-    }, {
-      value: 'Thornton Hall',
-    }, {
-      value: 'Hensil Hall',
-    }];
-
+    let { image, locationData } = this.state;
+    
     let categoryData = [{
       value: 'Study Group',
     }, {
@@ -230,6 +245,7 @@ console.log("Time :", startTime);
       value: 'Social',
     }];
 
+    
     return (
       <ScrollView>
         <View style={styles.container}>
