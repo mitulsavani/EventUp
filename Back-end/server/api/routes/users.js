@@ -10,9 +10,11 @@ router.post('/login', userController.login);
 
 router.get('/', checkAuth, userController.getUsers); 
 
-router.post('/RSVP', userController.RSVP);
+router.get('/:id(\\d+)', checkAuth, userController.getUser); 
 
-router.get('/RSVP', userController.getRSVP);
+router.get('/RSVP/:UserId(\\d+)', userController.getRSVP);
+
+router.post('/RSVP', userController.RSVP);
 
 router.delete('/RSVP', userController.revoke);
 

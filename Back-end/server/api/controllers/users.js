@@ -92,14 +92,9 @@ exports.login = (req, res, next) => {
 } 
 
 exports.RSVP = (req, res, next) => {
-    // db.query('SELECT RSVP.*, COUNT(*) FROM RSVP'+
-    // 'WHERE RSVP.UserId = ? AND RSVP.EventId = ? '
-    // ,[req.body.UserId, req.body.UserId]).then(([count,_]) =>{
-    //     if(count > 0){
-    //         console.log("gotcha bitch :" + count);
-    //     }
-    //     console.log("oop :" + count);
-        db.query('INSERT INTO RSVP SET ?', 
+        //only insert if no duplicate
+        db.query('INSERT INTO RSVP SET ?'+
+        '', 
         { UserId: req.body.UserId, EventId: req.body.EventId })
         .then(([result, fields]) => {
             res.status(200).json({
@@ -113,7 +108,6 @@ exports.RSVP = (req, res, next) => {
                 message: err
             })
         })
-    //})
 }
 
 exports.revoke = (req, res, next) => {
@@ -159,11 +153,11 @@ exports.getRSVP = (req, res, next) =>{
         ' FROM Event JOIN RSVP ON Event.id = RSVP.EventId'+
         ' JOIN Location ON Event.LocationId = Location.id JOIN Category '+
         'ON Event.CategoryId = Category.id'+
-        ' WHERE RSVP.UserId = ?', [req.body.UserId])
+        ' WHERE RSVP.UserId = ?', [req.params.UserId])
         .then(([data,_]) => {
         const response = {
             status: true,
-            message: "all RSVP records queried",
+            message: "All RSVP Records Queried",
             data: data
         }
         res.status(200).json(response);
@@ -185,6 +179,23 @@ exports.getUsers = (req, res, next) => {
             users: users
         }
         res.status(200).json(response);
+    })
+    .catch( err => {
+        res.status(500).json({
+            status: false,
+            message: err
+        })
+    })
+}
+
+exports.getUser = (req, res, next) => {
+    db.query('SELECT User.id, User.FirstName, User.LastName, User.Email FROM User WHERE User.id = ?', req.params.id)
+    .then(([userData,_]) => {
+        res.status(200).json({
+            status: true,
+            UserCount: userData,
+            message: "User Data Queried"
+        });
     })
     .catch( err => {
         res.status(500).json({
