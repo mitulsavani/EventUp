@@ -151,9 +151,10 @@ exports.getRSVP = (req, res, next) =>{
     db.query('SELECT Event.*, '+
     'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude'+
         ' FROM Event JOIN RSVP ON Event.id = RSVP.EventId'+
-        ' JOIN Location ON Event.LocationId = Location.id JOIN Category '+
-        'ON Event.CategoryId = Category.id'+
-        ' WHERE RSVP.UserId = ?', [req.params.UserId])
+        ' JOIN Location ON Event.LocationId = Location.id JOIN Category'+
+        ' ON Event.CategoryId = Category.id'+
+        ' WHERE EXISTS (SELECT RSVP.* FROM RSVP'+ 
+         ' WHERE RSVP.EventId = Event.id AND RSVP.UserId = ?)', [req.params.UserId])
         .then(([data,_]) => {
         const response = {
             status: true,
