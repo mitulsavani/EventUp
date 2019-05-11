@@ -10,7 +10,7 @@ router.post('/login', userController.login);
 
 router.get('/', checkAuth, userController.getUsers); 
 
-router.get('/:id', checkAuth, userController.getUser); 
+router.get('/:id(\\d+)', checkAuth, userController.getUser); 
 
 router.post('/RSVP', userController.RSVP);
 

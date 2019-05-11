@@ -148,6 +148,7 @@ exports.getPosts = (req, res, next) => {
 }
 
 exports.getRSVP = (req, res, next) =>{
+    console.log("yes yes yes");
     db.query('SELECT Event.*, '+
     'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude'+
         ' FROM Event JOIN RSVP ON Event.id = RSVP.EventId'+
