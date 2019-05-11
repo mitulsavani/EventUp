@@ -177,7 +177,9 @@ const styles = StyleSheet.create({
   nameTitle: {
     fontSize:18,
     marginBottom: 30,
-    
+    alignSelf: 'center',
+    fontStyle: "italic",
+    fontWeight:"500"
   },
 
   baseText: {
