@@ -17,10 +17,12 @@ import { format } from "date-fns";
 import { Dropdown } from 'react-native-material-dropdown';
 import moment from "moment";
 import {ImageStore, ImageEditor} from "react-native";
+// import RNFS from "react-native-fs";
 
 export const PRIMARY_COLOR = '#39CA74';
 
 export default class CreateEvent extends React.Component {
+  
   constructor(props) {
     super(props);
 
@@ -40,6 +42,8 @@ export default class CreateEvent extends React.Component {
       locationData:[],
       categoryData:[],
       imageData:"",
+      locationsMap:undefined,
+      categoriesMap:undefined,
 
       checked: false,
       isDatePickerVisible: false,
@@ -50,6 +54,8 @@ export default class CreateEvent extends React.Component {
     this.updatePostField = key => text => this.updatePostFieldState(key, text);
     this.uploadEvent = this.uploadEvent.bind(this);
   }
+
+  
 
   onChangeText(text) {
     ['locationName', 'categoryName']
@@ -148,6 +154,9 @@ export default class CreateEvent extends React.Component {
  async componentDidMount() {
    var locationNames = new Array();
    var categoryNames = new Array(); 
+   var locationsMap = new Map();
+   var categoriesMap = new Map();
+   
   try {
     const token = await AsyncStorage.getItem('userToken');
     const userId = await AsyncStorage.getItem('userId');
@@ -166,7 +175,9 @@ export default class CreateEvent extends React.Component {
     response.json().then(result => {
       result.data.forEach(function(location) {
         locationNames.push({value:location.Name});
+        locationsMap.set(location.Name,location.id);
       });
+      this.setState({ locationsMap:locationsMap });
       this.setState({ locationData:locationNames });
       
     });
@@ -190,9 +201,10 @@ export default class CreateEvent extends React.Component {
     response.json().then(result => {
       result.data.forEach(function(category) {
         categoryNames.push({value:category.Name});
+        categoriesMap.set(category.Name,category.id)
       });
+      this.setState({categoriesMap:categoriesMap });
       this.setState({ categoryData:categoryNames });
-      
     });
   } catch (error) {
     this.setState({ response: error });
@@ -206,30 +218,17 @@ export default class CreateEvent extends React.Component {
 
 
   async uploadEvent() {
-    const { imageData, title, locationName, categoryName, description, startDate, startTime, endTime, checked } = this.state;
-    let locationId = "1";
-    let categoryId = "1";
+    const { categoriesMap, locationsMap, image,imageData, title, locationName, categoryName, description, startDate, startTime, endTime, checked } = this.state;
+    let locationId = locationsMap.get(locationName);
+    let categoryId = categoriesMap.get(categoryName);
     let ageRestriction = "0"
     if (checked) {
       ageRestriction = "1";
     }
-console.log("Data :", imageData.toString());
 
-    if (locationName == "J Paul Leonard Library") {
-      locationId = "1";
-    } else if (locationName == "Thornton Hall") {
-      locationId = "2";
-    } else if (locationName == "Hensil Hall") {
-      locationId = "3";
-    }
+    console.log(categoryId,categoryName);
+    console.log(locationId,locationName);
 
-    if (categoryName == "") {
-      categoryId = "1";
-    } else if (categoryName == "") {
-      categoryId = "2";
-    } else if (categoryName == "") {
-      categoryId = "3";
-    }
 
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -253,7 +252,8 @@ console.log("Data :", imageData.toString());
               UserId: userId,
               CategoryId: categoryId,
               LocationId: locationId,
-              Image: imageData.toString(),
+              Image: imageData.toString,
+              //Image: null,
               StartDate: startDate,
               StartTime: startTime,
               EndTime: endTime
@@ -264,6 +264,7 @@ console.log("Data :", imageData.toString());
         response.text().then(result => {
           
           console.log(result);
+          //TODO : condition to check if event was created succesfully
           Alert.alert(
             'Alert!',
             'Event Created Successfully',

@@ -76,7 +76,7 @@ export default class ProfileScreen extends React.Component {
       console.log(error);
     }
     var url = "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/"+userId;
-    console.log("URL :",url);
+        
     try {
       let response = await fetch(
         url,
@@ -162,7 +162,7 @@ export default class ProfileScreen extends React.Component {
             data={eventsData}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => this._renderEvents(item)}
-            keyExtractor={(item, index) => index}
+            keyExtractor={(item, index) => index.toString()}
           />
         </View>
       </View>
