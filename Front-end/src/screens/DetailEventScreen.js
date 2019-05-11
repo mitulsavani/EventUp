@@ -189,8 +189,8 @@ export default class DetailEventScreen extends React.Component {
             <MapView
               style={{flex: 1}}
               region={{
-                latitude: 42.882004,
-                longitude: 74.582748,
+                latitude: event.Latitude,
+                longitude: event.Longitude,
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421
               }}
@@ -198,15 +198,22 @@ export default class DetailEventScreen extends React.Component {
             >
             <MapView.Marker
                 coordinate= {
-                  {latitude: 42.882004,
-                  longitude: 74.582748}
+                  {latitude: event.Latitude,
+                  longitude: event.Longitude}
                 }
-                onPress= { createOpenLink({start: "New York City, New York, NY", travelType: "drive", end: "SOHO, New York, NY"}) }
+                onPress= { createOpenLink({end: `${event.Latitude} ${event.Longitude}` }) }
             />
             </MapView>
             </View>
           </View>
           {/* locationContainer End */}
+          <View style={styles.container}>
+            <ScrollView>       
+              <Text>
+                Add your text
+              </Text>      
+            </ScrollView>
+        </View>
         </ScrollView>
         <View style={styles.purchaseContainer}>
           <TouchableOpacity>
