@@ -40,6 +40,8 @@ export default class ProfileScreen extends React.Component {
 
     this.state = {
       eventsData: [],
+      firstName: "",
+      lastName: "",
       isLoading: false,
       error: null
     };
@@ -49,8 +51,7 @@ export default class ProfileScreen extends React.Component {
     this.setState({ isLoading: true });
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const userId = await AsyncStorage.getItem('userId');
-      console.log("token: ", token, userId);
+      const userId = await AsyncStorage.getItem('userId');      
     try {
       let response = await fetch(
         "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/posts",
@@ -74,6 +75,32 @@ export default class ProfileScreen extends React.Component {
       this.setState({ loading: false, response: error });
       console.log(error);
     }
+    var url = "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/"+userId;
+    console.log("URL :",url);
+    try {
+      let response = await fetch(
+        url,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            Authorization:token
+          },
+        }
+      );
+      
+      response.json().then(result => {      
+      this.setState({firstName:result.UserCount[0].FirstName});
+      this.setState({lastName:result.UserCount[0].LastName});
+
+      });
+    } catch (error) {
+      this.setState({ loading: false, response: error });
+      console.log(error);
+    }
+
+
+
   } catch(e) {
     console.log("AsyncStorage failed to retrieve token:", e);
   }
@@ -106,7 +133,8 @@ export default class ProfileScreen extends React.Component {
 
 
   render() {
-    const { eventsData } = this.state;
+    const { eventsData,firstName,lastName } = this.state;    
+
     return (      
       <View style={{ flex: 1 }}>
 
@@ -116,11 +144,15 @@ export default class ProfileScreen extends React.Component {
         <Avatar 
         size="large" 
         rounded 
-        title="CP"
+        title={firstName.substring(0,1)+lastName.substring(0,1)}
         marginTop={30}
         marginBottom={30}
          />
         </View>
+
+        <Text style={styles.nameTitle}>
+       {firstName}{" "}{lastName}
+      </Text>
 
         <Text style={styles.baseText}>
        My Events
@@ -142,7 +174,12 @@ export default class ProfileScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  
+  nameTitle: {
+    fontSize:18,
+    marginBottom: 30,
+    
+  },
+
   baseText: {
     fontSize: 32, 
     marginLeft: 10,
