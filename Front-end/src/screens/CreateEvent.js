@@ -16,6 +16,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
 import { Dropdown } from 'react-native-material-dropdown';
 import moment from "moment";
+import {ImageStore, ImageEditor} from "react-native";
 
 export const PRIMARY_COLOR = '#39CA74';
 
@@ -38,6 +39,7 @@ export default class CreateEvent extends React.Component {
       categoryName:"",
       locationData:[],
       categoryData:[],
+      imageData:"",
 
       checked: false,
       isDatePickerVisible: false,
@@ -124,6 +126,21 @@ export default class CreateEvent extends React.Component {
     });
 
     if (!result.cancelled) {
+ 
+      Image.getSize(result, (width, height) => {
+        let imageSettings = {
+          offset: { x: 0, y: 0 },
+          size: { width: width, height: height }
+        };
+        ImageEditor.cropImage(result, imageSettings, (uri) => {
+          ImageStore.getBase64ForTag(uri, (data) => {
+            // data == base64 encoded image
+            this.setState({imageData:data});
+          }, e => console.warn("getBase64ForTag: ", e))
+        }, e => console.warn("cropImage: ", e))
+      })
+
+
       this.setState({ image: result });
     }
   };
@@ -189,14 +206,14 @@ export default class CreateEvent extends React.Component {
 
 
   async uploadEvent() {
-    const { title, locationName, categoryName, description, startDate, startTime, endTime, checked } = this.state;
+    const { imageData, title, locationName, categoryName, description, startDate, startTime, endTime, checked } = this.state;
     let locationId = "1";
     let categoryId = "1";
     let ageRestriction = "0"
     if (checked) {
       ageRestriction = "1";
     }
-console.log("Time :", startTime);
+console.log("Data :", imageData.toString());
 
     if (locationName == "J Paul Leonard Library") {
       locationId = "1";
@@ -214,51 +231,66 @@ console.log("Time :", startTime);
       categoryId = "3";
     }
 
-
     try {
-    const token = await AsyncStorage.getItem('userToken');
-    const userId = await AsyncStorage.getItem('userId');
-
-    try {
-      let response = await fetch(
-        "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-            Authorization:
-              token
-          },
-        }
-      );
-
-      response.json().then(result => {
-        
-        console.log(result);
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
+  
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization:
+                token
+            },
+  
+            body: JSON.stringify({
+              Name: title,
+              Description: description,
+              AgeRestriction: ageRestriction,
+              UserId: userId,
+              CategoryId: categoryId,
+              LocationId: locationId,
+              Image: imageData.toString(),
+              StartDate: startDate,
+              StartTime: startTime,
+              EndTime: endTime
+            })
+          }
+        );
+  
+        response.text().then(result => {
+          
+          console.log(result);
+          Alert.alert(
+            'Alert!',
+            'Event Created Successfully',
+            [
+              { text: 'OK', onPress: () => this.props.navigation.navigate('events') }
+            ],
+            { cancelable: false }
+          );
+        });
+      } catch (error) {
+        this.setState({ loading: false, response: error });      
+        console.log(error);
         Alert.alert(
           'Alert!',
-          'Event Created Successfully',
+          'Failed to Create an Event',
           [
-            { text: 'OK', onPress: () => this.props.navigation.navigate('events') }
+            { text: 'OK', onPress: () => console.log('Failed to Create an Event') }
           ],
           { cancelable: false }
         );
-      });
-    } catch (error) {
-      this.setState({ loading: false, response: error });      
-      console.log(error);
-      Alert.alert(
-        'Alert!',
-        'Failed to Create an Event',
-        [
-          { text: 'OK', onPress: () => console.log('Failed to Create an Event') }
-        ],
-        { cancelable: false }
-      );
+      }
+    } catch(e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
     }
-  } catch(e) {
-    console.log("AsyncStorage failed to retrieve token:", e);
-  }
+  
+
+   
   }
 
   render() {
