@@ -148,17 +148,16 @@ exports.getPosts = (req, res, next) => {
 }
 
 exports.getRSVP = (req, res, next) =>{
-    console.log("yes yes yes");
     db.query('SELECT Event.*, '+
     'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude'+
         ' FROM Event JOIN RSVP ON Event.id = RSVP.EventId'+
         ' JOIN Location ON Event.LocationId = Location.id JOIN Category '+
         'ON Event.CategoryId = Category.id'+
-        ' WHERE RSVP.UserId = ?', [req.body.UserId])
+        ' WHERE RSVP.UserId = ?', [req.params.UserId])
         .then(([data,_]) => {
         const response = {
             status: true,
-            message: "all RSVP records queried",
+            message: "All RSVP Records Queried",
             data: data
         }
         res.status(200).json(response);
