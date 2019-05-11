@@ -65,6 +65,7 @@ export default class DetailEventScreen extends React.Component {
     const { event } = this.state;
     try {
       const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem('userId');
 
       try {
         let response = await fetch(
@@ -77,7 +78,7 @@ export default class DetailEventScreen extends React.Component {
             },
 
             body: JSON.stringify({
-              UserId: event.UserId,
+              UserId: userId,
               EventId: event.id
             })
           }
