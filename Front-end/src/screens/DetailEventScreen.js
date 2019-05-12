@@ -8,10 +8,11 @@ import {
   TouchableOpacity,
   Alert,
   AsyncStorage,
-  SafeAreaView
+  SafeAreaView,
+  Share
 } from "react-native";
 import { SimpleLineIcons } from "@expo/vector-icons";
-import { Button } from "react-native-elements";
+import { Button, Icon } from "react-native-elements";
 import moment from "moment";
 import { format } from "date-fns";
 import MapView, { Marker } from "react-native-maps";
@@ -19,13 +20,27 @@ import openMap, { createOpenLink } from "react-native-open-maps";
 import { Permissions, Calendar, Localization, Alarm } from "expo";
 
 export default class DetailEventScreen extends React.Component {
-  static navigationOptions = {
-    title: "EVENT",
-    headerStyle: {
-      backgroundColor: "#39CA74",
-      borderBottomWidth: 0
-    },
-    headerTintColor: "#FFF"
+  static navigationOptions = ({ navigation }) => {
+    const {handleShare } = navigation.state.params;
+    
+    return {
+      title: "Details",
+      headerTintColor: "#FFF",
+      headerStyle: {
+        backgroundColor: "#39CA74",
+        borderBottomWidth: 0,
+        headerTintColor: "#FFF",
+      },
+      headerRight: (
+      <Icon
+        name='share'
+        type='material'
+        color='#fff'
+        iconStyle={{ marginRight: 15 }} 
+        onPress={ () => handleShare()}
+      />
+      )
+    };
   };
 
   constructor(props) {
@@ -37,8 +52,12 @@ export default class DetailEventScreen extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    const { event, isLoading } = this.state;
+
+
+
+  componentDidMount() {
+    const { event } = this.state;
+    this.props.navigation.setParams({ handleShare: this.onShare });
 
     this.setState({ isLoading: true });
     if (event === null) {
@@ -60,6 +79,26 @@ export default class DetailEventScreen extends React.Component {
       console.log("HERE", event);
     }
   }
+
+  onShare = async ()  => {
+    const { event } = this.state;
+    
+    const str =
+      "Event name: " +
+      event.Name +
+      ". Time: " +
+      format("January 01, 2019 " + event.StartTime, "hh:mm a") +
+      ".";
+
+    try {
+      const result =  await Share.share({
+        title: "Checkout this event from EventUp",
+        message: str
+      });
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
   async onTicketButtonPress() {
     const { event } = this.state;

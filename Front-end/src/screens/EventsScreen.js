@@ -6,7 +6,6 @@ import {
   Text,
   View,
   Image,
-  Share,
   TouchableOpacity
 } from "react-native";
 import { Button } from "react-native-elements";
@@ -67,24 +66,6 @@ export default class EventsScreen extends React.Component {
       console.log("AsyncStorage failed to retrieve token:", e);
     }
   }
-
-  onShare = async item => {
-    const str =
-      "Event name: " +
-      item.Name +
-      ". Time: " +
-      format("January 01, 2019 " + item.StartTime, "hh:mm a") +
-      ".";
-
-    try {
-      const result = await Share.share({
-        title: "Checkout this event from EventUp",
-        message: str
-      });
-    } catch (error) {
-      alert(error.message);
-    }
-  };
 
   onAddCalendarEvent = async item => {
     try {
@@ -147,27 +128,6 @@ export default class EventsScreen extends React.Component {
               {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
             </Text>
             <Text style={{ color: "#333" }}>{item.LocationName}</Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              alignContent: "center",
-              padding: 10
-            }}
-          >
-            <Button
-              title="Share"
-              type="outline"
-              titleStyle={{ fontSize: 12, color: "white" }}
-              containerStyle={{
-                marginTop: 20,
-                marginBottom: 30,
-                marginLeft: 20
-              }}
-              buttonStyle={styles.buttonStyling}
-              onPress={() => this.onShare(item, item.Name, item.StartTime)}
-            />
           </View>
         </View>
       </TouchableOpacity>
