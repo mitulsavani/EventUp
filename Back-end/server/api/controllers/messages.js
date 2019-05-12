@@ -1,5 +1,6 @@
 const db = require('../models/database.js');
 let checkAuth = require('../middleware/check-auth.js');
+const jwt = require('jsonwebtoken');
 
 exports.send = (req, res, next) => {
     db.query('INSERT INTO Message SET ?', 
@@ -19,6 +20,8 @@ exports.send = (req, res, next) => {
 }
 
 exports.receive = (req, res, next) => {
+    let userToken = jwt.decode(req.headers.authorization);
+    console.log(req.headers.authorization);
     db.query('SELECT Message.Message, Message.Timestamp, Message.FkSenderUserId, User.FirstName, User.LastName'+
     ' FROM Message'+
     ' JOIN User ON User.id = Message.FkSenderUserId'+

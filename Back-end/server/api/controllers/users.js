@@ -100,10 +100,8 @@ exports.login = (req, res, next) => {
 
 exports.RSVP = (req, res, next) => {
     //only insert if no duplicate
-    db.query('INSERT INTO RSVP SET ?' +
-        ' WHERE NOT EXISTS (SELECT RSVP.* FROM RSVP' +
-        ' WHERE RSVP.UserId = ? AND RSVP.EventId = ?)',
-        { UserId: req.body.UserId, EventId: req.body.EventId }, req.body.UserId, req.body.EventId)
+    db.query('INSERT INTO RSVP SET ?'
+        ,{ UserId: req.body.UserId, EventId: req.body.EventId })
         .then(([result, _]) => {
             res.status(200).json({
                 status: true,
@@ -140,7 +138,6 @@ exports.getPosts = (req, res, next) => {
         'ON Event.CategoryId = Category.id' +
         ' WHERE Event.UserId = ?', [req.body.UserId])
         .then(([result, fields]) => {
-            console.log(result);
             res.status(200).json({
                 status: true,
                 data: result,
