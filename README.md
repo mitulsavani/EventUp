@@ -16,9 +16,14 @@ Other features include a button to add an event to your calendar and Google Maps
 - Navigate to the project: `cd csc667-02-sp19/Front-end`
 - Download all dependencies: `npm install`
 - Install expo-cli: `npm install -g expo-cli`
-- Build the project: `expo start ios`
-- If you have an iOS simulator installed on XCode, it will automatically launch
+
+# Build
+
+- Through the console: `expo start iOS`
+If you have an iOS simulator installed on XCode, it will automatically launch
 Otherwise you can scan the generated QR code on an iOS device.
+- From expo:
+Scan the QR code from this link on an iOS device: https://expo.io/@mitulsavani/Front-end
 
 # Screens
 
