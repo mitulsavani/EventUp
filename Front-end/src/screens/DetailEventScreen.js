@@ -263,26 +263,25 @@ export default class DetailEventScreen extends React.Component {
               {event.LocationName}
             </Text>
             <View style={styles.mapImageContainer}>
+
               <MapView
-                style={{ flex: 1 }}
-                region={{
-                  latitude: 42.882004,
-                  longitude: 74.582748,
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421
-                }}
-                showsUserLocation={true}
-              >
-                <MapView.Marker
-                  coordinate={
-                    {
-                      latitude: 42.882004,
-                      longitude: 74.582748
-                    }
-                  }
-                  onPress={createOpenLink({ start: "New York City, New York, NY", travelType: "drive", end: "SOHO, New York, NY" })}
-                />
-              </MapView>
+              style={{flex: 1}}
+              region={{
+                latitude: event.Latitude,
+                longitude: event.Longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+              }}
+              showsUserLocation={true}
+            >
+            <MapView.Marker
+                coordinate= {
+                  {latitude: event.Latitude,
+                  longitude: event.Longitude}
+                }
+                onPress= { createOpenLink({end: `${event.Latitude} ${event.Longitude}` }) }
+            />
+            </MapView>
             </View>
           </View>
           {/* locationContainer End */}
@@ -314,7 +313,7 @@ export default class DetailEventScreen extends React.Component {
             onPress={() => this.onCommentButtonPress()}
           />
           <Text style={styles.baseText}>
-            Comments
+            
       </Text>
 
           <FlatList
@@ -349,6 +348,7 @@ export default class DetailEventScreen extends React.Component {
               </View>
             )}
           />
+
         </ScrollView>
         {/* Comments Section End */}
         <View style={styles.purchaseContainer}>
