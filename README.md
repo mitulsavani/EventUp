@@ -1,6 +1,6 @@
 # Event Up
 ---
-Event Up is a social app on iOS for San Francisco State University students. Users can post, browse, and RSVP for events around campus.
+Event Up is a social app on iOS for San Francisco State University students. Users can post, browse, and RSVP for events around campus.<br/>
 Other features include a button to add an event to your calendar and Google Maps integration.
 
 ### TODO
@@ -19,8 +19,8 @@ Other features include a button to add an event to your calendar and Google Maps
 
 # Build
 
-- Through the console: `expo start iOS`
-If you have an iOS simulator installed on XCode, it will automatically launch
+- Through the console: `expo start iOS`<br/>
+If you have an iOS simulator installed on XCode, it will automatically launch<br/>
 Otherwise you can scan the generated QR code on an iOS device.
 - From expo:
 Scan the QR code from this link on an iOS device: https://expo.io/@mitulsavani/Front-end
@@ -37,8 +37,7 @@ Create an account with a name, e-mail, and password. The user is then automatica
 Displays a feed of all of the soonest events. Users can choose to filter the feed with options such as category, date, time, and location. Tapping an event will redirect the user to the Event Details screen.
 
 - **Event Details**
-Provides all of the information about an event. This includes an image, description, category, date, time, and the location on a map.
-On this screen, the user can also: RSVP for the event, add the event to their calendar, or open the location of the event in apple maps, or message the poster.
+Provides all of the information about an event. This includes an image, description, category, date, time, and the location on a map. On this screen, the user can also: RSVP for the event, add the event to their calendar, or open the location of the event in apple maps, or message the poster.
 
 - **Create Event**
 Users can provide all of the details for an event and post it. The category and location is selected form a drop-down menu.
@@ -54,36 +53,36 @@ Contains a Sign Out button that will redirect the user to the Login screen.
 # API Routes
 
 - **POST /users/login**
-Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e-mail and password
+Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e-mail and password<br/>
 Response:&nbsp;&nbsp; user id, login status, response message, and access token
 
 - **PUT /users/register**
-Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; First name, last name, e-mail, and password
+Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; First name, last name, e-mail, and password<br/>
 Response:&nbsp;&nbsp; user id, login status, response message, and access token
 
 - **GET /users/getUsers**
 Response:&nbsp;&nbsp; login status, response message, number of users, and an array of user objects
 
 - **POST /users/RSVP**
-Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User ID, event ID
+Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User ID, event ID<br/>
 Response:&nbsp;&nbsp; login status and response message
 
 - **DELETE /users/RSVP**
-Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User ID, event ID
+Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User ID, event ID<br/>
 Response:&nbsp;&nbsp; login status and response message
 
 - **GET /users/RSVP/:UserID**
 Response:&nbsp;&nbsp; login status, response message, and a list of events the user RSVP'd for
 
 - **POST /users/posts**
-Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User ID
+Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User ID<br/>
 Response:&nbsp;&nbsp; login status, response message, and a an array of event objects that the user posted
 
 - **GET /events**
 Response:&nbsp;&nbsp; An array of event objects
 
 - **POST /events**
-Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Event name, description, age restriction, user ID, Category ID, location ID, image, date, start time, and end time
+Request:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Event name, description, age restriction, user ID, Category ID, location ID, image, date, start time, and end time<br/>
 Response:&nbsp;&nbsp; login status, response message, and event ID of the created event
 
 - **DELETE /events/:EventID**
