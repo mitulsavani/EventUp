@@ -9,31 +9,35 @@ import {
   Image,
   Share
 } from "react-native";
-import { Avatar, Button } from "react-native-elements";
+import { Avatar, Icon } from "react-native-elements";
 import { format } from "date-fns";
 import moment from "moment";
 
 export default class ProfileScreen extends React.Component {
 
-  static navigationOptions = {
-    title: 'Profile',
-    headerTintColor: 'white',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-      color: 'white',
-    },
-    headerStyle: {
-      backgroundColor: '#39CA74',
-    },
-    headerRight: (
-      <Button
-        onPress={this._signOutAsync}
-        title="Sign Out"
-        color="#fff"
-        type='clear'
-        titleStyle={{ fontSize: 16, color: '#FFFFFF'}}
-      />    
-    ), 
+  static navigationOptions = ({navigation}) => {
+    
+    const { params = {} } = navigation.state;
+    return {
+      title: 'Profile',
+      headerTintColor: 'white',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+        color: 'white',
+      },
+      headerStyle: {
+        backgroundColor: '#39CA74',
+      },
+      headerRight: (
+        <Icon
+          name="sign-out"
+          type="octicon"
+          color="#fff"
+          iconStyle={{ marginRight: 15 }}
+          onPress={() => params.handleSignOut()}
+        />    
+      ), 
+    };
   };
 
   constructor(props) {
@@ -50,6 +54,8 @@ export default class ProfileScreen extends React.Component {
 
   async componentDidMount() {
     this.setState({ isLoading: true });
+    this.props.navigation.setParams({ handleSignOut: this._signOutAsync})
+
     try {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');      
