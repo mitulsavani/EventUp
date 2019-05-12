@@ -7,7 +7,8 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  StatusBar
+  StatusBar,
+
 } from "react-native";
 import { CheckBox, Button } from "react-native-elements";
 import { TextInput } from "react-native-paper";
@@ -16,10 +17,13 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
 import { Dropdown } from 'react-native-material-dropdown';
 import moment from "moment";
+import {ImageStore, ImageEditor} from "react-native";
+// import RNFS from "react-native-fs";
 
 export const PRIMARY_COLOR = '#39CA74';
 
 export default class CreateEvent extends React.Component {
+  
   constructor(props) {
     super(props);
 
@@ -36,6 +40,11 @@ export default class CreateEvent extends React.Component {
       endTime: "",
       locationName:"",
       categoryName:"",
+      locationData:[],
+      categoryData:[],
+      imageData:"",
+      locationsMap:undefined,
+      categoriesMap:undefined,
 
       checked: false,
       isDatePickerVisible: false,
@@ -46,6 +55,8 @@ export default class CreateEvent extends React.Component {
     this.updatePostField = key => text => this.updatePostFieldState(key, text);
     this.uploadEvent = this.uploadEvent.bind(this);
   }
+
+  
 
   onChangeText(text) {
     ['locationName', 'categoryName']
@@ -122,114 +133,179 @@ export default class CreateEvent extends React.Component {
     });
 
     if (!result.cancelled) {
+      
+      Image.getSize(result, (width, height) => {
+        let imageSettings = {
+          offset: { x: 0, y: 0 },
+          size: { width: width, height: height }
+        };
+        ImageEditor.cropImage(result, imageSettings, (uri) => {
+          ImageStore.getBase64ForTag(uri, (data) => {
+            // data == base64 encoded image
+            this.setState({imageData:data});
+          }, e => console.warn("getBase64ForTag: ", e))
+        }, e => console.warn("cropImage: ", e))
+      })
+
+
       this.setState({ image: result });
     }
   };
 
+ async componentDidMount() {
+   var locationNames = new Array();
+   var categoryNames = new Array(); 
+   var locationsMap = new Map();
+   var categoriesMap = new Map();
+   
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    const userId = await AsyncStorage.getItem('userId');
+  try {
+    let response = await fetch(
+      "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/locations",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Authorization: token
+        }
+      }
+    );
+
+    response.json().then(result => {
+      result.data.forEach(function(location) {
+        locationNames.push({value:location.Name});
+        locationsMap.set(location.Name,location.id);
+      });
+      this.setState({ locationsMap:locationsMap });
+      this.setState({ locationData:locationNames });
+      
+    });
+  } catch (error) {
+    this.setState({ response: error });
+    console.log(error);
+  }
+
+  try {
+    let response = await fetch(
+      "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/categories",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          Authorization: token
+        }
+      }
+    );
+
+    response.json().then(result => {
+      result.data.forEach(function(category) {
+        categoryNames.push({value:category.Name});
+        categoriesMap.set(category.Name,category.id)
+      });
+      this.setState({categoriesMap:categoriesMap });
+      this.setState({ categoryData:categoryNames });
+    });
+  } catch (error) {
+    this.setState({ response: error });
+    console.log(error);
+  }
+
+}catch (e) {
+    console.log("AsyncStorage failed to retrieve token:", e);
+  }
+}
+
+
   async uploadEvent() {
-    const { title, locationName, categoryName, description, startDate, startTime, endTime, checked } = this.state;
-    let locationId = "1";
-    let categoryId = "1";
+    const { categoriesMap, locationsMap, image,imageData, title, locationName, categoryName, description, startDate, startTime, endTime, checked } = this.state;
+    let locationId = locationsMap.get(locationName);
+    let categoryId = categoriesMap.get(categoryName);
     let ageRestriction = "0"
     if (checked) {
       ageRestriction = "1";
     }
-console.log("Time :", startTime);
-
-    if (locationName == "J Paul Leonard Library") {
-      locationId = "1";
-    } else if (locationName == "Thornton Hall") {
-      locationId = "2";
-    } else if (locationName == "Hensil Hall") {
-      locationId = "3";
-    }
-
-    if (categoryName == "") {
-      categoryId = "1";
-    } else if (categoryName == "") {
-      categoryId = "2";
-    } else if (categoryName == "") {
-      categoryId = "3";
-    }
-
-
+    console.log("LocationId:",locationId);
     try {
-    const token = await AsyncStorage.getItem('userToken');
-    const userId = await AsyncStorage.getItem('userId');
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
 
-    try {
-      let response = await fetch(
-        "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-            Authorization:
-              token
-          },
 
-          body: JSON.stringify({
-            Name: title,
-            Description: description,
-            AgeRestriction: ageRestriction,
-            UserId: userId,
-            CategoryId: categoryId,
-            LocationId: locationId,
-            Image: null,
-            StartDate: startDate,
-            StartTime: startTime,
-            EndTime: endTime
-          })
+      try {
+        var formData = new FormData();
+        formData.append("Name",title);
+        formData.append("Description",description);
+        formData.append("AgeRestriction",ageRestriction);      
+        formData.append("UserId",userId);
+        formData.append("CategoryId",categoryId);
+        formData.append("LocationId",locationId);
+        formData.append("Image",imageData);
+        formData.append("StartDate",startDate);
+        formData.append("StartTime",startTime);
+        formData.append("EndTime",endTime);
+          
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "multipart/form-data; charset=utf-8",
+              Authorization:
+                token
+            },
+            
+            body:formData
+          }
+        );
+  
+        response.json().then(result => {
+          if(result.status){
+          Alert.alert(
+            'Alert!',
+            'Event Created Successfully',
+            [
+              { text: 'OK', onPress: () => this.props.navigation.navigate('events') }
+            ],
+            { cancelable: false }
+          );
+        }else {
+          Alert.alert(
+            'Alert!',
+            'Please Fill out All the Fields',
+            [
+              { text: 'OK' }
+            ],
+            { cancelable: false }
+          );
         }
-      );
-
-      response.json().then(result => {
-        
-        console.log(result);
+        });
+      } catch (error) {
+        this.setState({ loading: false, response: error });      
+        console.log(error);
         Alert.alert(
           'Alert!',
-          'Event Created Successfully',
+          'Failed to Create an Event',
           [
-            { text: 'OK', onPress: () => this.props.navigation.navigate('events') }
+            { text: 'OK', onPress: () => console.log('Failed to Create an Event') }
           ],
           { cancelable: false }
         );
-      });
-    } catch (error) {
-      this.setState({ loading: false, response: error });      
-      console.log(error);
-      Alert.alert(
-        'Alert!',
-        'Failed to Create an Event',
-        [
-          { text: 'OK', onPress: () => console.log('Failed to Create an Event') }
-        ],
-        { cancelable: false }
-      );
+      }
+    } catch(e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
     }
-  } catch(e) {
-    console.log("AsyncStorage failed to retrieve token:", e);
-  }
+  
+
+   
   }
 
   render() {
-    let { image} = this.state;
-    let locationData = [{
-      value: 'J Paul Leonard Library',
-    }, {
-      value: 'Thornton Hall',
-    }, {
-      value: 'Hensil Hall',
-    }];
+    let { image, locationData, categoryData } = this.state;
+    
 
-    let categoryData = [{
-      value: 'Study Group',
-    }, {
-      value: 'Health & Wellness',
-    }, {
-      value: 'Social',
-    }];
 
+    
     return (
       <ScrollView>
         <View style={styles.container}>
@@ -267,7 +343,7 @@ console.log("Time :", startTime);
 
             <TextInput
               mode="outlined"
-              style={{ marginBottom: 10, height: 200, position: "fixed" }}
+              style={{ marginBottom: 10, height: 200 }}
               label="Description"
               multiline={true}
               numberOfLines={4}

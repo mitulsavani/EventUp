@@ -103,22 +103,36 @@ async loginAction() {
     });
 
     response.json().then(result => {
+      console.log(result)
       //Login Successful
-      if (result.message == "success" || result.message == "Successful login"){        
-        Alert.alert(
-          'Alert!',
-          'You have successfully logged in',
-          [
-            { text: 'OK', onPress: () => this._signInAsync(result.token,result.id.toString()) }
-          ],
-          { cancelable: false }
-        );
+      if (result.status){ 
+        
+        if(!result.isBlocked) {
+          Alert.alert(
+            'Alert!',
+            `${result.message}`,
+            [
+              { text: 'OK', onPress: () => this._signInAsync(result.token,result.id.toString()) }
+            ],
+            { cancelable: false }
+          );
+        } else {
+          Alert.alert(
+            'Alert!',
+            `${result.message}`,
+            [
+              { text: 'OK' }
+            ],
+            { cancelable: false }
+          );
+        }
+
       } 
       //Login failed
       else {
         Alert.alert(
-          'Alert!',
-          'Login Failed',
+          `${result.message}`,
+          'Incorrect email or password',
           [
             { text: 'OK' }
           ],
