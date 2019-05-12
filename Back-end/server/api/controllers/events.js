@@ -6,7 +6,8 @@ exports.getAllEvents = (req, res, next) => {
     db.query('SELECT Event.*, '+
     'Category.Name AS CategoryName, Location.Name AS LocationName, Location.Longitude, Location.Latitude'+
     ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
-    'ON Event.CategoryId = Category.id').then( ([result, fields]) => {
+    'ON Event.CategoryId = Category.id'+
+    ' LIMIT 25').then( ([result, fields]) => {
         res.status(200).json({
             status: true,
             message: "All events queried",
