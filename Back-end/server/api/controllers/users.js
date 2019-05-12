@@ -59,7 +59,7 @@ exports.login = (req, res, next) => {
             if (user == "") {
                 res.status(404).json({
                     status: false,
-                    message: 'No Account'
+                    message: 'Login Failed'
                 });
             }else{
                 bcrypt.compare(req.body.Password, user[0].Password, (err, result) => {
@@ -71,10 +71,7 @@ exports.login = (req, res, next) => {
                                 LastName: user.LastName,
                                 Email: user.Email,
                             },
-                            process.env.JWT_KEY,
-                            {
-                                expiresIn: '24h'
-                            }
+                            process.env.JWT_KEY
                         )
                         res.status(200).json({
                             id: user[0].id,

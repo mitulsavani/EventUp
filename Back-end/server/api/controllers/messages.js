@@ -19,10 +19,9 @@ exports.send = (req, res, next) => {
 }
 
 exports.receive = (req, res, next) => {
-    console.log("passed id: " + req.params.EventId);
-    //UNTESTED query , Cory, 5/7/19
-    db.query('SELECT Message.Message, Message.Timestamp'+
+    db.query('SELECT Message.Message, Message.Timestamp, Message.FkSenderUserId, User.FirstName, User.LastName'+
     ' FROM Message'+
+    ' JOIN User ON User.id = Message.FkSenderUserId'+
     ' WHERE Message.FkReceiverEventId = ?' + 
     'ORDER BY Message.id DESC', [req.params.EventId]).then(([data,_]) => {
         res.status(200).json({
