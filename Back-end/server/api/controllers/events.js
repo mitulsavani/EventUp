@@ -1,4 +1,5 @@
 const db = require('../models/database.js');
+const fs = require('file-system')
 const jwt = require('jsonwebtoken');
 
 exports.getAllEvents = (req, res, next) => {
@@ -21,10 +22,19 @@ exports.getAllEvents = (req, res, next) => {
 }
 
 exports.postEvent = (req, res, next) => {
+
+    let data = req.body.Image.substring(18);
+    data = new Buffer(data.toString(), 'base64')
+    let filename = new Date().toISOString().replace(/:/g, '-') + '.jpeg';
+
+    fs.writeFile(`./uploads/${filename}`, data, function(err) {
+        if (err) console.log(err);
+    })
+
     db.query('INSERT INTO Event SET ?', 
     {Name: req.body.Name, Description: req.body.Description, AgeRestriction: req.body.AgeRestriction, 
     UserId: req.body.UserId, CategoryId: req.body.CategoryId, LocationId: req.body.CategoryId, 
-    Image: 'ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/' + req.file.path, 
+    Image: 'localhost:3000/uploads' + filename, 
     StartDate: req.body.StartDate, StartTime: req.body.StartTime, EndTime: req.body.EndTime
     })
     .then( result => {
