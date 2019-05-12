@@ -22,8 +22,8 @@ Other features include a button to add an event to your calendar and Google Maps
 - Through the console: `expo start iOS`<br/>
 If you have an iOS simulator installed on XCode, it will automatically launch.<br/>
 Otherwise you can scan the generated QR code on an iOS device.
-- From expo:
-Scan the QR code from this link on an iOS device: https://expo.io/@mitulsavani/Front-end
+- Scan the QR code for the built project on Expo with an iOS device:
+[Expo Build](https://expo.io/@mitulsavani/Front-end "Link to Expo build")
 
 # Screens
 
