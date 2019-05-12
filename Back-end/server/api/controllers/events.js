@@ -34,7 +34,7 @@ exports.postEvent = (req, res, next) => {
     db.query('INSERT INTO Event SET ?', 
     {Name: req.body.Name, Description: req.body.Description, AgeRestriction: req.body.AgeRestriction, 
     UserId: req.body.UserId, CategoryId: req.body.CategoryId, LocationId: req.body.CategoryId, 
-    Image: 'ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/uploads' + filename, 
+    Image: 'ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/uploads/' + filename, 
     StartDate: req.body.StartDate, StartTime: req.body.StartTime, EndTime: req.body.EndTime
     })
     .then( result => {
