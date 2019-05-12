@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  TouchableOpacity,
   AsyncStorage,
   FlatList,
   StyleSheet,
@@ -76,7 +77,7 @@ export default class ProfileScreen extends React.Component {
       console.log(error);
     }
     var url = "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/"+userId;
-        
+
     try {
       let response = await fetch(
         url,
@@ -114,6 +115,12 @@ export default class ProfileScreen extends React.Component {
 
   _renderEvents = (item) => {
     return(
+      <TouchableOpacity
+        style={styles.cardContainer}
+        key={item}
+        onPress={() => this.props.navigation.navigate("detailEvent", { item })}
+        activeOpacity={0.8}
+      >
     <View style={{ flexDirection: "row", paddingTop: 30 }}>
       <Image
         source={require("../img/sample_image.jpg")}
@@ -128,6 +135,7 @@ export default class ProfileScreen extends React.Component {
         <Text style={{color: '#333'}}>{item.LocationName}</Text>      
       </View>
     </View>    
+    </TouchableOpacity>
     )
   }
 

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Alert,
   TextInput,
-FlatList,
+  FlatList,
 } from "react-native";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Button, Avatar } from "react-native-elements";
@@ -66,33 +66,33 @@ export default class DetailEventScreen extends React.Component {
     this.fetchComments();
   }
 
- async fetchComments() {
-  try {
-    const token = await AsyncStorage.getItem('userToken');
-    const userId = await AsyncStorage.getItem('userId');      
-  try {
-    let response = await fetch(
-      "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/messages/"+this.state.event.id,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          Authorization:token
-        },
-      }
-    );
-    
-    response.json().then(result => {      
-    this.setState({commentsData:result.data})
-    });
-  } catch (error) {
-    this.setState({ loading: false, response: error });
-    console.log(error);
-  }
+  async fetchComments() {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/messages/" + this.state.event.id,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: token
+            },
+          }
+        );
 
-} catch(e) {
-  console.log("AsyncStorage failed to retrieve token:", e);
-}
+        response.json().then(result => {
+          this.setState({ commentsData: result.data })
+        });
+      } catch (error) {
+        this.setState({ loading: false, response: error });
+        console.log(error);
+      }
+
+    } catch (e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
+    }
   }
 
   onTicketButtonPress = () => {
@@ -108,39 +108,42 @@ export default class DetailEventScreen extends React.Component {
   };
 
   onCommentButtonPress = async () => {
-     
-     try {
-      const token = await AsyncStorage.getItem('userToken');
-      const userId = await AsyncStorage.getItem('userId');      
+    const { event, commentsText } = this.state;
     try {
-      let response = await fetch(
-        "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/messages/send",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-            Authorization:token
-          },
-          body: 
-          JSON.stringify({
-            "SenderUserId" : userId,
-            "ReceiverEventId": this.state.event.id,
-             "Message":this.state.commentsText             
-        })
-        }
-      );
-      
-      response.json().then(result => {      
-      console.log("Message Sent :", result);
-      });
-    } catch (error) {
-      this.setState({ loading: false, response: error });
-      console.log(error);
-    }
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/messages/send",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: token
+            },
+            body:
+            JSON.stringify({
+              "SenderUserId": userId,
+              "ReceiverEventId": event.id,
+              "Message": commentsText
+            })
+          }
+        );
 
-  } catch(e) {
-    console.log("AsyncStorage failed to retrieve token:", e);
-  }
+        response.json().then(result => {
+          console.log("Message Sent :", result);
+          this.fetchComments();
+          this.state.commentsText = "";
+
+        });
+      } catch (error) {
+        this.setState({ loading: false, response: error });
+        console.log(error);
+      }
+
+    } catch (e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
+    }
 
   };
 
@@ -190,8 +193,8 @@ export default class DetailEventScreen extends React.Component {
         <ScrollView style={styles.scrollViewContainer}>
           <View style={styles.bannerImageContainer}>
             <Image
-             // source={require("../img/sample_image.jpg")}
-             source= {{uri:"http://"+event.Image}}
+              // source={require("../img/sample_image.jpg")}
+              source={{ uri: "http://" + event.Image }}
               style={{
                 flex: 1,
                 height: 200,
@@ -260,73 +263,94 @@ export default class DetailEventScreen extends React.Component {
               {event.LocationName}
             </Text>
             <View style={styles.mapImageContainer}>
-            <MapView
-              style={{flex: 1}}
-              region={{
-                latitude: 42.882004,
-                longitude: 74.582748,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421
-              }}
-              showsUserLocation={true}
-            >
-            <MapView.Marker
-                coordinate= {
-                  {latitude: 42.882004,
-                  longitude: 74.582748}
-                }
-                onPress= { createOpenLink({start: "New York City, New York, NY", travelType: "drive", end: "SOHO, New York, NY"}) }
-            />
-            </MapView>
+              <MapView
+                style={{ flex: 1 }}
+                region={{
+                  latitude: 42.882004,
+                  longitude: 74.582748,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421
+                }}
+                showsUserLocation={true}
+              >
+                <MapView.Marker
+                  coordinate={
+                    {
+                      latitude: 42.882004,
+                      longitude: 74.582748
+                    }
+                  }
+                  onPress={createOpenLink({ start: "New York City, New York, NY", travelType: "drive", end: "SOHO, New York, NY" })}
+                />
+              </MapView>
             </View>
           </View>
+          {/* locationContainer End */}
 
+          {/* Comments Section Start */}
 
-
-
-<View  style={styles.commentsInput}>
-<TextInput
-placeholder="Leave a comment"
-        style={{ paddingLeft:5,paddingRight:5,height: 80, borderColor: 'gray', borderWidth: 1}}
-        onChangeText={(text) => this.setState({commentsText:text})}
-        value={commentsText}
-        editable = {true}
-        multiline = {true}
-        numberOfLines = {4}
-      />
-</View>
-<Button
-              title="Comment"
-              type="outline"
-              titleStyle={{ fontSize: 12, color: "white" }}
-              containerStyle={{                
-                marginTop: 20,
-                marginBottom: 40,
-                marginLeft: 20,
-                alignSelf:"center"
-              }}
-              buttonStyle={styles.commentButton}
-              onPress={() => this.onCommentButtonPress()}
+          <View style={styles.commentsInput}>
+            <TextInput
+              placeholder="Leave a comment..."
+              style={{ paddingLeft: 5, paddingRight: 5, height: 80, borderColor: 'gray', borderWidth: 1 }}
+              onChangeText={(text) => this.setState({ commentsText: text })}
+              value={commentsText}
+              editable={true}
+              multiline={true}
+              numberOfLines={4}
             />
-     <Text style={styles.baseText}>
-       Comments
+          </View>
+          <Button
+            title="Comment"
+            type="outline"
+            titleStyle={{ fontSize: 12, color: "white" }}
+            containerStyle={{
+              marginTop: 20,
+              marginBottom: 40,
+              marginLeft: 20,
+              alignSelf: "center"
+            }}
+            buttonStyle={styles.commentButton}
+            onPress={() => this.onCommentButtonPress()}
+          />
+          <Text style={styles.baseText}>
+            Comments
       </Text>
 
-      <FlatList
-        data={this.state.commentsData}
-        style={styles.commentsList}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View>
-          <Text style={{ color: "#333" }}>{item.Message}</Text>
-          <Text style={{ color: "#333" }}> {moment.utc(item.Timestamp).format("MMMM DD")} {" | "}
-              {format(item.Timestamp, "hh:mm a")} </Text>
-          </View>
-        )}
-      />
-    
-          {/* locationContainer End */}
+          <FlatList
+            data={this.state.commentsData}
+            style={styles.commentsList}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginBottom: 25,
+                }}>
+                <View
+                  style={styles.avatarView}>
+                  <Avatar
+                    size="small"
+                    rounded
+                    title={item.FirstName.substring(0, 1) + item.LastName.substring(0, 1)}
+                  />
+                </View>
+                <View style={{}}>
+                  <View style={{ flexDirection: "row", paddingBottom: 5 }}>
+                    <Text style={styles.commentName}> {item.FirstName}{" "}{item.LastName}</Text>
+                    <Text style={styles.commentTimestamp}>  {moment.utc(item.Timestamp).format("MMMM DD")} {" | "} {format(item.Timestamp, "hh:mm a")} </Text>
+                  </View>
+
+                  <Text numberOfLines={5} style={{
+                    flex: 1, width: 300,
+                  }}>{" "}{item.Message}</Text>
+
+                </View>
+              </View>
+            )}
+          />
         </ScrollView>
+        {/* Comments Section End */}
         <View style={styles.purchaseContainer}>
           <TouchableOpacity>
             <Button
@@ -345,14 +369,14 @@ placeholder="Leave a comment"
     const { isLoading } = this.state;
     return (
       <View style={styles.mainContainer}>
-        {isLoading ? this.loadingView() : this.contentView() }
+        {isLoading ? this.loadingView() : this.contentView()}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  
+
   mainContainer: {
     flex: 1
   },
@@ -469,19 +493,36 @@ const styles = StyleSheet.create({
   },
 
   commentsInput: {
-    paddingLeft:10,
-    paddingRight:10
+    paddingLeft: 10,
+    paddingRight: 10
   },
 
-commentsList: {
-  paddingLeft:20,
-  paddingRight:20
-},
+  commentsList: {
+    paddingLeft: 20,
+    paddingRight: 20
+  },
+
+  commentName: {
+    fontWeight: "500",
+    paddingRight: 10,
+    fontSize: 12.5
+
+  },
+
+  commentTimestamp: {
+    color: "grey",
+    fontSize: 12
+  },
   baseText: {
-    fontSize: 32, 
+    fontSize: 32,
     marginLeft: 10,
     fontWeight: 'bold',
+    paddingBottom: 20
   },
+
+  avatarView: {
+    paddingRight: 10,   
+  }
 
 
 });
