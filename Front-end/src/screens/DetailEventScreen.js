@@ -1,15 +1,18 @@
 import React from "react";
 import {
+  AsyncStorage,
   StyleSheet,
   Text,
   View,
   ScrollView,
   Image,
   TouchableOpacity,
-  Alert
+  Alert,
+  TextInput,
+  FlatList,
 } from "react-native";
 import { SimpleLineIcons } from "@expo/vector-icons";
-import { Button } from "react-native-elements";
+import { Button, Avatar } from "react-native-elements";
 import moment from "moment";
 import { format } from "date-fns";
 import MapView, { Marker } from 'react-native-maps';
@@ -31,7 +34,10 @@ export default class DetailEventScreen extends React.Component {
     const event = props.navigation.state.params.item;
     this.state = {
       event: event || null,
-      isLoading: false
+      isLoading: false,
+      commentsData: [],
+
+      commentsText: '',
     };
   }
 
@@ -57,6 +63,36 @@ export default class DetailEventScreen extends React.Component {
       this.setState({ isLoading: false });
       console.log("HERE", event);
     }
+    this.fetchComments();
+  }
+
+  async fetchComments() {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/messages/" + this.state.event.id,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: token
+            },
+          }
+        );
+
+        response.json().then(result => {
+          this.setState({ commentsData: result.data })
+        });
+      } catch (error) {
+        this.setState({ loading: false, response: error });
+        console.log(error);
+      }
+
+    } catch (e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
+    }
   }
 
   onTicketButtonPress = () => {
@@ -69,6 +105,46 @@ export default class DetailEventScreen extends React.Component {
         <ActivityIndicator size="large" />
       </View>
     );
+  };
+
+  onCommentButtonPress = async () => {
+    const { event, commentsText } = this.state;
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/messages/send",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: token
+            },
+            body:
+            JSON.stringify({
+              "SenderUserId": userId,
+              "ReceiverEventId": event.id,
+              "Message": commentsText
+            })
+          }
+        );
+
+        response.json().then(result => {
+          console.log("Message Sent :", result);
+          this.fetchComments();
+          this.state.commentsText = "";
+
+        });
+      } catch (error) {
+        this.setState({ loading: false, response: error });
+        console.log(error);
+      }
+
+    } catch (e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
+    }
+
   };
 
   onAddCalendarEvent = async item => {
@@ -110,14 +186,15 @@ export default class DetailEventScreen extends React.Component {
   };
 
   contentView = () => {
-    const { isLoading, event } = this.state;
+    const { isLoading, event, commentsText } = this.state;
 
     return (
       <View style={styles.mainContainer}>
         <ScrollView style={styles.scrollViewContainer}>
           <View style={styles.bannerImageContainer}>
             <Image
-              source={require("../img/sample_image.jpg")}
+              // source={require("../img/sample_image.jpg")}
+              source={{ uri: "http://" + event.Image }}
               style={{
                 flex: 1,
                 height: 200,
@@ -186,7 +263,8 @@ export default class DetailEventScreen extends React.Component {
               {event.LocationName}
             </Text>
             <View style={styles.mapImageContainer}>
-            <MapView
+
+              <MapView
               style={{flex: 1}}
               region={{
                 latitude: event.Latitude,
@@ -207,14 +285,72 @@ export default class DetailEventScreen extends React.Component {
             </View>
           </View>
           {/* locationContainer End */}
-          <View style={styles.container}>
-            <ScrollView>       
-              <Text>
-                Add your text
-              </Text>      
-            </ScrollView>
-        </View>
+
+          {/* Comments Section Start */}
+
+          <View style={styles.commentsInput}>
+            <TextInput
+              placeholder="Leave a comment..."
+              style={{ paddingLeft: 5, paddingRight: 5, height: 80, borderColor: 'gray', borderWidth: 1 }}
+              onChangeText={(text) => this.setState({ commentsText: text })}
+              value={commentsText}
+              editable={true}
+              multiline={true}
+              numberOfLines={4}
+            />
+          </View>
+          <Button
+            title="Comment"
+            type="outline"
+            titleStyle={{ fontSize: 12, color: "white" }}
+            containerStyle={{
+              marginTop: 20,
+              marginBottom: 40,
+              marginLeft: 20,
+              alignSelf: "center"
+            }}
+            buttonStyle={styles.commentButton}
+            onPress={() => this.onCommentButtonPress()}
+          />
+          <Text style={styles.baseText}>
+            
+      </Text>
+
+          <FlatList
+            data={this.state.commentsData}
+            style={styles.commentsList}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginBottom: 25,
+                }}>
+                <View
+                  style={styles.avatarView}>
+                  <Avatar
+                    size="small"
+                    rounded
+                    title={item.FirstName.substring(0, 1) + item.LastName.substring(0, 1)}
+                  />
+                </View>
+                <View style={{}}>
+                  <View style={{ flexDirection: "row", paddingBottom: 5 }}>
+                    <Text style={styles.commentName}> {item.FirstName}{" "}{item.LastName}</Text>
+                    <Text style={styles.commentTimestamp}>  {moment.utc(item.Timestamp).format("MMMM DD")} {" | "} {format(item.Timestamp, "hh:mm a")} </Text>
+                  </View>
+
+                  <Text numberOfLines={5} style={{
+                    flex: 1, width: 300,
+                  }}>{" "}{item.Message}</Text>
+
+                </View>
+              </View>
+            )}
+          />
+
         </ScrollView>
+        {/* Comments Section End */}
         <View style={styles.purchaseContainer}>
           <TouchableOpacity>
             <Button
@@ -233,13 +369,14 @@ export default class DetailEventScreen extends React.Component {
     const { isLoading } = this.state;
     return (
       <View style={styles.mainContainer}>
-        {isLoading ? this.loadingView() : this.contentView() }
+        {isLoading ? this.loadingView() : this.contentView()}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+
   mainContainer: {
     flex: 1
   },
@@ -346,5 +483,46 @@ const styles = StyleSheet.create({
     width: 250,
     borderRadius: 5,
     backgroundColor: "#E8787B"
+  },
+
+  commentButton: {
+    width: 80,
+    height: 40,
+    borderRadius: 5,
+    backgroundColor: "#39CA74"
+  },
+
+  commentsInput: {
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+
+  commentsList: {
+    paddingLeft: 20,
+    paddingRight: 20
+  },
+
+  commentName: {
+    fontWeight: "500",
+    paddingRight: 10,
+    fontSize: 12.5
+
+  },
+
+  commentTimestamp: {
+    color: "grey",
+    fontSize: 12
+  },
+  baseText: {
+    fontSize: 32,
+    marginLeft: 10,
+    fontWeight: 'bold',
+    paddingBottom: 20
+  },
+
+  avatarView: {
+    paddingRight: 10,   
   }
+
+
 });
