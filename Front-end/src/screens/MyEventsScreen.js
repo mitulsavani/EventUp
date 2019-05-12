@@ -74,7 +74,7 @@ export default class MyEventsScreen extends React.Component {
       >
         <View style={{ flex: 1, marginLeft: 10 }}>
           <Image
-            source={require("../img/sample_image.jpg")}
+            source= {{uri:"http://"+item.Image}}
             style={styles.imageEx}
           />
         </View>

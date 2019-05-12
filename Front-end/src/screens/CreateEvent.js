@@ -7,7 +7,8 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  StatusBar
+  StatusBar,
+
 } from "react-native";
 import { CheckBox, Button } from "react-native-elements";
 import { TextInput } from "react-native-paper";
@@ -132,7 +133,7 @@ export default class CreateEvent extends React.Component {
     });
 
     if (!result.cancelled) {
- 
+      
       Image.getSize(result, (width, height) => {
         let imageSettings = {
           offset: { x: 0, y: 0 },
@@ -225,71 +226,75 @@ export default class CreateEvent extends React.Component {
     if (checked) {
       ageRestriction = "1";
     }
+    console.log("LocationId:",locationId);
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
 
-    console.log("BASE 64 STRING : ",imageData.toString());
-    // console.log(categoryId,categoryName);
-    // console.log(locationId,locationName);
 
-
-    // try {
-    //   const token = await AsyncStorage.getItem('userToken');
-    //   const userId = await AsyncStorage.getItem('userId');
-  
-    //   try {
-    //     let response = await fetch(
-    //       "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
-    //       {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-Type": "application/json; charset=utf-8",
-    //           Authorization:
-    //             token
-    //         },
-  
-    //         body: JSON.stringify({
-    //           Name: title,
-    //           Description: description,
-    //           AgeRestriction: ageRestriction,
-    //           UserId: userId,
-    //           CategoryId: categoryId,
-    //           LocationId: locationId,
-    //           Image: imageData.toString,
-    //           //Image: null,
-    //           StartDate: startDate,
-    //           StartTime: startTime,
-    //           EndTime: endTime
-    //         })
-    //       }
-    //     );
-  
-    //     response.text().then(result => {
+      try {
+        var formData = new FormData();
+        formData.append("Name",title);
+        formData.append("Description",description);
+        formData.append("AgeRestriction",ageRestriction);      
+        formData.append("UserId",userId);
+        formData.append("CategoryId",categoryId);
+        formData.append("LocationId",locationId);
+        formData.append("Image",imageData);
+        formData.append("StartDate",startDate);
+        formData.append("StartTime",startTime);
+        formData.append("EndTime",endTime);
           
-    //       console.log(result);
-    //       //TODO : condition to check if event was created succesfully
-    //       Alert.alert(
-    //         'Alert!',
-    //         'Event Created Successfully',
-    //         [
-    //           { text: 'OK', onPress: () => this.props.navigation.navigate('events') }
-    //         ],
-    //         { cancelable: false }
-    //       );
-    //     });
-    //   } catch (error) {
-    //     this.setState({ loading: false, response: error });      
-    //     console.log(error);
-    //     Alert.alert(
-    //       'Alert!',
-    //       'Failed to Create an Event',
-    //       [
-    //         { text: 'OK', onPress: () => console.log('Failed to Create an Event') }
-    //       ],
-    //       { cancelable: false }
-    //     );
-    //   }
-    // } catch(e) {
-    //   console.log("AsyncStorage failed to retrieve token:", e);
-    // }
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "multipart/form-data; charset=utf-8",
+              Authorization:
+                token
+            },
+            
+            body:formData
+          }
+        );
+  
+        response.json().then(result => {
+          if(result.status){
+          Alert.alert(
+            'Alert!',
+            'Event Created Successfully',
+            [
+              { text: 'OK', onPress: () => this.props.navigation.navigate('events') }
+            ],
+            { cancelable: false }
+          );
+        }else {
+          Alert.alert(
+            'Alert!',
+            'Please Fill out All the Fields',
+            [
+              { text: 'OK' }
+            ],
+            { cancelable: false }
+          );
+        }
+        });
+      } catch (error) {
+        this.setState({ loading: false, response: error });      
+        console.log(error);
+        Alert.alert(
+          'Alert!',
+          'Failed to Create an Event',
+          [
+            { text: 'OK', onPress: () => console.log('Failed to Create an Event') }
+          ],
+          { cancelable: false }
+        );
+      }
+    } catch(e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
+    }
   
 
    
