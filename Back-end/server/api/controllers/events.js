@@ -23,8 +23,7 @@ exports.getAllEvents = (req, res, next) => {
 
 exports.postEvent = (req, res, next) => {
 
-    let data = req.body.Image.substring(18);
-    data.replaceAll(' ', '+');
+    let data = req.body.Image;
     data = new Buffer(data.toString(), 'base64')
     let filename = new Date().toISOString().replace(/:/g, '-') + '.jpeg';
 
