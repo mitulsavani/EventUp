@@ -103,6 +103,7 @@ async loginAction() {
     });
 
     response.json().then(result => {
+      console.log(result)
       //Login Successful
       if (result.status){ 
         
@@ -125,6 +126,7 @@ async loginAction() {
             { cancelable: false }
           );
         }
+
       } 
       //Login failed
       else {
