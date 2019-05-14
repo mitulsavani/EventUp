@@ -34,13 +34,14 @@ export default class DetailEventScreen extends React.Component {
         headerTintColor: "#FFF",
       },
       headerRight: (
-      <Icon
-        name='share'
-        type='material'
-        color='#fff'
-        iconStyle={{ marginRight: 15 }} 
-        onPress={ () => handleShare()}
-      />
+      <TouchableOpacity onPress={ () => handleShare()}>  
+        <Icon
+          name='share'
+          type='material'
+          color='#fff'
+          iconStyle={{ marginRight: 15 }} 
+        />
+      </TouchableOpacity>
       )
     };
   };
