@@ -16,15 +16,12 @@ exports.register = (req, res, next) => {
                 .then(([result, fields]) => {
                     const token = jwt.sign(
                         {
-                            id: result.insertId,
-                            FirstName: req.FirstName,
-                            LastName: req.LastName,
-                            Email: req.Email,
+                            id: req.body.id,
+                            FirstName: req.body.FirstName,
+                            LastName: req.body.LastName,
+                            Email: req.body.Email,
                         },
-                        process.env.JWT_KEY,
-                        {
-                            expiresIn: '24h'
-                        }
+                        process.env.JWT_KEY
                     )
                     res.status(200).json({
                         status: true,
@@ -32,6 +29,7 @@ exports.register = (req, res, next) => {
                         message: 'Registered Successfully',
                         token: token
                     });
+                    return;
                 })
                 .catch(err => {
                     res.send({
@@ -46,7 +44,7 @@ exports.register = (req, res, next) => {
 
 exports.login = (req, res, next) => {
     db.query('SELECT * FROM User WHERE Email = ?', req.body.Email)
-        .then(([user,_]) => {
+        .then(([user, _]) => {
             //Check if account is blocked
             let message = () =>{
                 if(user[0].isBlocked != 0){
@@ -66,10 +64,10 @@ exports.login = (req, res, next) => {
                     if (result) {
                         const token = jwt.sign(
                             {
-                                id: user.id,
-                                FirstName: user.FirstName,
-                                LastName: user.LastName,
-                                Email: user.Email,
+                                id: user[0].id,
+                                FirstName: user[0].FirstName,
+                                LastName: user[0].LastName,
+                                Email: user[0].Email,
                             },
                             process.env.JWT_KEY
                         )
