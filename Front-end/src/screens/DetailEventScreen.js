@@ -54,6 +54,7 @@ export default class DetailEventScreen extends React.Component {
       commentsData: [],
 
       commentsText: '',
+      isRSVP: false
     };
   }
 
@@ -135,7 +136,7 @@ export default class DetailEventScreen extends React.Component {
     }
   };
 
-  async onTicketButtonPress() {
+  async addRSVP() {
     const { event } = this.state;
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -192,6 +193,88 @@ export default class DetailEventScreen extends React.Component {
     } catch (e) {
       console.log("AsynStorage failed", e);
     }
+  }
+
+  async removeRsvp() {
+    const { event } = this.state;
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem('userId');
+
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/RSVP",
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: token
+            },
+
+            body: JSON.stringify({
+              UserId: userId,
+              EventId: event.id
+            })
+          }
+        );
+
+        response.json().then(result => {
+          console.log(result);
+
+          if (result.status == true) {
+            Alert.alert(
+              "Alert!",
+              "Successfully removed RSVP",
+              [
+                {
+                  text: "OK",
+                  onPress: () => this.props.navigation.navigate("events")
+                }
+              ],
+              { cancelable: false }
+            );
+          } else {
+            Alert.alert("Alert!", "Failed to delete RSVP, Please try again later", [{ text: "OK" }], {
+              cancelable: false
+            });
+          }
+        });
+      } catch (e) {
+        console.log("Something failed with response", e);
+
+        Alert.alert(
+          "Alert!",
+          "Error, Server Issue",
+          [{ text: "OK" }],
+          { cancelable: false }
+        );
+      }
+    } catch (e) {
+      console.log("AsynStorage failed", e);
+    }
+  }
+
+  async onRsvpButtonPress() {
+    if(!this.state.isRSVP)
+      this.addRSVP();
+    else
+      this.removeRsvp();
+  }
+
+  getRsvpButtonTitle = () => {
+    if(!this.state.isRSVP)
+    return "RSVP";
+  else
+    return "Remove RSVP";
+  }
+
+  getRsvpButtonStyle = () => {
+    console.log("isRSVP: ", this.state.isRSVP);
+
+    if(!this.state.isRSVP)
+      return styles.rsvpAddButton;
+    else
+      return styles.rsvpRemoveButton;
   }
 
   loadingView = () => {
@@ -440,9 +523,11 @@ export default class DetailEventScreen extends React.Component {
           <View style={styles.purchaseContainer}>
             <TouchableOpacity>
               <Button
-                onPress={() => this.onTicketButtonPress()}
-                title="RSVP"
-                buttonStyle={styles.rsvpButton}
+                onPress={() => this.onRsvpButtonPress()}
+
+                title = {this.getRsvpButtonTitle()}
+                buttonStyle = {this.getRsvpButtonStyle()}
+
                 titleStyle={{ fontSize: 25, fontFamily: "Futura" }}
                 rounded
               />
@@ -567,11 +652,17 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
 
-  rsvpButton: {
+  rsvpAddButton: {
     width: 375,
     height: 70,
     backgroundColor: "#39CA74"
-},
+  },
+
+  rsvpRemoveButton: {
+    width: 375,
+    height: 70,
+    backgroundColor: "#FF0000"
+  },
 
   commentButton: {
     width: 80,

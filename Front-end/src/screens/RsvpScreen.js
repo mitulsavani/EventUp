@@ -10,7 +10,7 @@ import {
   createAppContainer,
   createStackNavigator
 } from "react-native";
-import { withNavigation, withNavigationFocus } from "react-navigation";
+import { withNavigationFocus } from "react-navigation";
 import { format } from 'date-fns';
 import moment from 'moment';
 
