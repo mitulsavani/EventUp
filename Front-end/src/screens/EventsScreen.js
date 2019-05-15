@@ -153,7 +153,7 @@ export default class EventsScreen extends React.Component {
         <View style={{ position: "absolute", right: 10, bottom: 30 }}>
           <Button
             title="+"
-            titleStyle={{ fontSize: 28 }}
+            titleStyle={{ fontSize: 28, height: "120%" }}
             containerStyle={{}}
             buttonStyle={{
               width: 50,
