@@ -6,10 +6,9 @@ import {
   Text,
   View,
   Image,
-  Share,
   TouchableOpacity
 } from "react-native";
-import { Button, Icon } from "react-native-elements";
+import { Button } from "react-native-elements";
 import { format } from "date-fns";
 import moment from "moment";
 
@@ -23,18 +22,8 @@ export default class EventsScreen extends React.Component {
     },
     headerStyle: {
       backgroundColor: "#39CA74"
-    },
-    headerRight: (
-      <Icon
-        name='share-alt'
-        type='font-awesome'
-        color='#fff'
-        iconStyle={{ marginRight: 15 }} 
-        onPress={() => {toggleModal(!this.state.isModalVisible)}}
-      />
-      )
+    }
   };
-  
 
   constructor(props) {
     super(props);
@@ -47,7 +36,7 @@ export default class EventsScreen extends React.Component {
   }
 
   async componentDidMount() {
-    this.setState({ isLoading: true, isModalVisible: false });
+    this.setState({ isLoading: true });
 
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -66,8 +55,9 @@ export default class EventsScreen extends React.Component {
         );
 
         response.json().then(result => {
+          console.log(result);
           this.setState({ eventsData: result.data, isLoading: false });
-          console.log(this.state.eventsData);
+          
         });
       } catch (error) {
         this.setState({ response: error });
@@ -77,28 +67,6 @@ export default class EventsScreen extends React.Component {
       console.log("AsyncStorage failed to retrieve token:", e);
     }
   }
-
-  toggleModal(visible) {
-    this.setState({ isModalVisible: visible });
-  }
-
-  onShare = async item => {
-    const str =
-      "Event name: " +
-      item.Name +
-      ". Time: " +
-      format("January 01, 2019 " + item.StartTime, "hh:mm a") +
-      ".";
-
-    try {
-      const result = await Share.share({
-        title: "Checkout this event from EventUp",
-        message: str
-      });
-    } catch (error) {
-      alert(error.message);
-    }
-  };
 
   onAddCalendarEvent = async item => {
     try {
@@ -148,7 +116,8 @@ export default class EventsScreen extends React.Component {
       >
         <View style={{ flex: 1, marginLeft: 10 }}>
           <Image
-            source={require("../img/sample_image.jpg")}
+            //source={require("../img/sample_image.jpg")}
+            source= {{uri:"http://"+item.Image}}
             style={styles.imageEx}
           />
         </View>
@@ -161,27 +130,6 @@ export default class EventsScreen extends React.Component {
               {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
             </Text>
             <Text style={{ color: "#333" }}>{item.LocationName}</Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              alignContent: "center",
-              padding: 10
-            }}
-          >
-            <Button
-              title="Share"
-              type="outline"
-              titleStyle={{ fontSize: 12, color: "white" }}
-              containerStyle={{
-                marginTop: 20,
-                marginBottom: 30,
-                marginLeft: 20
-              }}
-              buttonStyle={styles.buttonStyling}
-              onPress={() => this.onShare(item, item.Name, item.StartTime)}
-            />
           </View>
         </View>
       </TouchableOpacity>
@@ -204,29 +152,18 @@ export default class EventsScreen extends React.Component {
 
         <View style={{ position: "absolute", right: 10, bottom: 30 }}>
           <Button
-            title="Create"
-            titleStyle={{ fontSize: 12 }}
+            title="+"
+            titleStyle={{ fontSize: 28 }}
             containerStyle={{}}
             buttonStyle={{
-              width: 60,
-              height: 40,
-              borderRadius: 5,
-              backgroundColor: "#39CA74"
+              width: 50,
+              height: 50,
+              borderRadius: 25,
+              backgroundColor: "#463077"
             }}
             onPress={() => this.props.navigation.navigate("createEvent")}
           />
         </View>
-        <Modal animationType = {"slide"} transparent = {false}
-          visible = {this.state.isModalVisible}
-          onRequestClose = {() => { console.log("Modal has been closed.") } }>     
-            <View style = {styles.modal}>
-              <Text style = {styles.text}>Modal is open!</Text>          
-              <TouchableHighlight onPress = {() => {
-                this.toggleModal(!this.state.isModalVisible)}}> 
-                <Text style = {styles.text}>Close Modal</Text>
-              </TouchableHighlight>
-            </View>
-        </Modal>
       </View>
     );
   }
