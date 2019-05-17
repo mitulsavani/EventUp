@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   AsyncStorage,
   StyleSheet,
@@ -13,6 +13,7 @@ import {
   SafeAreaView,
   FlatList,
 } from "react-native";
+import { withNavigationFocus } from "react-navigation";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Button, Avatar, Icon } from "react-native-elements";
 import moment from "moment";
@@ -21,7 +22,7 @@ import MapView, { Marker } from "react-native-maps";
 import openMap, { createOpenLink } from "react-native-open-maps";
 import { Permissions, Calendar, Localization, Alarm } from "expo";
 
-export default class DetailEventScreen extends React.Component {
+class DetailEventScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const {handleShare } = navigation.state.params;
     
@@ -52,7 +53,6 @@ export default class DetailEventScreen extends React.Component {
       event: event || null,
       isLoading: false,
       commentsData: [],
-
       commentsText: '',
       isRSVP: false
     };
@@ -66,6 +66,7 @@ export default class DetailEventScreen extends React.Component {
     this.props.navigation.setParams({ handleShare: this.onShare });
 
     this.setState({ isLoading: true });
+
     if (event === null) {
       Alert.alert(
         "Unable to display Post!",
@@ -82,9 +83,17 @@ export default class DetailEventScreen extends React.Component {
       );
     } else {
       this.setState({ isLoading: false });
-      console.log("HERE", event);
+      //console.log("HERE", event);
     }
     this.fetchComments();
+  }
+
+  componentDidUpdate(prevProps) {
+    if(this.props.isFocused)
+      this.checkRSVP();
+    // if((prevProps.isFocused !== this.props.isFocused) && this.props.isFocused) {
+    //   this.checkRSVP();
+    // }
   }
 
   async fetchComments() {
@@ -160,7 +169,7 @@ export default class DetailEventScreen extends React.Component {
         );
 
         response.json().then(result => {
-          console.log(result);
+          //console.log(result);
 
           if (result.status == true) {
             Alert.alert(
@@ -219,7 +228,7 @@ export default class DetailEventScreen extends React.Component {
         );
 
         response.json().then(result => {
-          console.log(result);
+          //console.log(result);
 
           if (result.status == true) {
             Alert.alert(
@@ -254,6 +263,53 @@ export default class DetailEventScreen extends React.Component {
     }
   }
 
+  async checkRSVP() {
+    const { event } = this.state;
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem('userId');
+
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/checkRSVP",
+          //"http://localhost:3000/users/checkRSVP",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: token
+            },
+
+            body: JSON.stringify({
+              UserId: userId,
+              EventId: event.id
+            })
+          }
+        );
+
+        response.json().then(result => {
+          if (result.status == true) {
+            console.log("isRSVP: ", result.exists);
+            this.setState({ isRSVP: result.exists });
+          } else {
+            console.log("There was an error checking RSVP");
+          }
+        });
+      } catch (e) {
+        console.log("Something failed with response", e);
+
+        Alert.alert(
+          "Alert!",
+          "Error, Server Issue",
+          [{ text: "OK" }],
+          { cancelable: false }
+        );
+      }
+    } catch (e) {
+      console.log("AsynStorage failed", e);
+    }
+  }
+
   async onRsvpButtonPress() {
     if(!this.state.isRSVP)
       this.addRSVP();
@@ -263,14 +319,12 @@ export default class DetailEventScreen extends React.Component {
 
   getRsvpButtonTitle = () => {
     if(!this.state.isRSVP)
-    return "RSVP";
-  else
-    return "Remove RSVP";
+      return "RSVP";
+    else
+      return "Remove RSVP";
   }
 
   getRsvpButtonStyle = () => {
-    console.log("isRSVP: ", this.state.isRSVP);
-
     if(!this.state.isRSVP)
       return styles.rsvpAddButton;
     else
@@ -546,6 +600,8 @@ export default class DetailEventScreen extends React.Component {
     );
   }
 }
+
+export default withNavigationFocus(DetailEventScreen);
 
 const styles = StyleSheet.create({
 
