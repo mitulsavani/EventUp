@@ -54,27 +54,25 @@ exports.postEvent = (req, res, next) => {
 } 
 
 exports.getEvent = (req, res, next) => {
-        db.query('SELECT Event.*, '+
-        'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude'+
-        ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
-        'ON Event.CategoryId = Category.id'+
-        ' WHERE Event.id = ?', [req.params.id])
-        .then( (data) => {
-            console.log(req.userData);
-            res.status(200).json({
-                status: true,
-                event: data[0], 
-                message: "retrieved successfully"
-                //isRSVP:isRSVP
-            })
+    db.query('SELECT Event.*, '+
+    'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude'+
+    ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
+    'ON Event.CategoryId = Category.id'+
+    ' WHERE Event.id = ?', [req.params.id])
+    .then( (data) => {
+        console.log(req.userData);
+        res.status(200).json({
+            status: true,
+            event: data[0], 
+            message: "retrieved successfully"
         })
-        .catch( err => {
-            res.status(500).json({
-                status: false,
-                message: err
-            })
+    })
+    .catch( err => {
+        res.status(500).json({
+            status: false,
+            message: err
         })
-    //})
+    })
 }
 
 exports.deleteEvent = (req, res, next) => {
@@ -91,5 +89,35 @@ exports.deleteEvent = (req, res, next) => {
             message: err
         })
     })
+}
+
+exports.filterEvents = (req, res, next) => {
+    db.query('SELECT * FROM Event WHERE StartDate > NOW() AND CategoryId = ? ORDER BY StartDate ASC, StartTime ASC', [req.params.id])
+    .then( (events) => {
+        res.status(200).json({
+            status: true,
+            events: events[0]
+        })
+    })
+    .catch( (err) => {
+        res.status(500).json({
+            err
+        })
+    });
+}
+
+exports.startingSoon = (req, res, next) => {
+    db.query(`SELECT * FROM Event WHERE StartDate > NOW() ORDER BY StartDate ASC, StartTime ASC`)
+    .then( (events) => {
+        res.status(200).json({
+            status: true,
+            events: events[0]
+        })
+    })
+    .catch( (err) => {
+        res.status(500).json({
+            err
+        })
+    });
 }
 

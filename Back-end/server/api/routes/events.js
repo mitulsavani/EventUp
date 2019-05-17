@@ -16,6 +16,8 @@ const upload = multer({ storage: storage });
 checkAuth = require('../middleware/check-auth.js');
 eventController = require('../controllers/events.js');
 
+router.get('/upcoming', checkAuth, eventController.startingSoon);
+
 router.get('/', checkAuth, eventController.getAllEvents);
 
 router.post('/', checkAuth, upload.single('Image'), eventController.postEvent);
@@ -23,5 +25,7 @@ router.post('/', checkAuth, upload.single('Image'), eventController.postEvent);
 router.delete('/:id', checkAuth, eventController.deleteEvent);
 
 router.get('/:id', checkAuth, eventController.getEvent);
+
+router.get('/filter/:id', checkAuth, eventController.filterEvents);
 
 module.exports = router; 
