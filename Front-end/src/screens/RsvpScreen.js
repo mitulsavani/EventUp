@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,21 +6,27 @@ import {
   AsyncStorage,
   TouchableOpacity,
   FlatList,
-  Image
+  Image,
+  createAppContainer,
+  createStackNavigator
 } from "react-native";
+import { withNavigationFocus } from "react-navigation";
 import { format } from 'date-fns';
 import moment from 'moment';
 
-export default class MyEventsScreen extends React.Component {
+
+export default class RsvpScreen extends React.Component {
   static navigationOptions = {
-    title: "Tickets",
-    headerTintColor: "white",
+    title: `My Tickets`,
     headerTitleStyle: {
       fontWeight: "bold",
-      color: "white"
+      color: "#FFCC33"
+    },
+    headerTintStyle: {
+      color: '#FFCC33'
     },
     headerStyle: {
-      backgroundColor: "#39CA74"
+      backgroundColor: "#330033"
     }
   };
 
@@ -32,7 +38,13 @@ export default class MyEventsScreen extends React.Component {
       events: []
     };
   }
+
+
   async componentDidMount() {
+    this.loadRSVPEvents()
+  }
+
+  loadRSVPEvents = async () => {
     this.setState({ isLoading: true });
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -53,7 +65,6 @@ export default class MyEventsScreen extends React.Component {
         );
 
         response.json().then(result => {
-          console.log(result);
           this.setState({ events: result.data, isLoading: false });
         });
       } catch (error) {
@@ -65,12 +76,14 @@ export default class MyEventsScreen extends React.Component {
     }
   }
 
+
   _renderEvents = item => {
     return (
       <TouchableOpacity
         style={styles.cardContainer}
         key={item}
         activeOpacity={0.8}
+        onPress={() => this.props.navigation.navigate("detailEvent", { item })}
       >
         <View style={{ flex: 1, marginLeft: 10 }}>
           <Image
@@ -102,6 +115,8 @@ export default class MyEventsScreen extends React.Component {
             data={events}
             renderItem={({ item }) => this._renderEvents(item)}
             keyExtractor={(item, index) => index.toString()}
+            onRefresh={() => this.loadRSVPEvents()}
+            refreshing={this.state.isLoading}
           />
         </View>
       </View>
@@ -136,3 +151,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1
   }
 });
+
+
+export default withNavigationFocus(RsvpScreen);
+

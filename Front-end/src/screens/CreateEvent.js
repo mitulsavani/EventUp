@@ -20,9 +20,10 @@ import moment from "moment";
 import {ImageStore, ImageEditor} from "react-native";
 // import RNFS from "react-native-fs";
 
-export const PRIMARY_COLOR = '#39CA74';
+export const PRIMARY_COLOR = '#FFCC33';
 
 export default class CreateEvent extends React.Component {
+
   
   constructor(props) {
     super(props);
@@ -428,6 +429,7 @@ export default class CreateEvent extends React.Component {
                 title="Pick an image for the event"
                 onPress={this._pickImage}
                 buttonStyle={{ marginTop: 30, height: 50, borderRadius: 5, backgroundColor: PRIMARY_COLOR }}
+                titleStyle={{color: '#330033'}}
               />
               {image && (
                 <Image
@@ -439,7 +441,7 @@ export default class CreateEvent extends React.Component {
 
             <Button
               title="Create Event"
-              titleStyle={{ fontSize: 20, marginTop: 5 }}
+              titleStyle={{ fontSize: 20, marginTop: 5, color: '#330033' }}
               containerStyle={{ marginTop: 20, marginBottom: 30 }}
               buttonStyle={{ marginTop: 30, height: 50, borderRadius: 5, backgroundColor: PRIMARY_COLOR }}
               activeOpacity={0.8}

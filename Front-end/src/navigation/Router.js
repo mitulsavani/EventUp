@@ -4,7 +4,6 @@ import { createBottomTabNavigator, createAppContainer, createStackNavigator, cre
 import PropTypes from 'prop-types';
 import { SimpleLineIcons } from '@expo/vector-icons';
 
-import MyEventsScreen from '../screens/MyEventsScreen'
 import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
@@ -12,6 +11,7 @@ import EventsScreen from '../screens/EventsScreen';
 import CreateEventScreen from '../screens/CreateEvent';
 import DetailEventScreen from '../screens/DetailEventScreen';
 import AuthLoadingScreen  from '../screens/AuthLoadingScreen';
+import RsvpScreen from '../screens/RsvpScreen';
 
 const AuthStack =  createStackNavigator({
   login: {
@@ -49,8 +49,8 @@ EventStack.navigationOptions = ({ navigation }) => {
 };
 
 const TicketStack = createStackNavigator({
-  myEvents: {
-    screen: MyEventsScreen
+  Rsvp: {
+    screen: RsvpScreen
   }
 });
 
@@ -123,10 +123,10 @@ const TabNavigator = createBottomTabNavigator({
   tabBarOptions: {
     showIcon: true,
     showLabel: true,
-    activeTintColor: '#E8787B',
+    activeTintColor: '#FFCA13',
     inactiveTintColor: '#999',
     style: {
-      backgroundColor: '#FFF',
+      backgroundColor: '#330033',
       padding: Platform.OS === 'ios' ? 5 : 0,
     },
     indicatorStyle: {

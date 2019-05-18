@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   AsyncStorage,
   StyleSheet,
@@ -13,6 +13,7 @@ import {
   SafeAreaView,
   FlatList,
 } from "react-native";
+import { withNavigationFocus } from "react-navigation";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Button, Avatar, Icon } from "react-native-elements";
 import moment from "moment";
@@ -21,26 +22,31 @@ import MapView, { Marker } from "react-native-maps";
 import openMap, { createOpenLink } from "react-native-open-maps";
 import { Permissions, Calendar, Localization, Alarm } from "expo";
 
-export default class DetailEventScreen extends React.Component {
+class DetailEventScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const {handleShare } = navigation.state.params;
     
     return {
       title: "Details",
-      headerTintColor: "#FFF",
+      headerTintColor: "#FFCC33",
+      headerTitleStyle: {
+        fontWeight: "bold",
+        color: "#FFCC33"
+      },
       headerStyle: {
-        backgroundColor: "#39CA74",
+        backgroundColor: "#330033",
         borderBottomWidth: 0,
         headerTintColor: "#FFF",
       },
       headerRight: (
-      <Icon
-        name='share'
-        type='material'
-        color='#fff'
-        iconStyle={{ marginRight: 15 }} 
-        onPress={ () => handleShare()}
-      />
+      <TouchableOpacity onPress={ () => handleShare()}>  
+        <Icon
+          name='share'
+          type='material'
+          color='#fff'
+          iconStyle={{ color: '#FFCC33', marginRight: 15 }} 
+        />
+      </TouchableOpacity>
       )
     };
   };
@@ -52,8 +58,8 @@ export default class DetailEventScreen extends React.Component {
       event: event || null,
       isLoading: false,
       commentsData: [],
-
       commentsText: '',
+      isRSVP: false
     };
   }
 
@@ -63,8 +69,10 @@ export default class DetailEventScreen extends React.Component {
   componentDidMount() {
     const { event } = this.state;
     this.props.navigation.setParams({ handleShare: this.onShare });
-
+    
     this.setState({ isLoading: true });
+
+    this.setState({isRSVP:event.isRSVP});
     if (event === null) {
       Alert.alert(
         "Unable to display Post!",
@@ -80,11 +88,15 @@ export default class DetailEventScreen extends React.Component {
         { cancelable: false }
       );
     } else {
-      this.setState({ isLoading: false });
-      console.log("HERE", event);
+      this.setState({ isLoading: false });      
     }
     this.fetchComments();
   }
+
+  // componentDidUpdate(prevProps) {
+  //   if(this.props.isFocused)
+  //     this.checkRSVP();
+  // }
 
   async fetchComments() {
     try {
@@ -135,7 +147,7 @@ export default class DetailEventScreen extends React.Component {
     }
   };
 
-  async onTicketButtonPress() {
+  async addRSVP() {
     const { event } = this.state;
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -158,8 +170,7 @@ export default class DetailEventScreen extends React.Component {
           }
         );
 
-        response.json().then(result => {
-          console.log(result);
+        response.json().then(result => {          
 
           if (result.status == true) {
             Alert.alert(
@@ -191,6 +202,138 @@ export default class DetailEventScreen extends React.Component {
       }
     } catch (e) {
       console.log("AsynStorage failed", e);
+    }
+  }
+
+  async removeRsvp() {
+    const { event } = this.state;
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem('userId');
+
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/RSVP",
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: token
+            },
+
+            body: JSON.stringify({
+              UserId: userId,
+              EventId: event.id
+            })
+          }
+        );
+
+        response.json().then(result => {          
+
+          if (result.status == true) {
+            Alert.alert(
+              "Alert!",
+              "Successfully removed RSVP",
+              [
+                {
+                  text: "OK",
+                  onPress: () => this.props.navigation.navigate("events")
+                }
+              ],
+              { cancelable: false }
+            );
+          } else {
+            Alert.alert("Alert!", "Failed to delete RSVP, Please try again later", [{ text: "OK" }], {
+              cancelable: false
+            });
+          }
+        });
+      } catch (e) {
+        console.log("Something failed with response", e);
+
+        Alert.alert(
+          "Alert!",
+          "Error, Server Issue",
+          [{ text: "OK" }],
+          { cancelable: false }
+        );
+      }
+    } catch (e) {
+      console.log("AsynStorage failed", e);
+    }
+  }
+
+  // async checkRSVP() {
+  //   const { event } = this.state;
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken");
+  //     const userId = await AsyncStorage.getItem('userId');
+
+  //     try {
+  //       let response = await fetch(
+  //         "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/checkRSVP",
+  //         //"http://localhost:3000/users/checkRSVP",
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json; charset=utf-8",
+  //             Authorization: token
+  //           },
+
+  //           body: JSON.stringify({
+  //             UserId: userId,
+  //             EventId: event.id
+  //           })
+  //         }
+  //       );
+
+  //       response.json().then(result => {
+  //         if (result.status == true) {
+  //           console.log("isRSVP: ", result.data.isRSVP);
+  //           this.setState({ isRSVP: result.data.isRSVP });
+  //         } else {
+  //           console.log("There was an error checking RSVP");
+  //         }
+  //       });
+  //     } catch (e) {
+  //       console.log("Something failed with response", e);
+
+  //       Alert.alert(
+  //         "Alert!",
+  //         "Error, Server Issue",
+  //         [{ text: "OK" }],
+  //         { cancelable: false }
+  //       );
+  //     }
+  //   } catch (e) {
+  //     console.log("AsynStorage failed", e);
+  //   }
+  // }
+
+  async onRsvpButtonPress() {
+    if(!this.state.isRSVP){
+      this.addRSVP();
+    }
+    else {
+      this.removeRsvp();
+    }
+  }
+
+  getRsvpButtonTitle = () => {
+    if(!this.state.isRSVP){
+      return "RSVP";
+    }
+    else{
+      return "Remove RSVP";
+    }
+  }
+
+  getRsvpButtonStyle = () => {
+    if(!this.state.isRSVP){
+      return styles.rsvpAddButton;
+    }
+    else{
+      return styles.rsvpRemoveButton;
     }
   }
 
@@ -282,7 +425,8 @@ export default class DetailEventScreen extends React.Component {
 
   contentView = () => {
       const { isLoading, event, commentsText } = this.state;
-  
+      console.log("isRSVP: ", event.isRSVP);
+      
       return (
 
         <View style={styles.mainContainer}>
@@ -311,7 +455,7 @@ export default class DetailEventScreen extends React.Component {
                 onPress={() => this.onAddCalendarEvent(event)}
                 activeOpacity={0.8}
               >
-                <SimpleLineIcons name="calendar" size={25} />
+                <SimpleLineIcons name="calendar" size={25}  color='#330033'/>
                 <View style={styles.subDetailColumnContainer}>
                   <Text style={styles.detailMainText}>
                     {moment.utc(event.StartDate).format("MMMM DD")}
@@ -321,8 +465,20 @@ export default class DetailEventScreen extends React.Component {
                   </Text>
                 </View>
               </TouchableOpacity>
+              <View style={styles.detailContainer}>
+                <SimpleLineIcons 
+                  name='location-pin'
+                  size={25}
+                  color='#330033'
+                >
+
+                </SimpleLineIcons>
+                <View style={styles.subDetailColumnContainer}>
+                  <Text style={styles.detailMainText}>{event.LocationName}</Text>
+                </View>
+              </View>
                 <View style={styles.detailContainer}>
-                  <SimpleLineIcons name="tag" size={25} />
+                  <SimpleLineIcons name="tag" size={25} color='#330033' />
                   <View style={styles.subDetailColumnContainer}>
                     <Text style={styles.detailMainText}>Free</Text>
                     <Text style={styles.detailSubText}>on EventUp</Text>
@@ -440,9 +596,11 @@ export default class DetailEventScreen extends React.Component {
           <View style={styles.purchaseContainer}>
             <TouchableOpacity>
               <Button
-                onPress={() => this.onTicketButtonPress()}
-                title="RSVP"
-                buttonStyle={styles.rsvpButton}
+                onPress={() => this.onRsvpButtonPress()}
+
+                title = {this.getRsvpButtonTitle()}
+                buttonStyle = {this.getRsvpButtonStyle()}
+
                 titleStyle={{ fontSize: 25, fontFamily: "Futura" }}
                 rounded
               />
@@ -453,7 +611,7 @@ export default class DetailEventScreen extends React.Component {
   }
 
   render() {
-    const { isLoading } = this.state;
+    const { isLoading } = this.state;    
     return (
       <View style={styles.mainContainer}>
         {isLoading ? this.loadingView() : this.contentView()}
@@ -461,6 +619,8 @@ export default class DetailEventScreen extends React.Component {
     );
   }
 }
+
+export default withNavigationFocus(DetailEventScreen);
 
 const styles = StyleSheet.create({
 
@@ -567,11 +727,18 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
 
-  rsvpButton: {
+  rsvpAddButton: {
     width: 375,
     height: 70,
-    backgroundColor: "#39CA74"
+    backgroundColor: "#FFCC33"
 },
+
+  rsvpRemoveButton: {
+    width: 375,
+    height: 70,
+    backgroundColor: "#FF0000"
+  },
+
 
   commentButton: {
     width: 80,
