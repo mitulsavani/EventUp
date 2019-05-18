@@ -2,7 +2,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { createBottomTabNavigator, createAppContainer, createStackNavigator, createSwitchNavigator } from 'react-navigation';
 import PropTypes from 'prop-types';
-import { SimpleLineIcons } from '@expo/vector-icons';
+import { SimpleLineIcons, Entypo } from '@expo/vector-icons';
 
 import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -72,8 +72,8 @@ EventsTabIcon.propTypes = {
 };
 
 const TicketsTabIcon = ({ tintColor }) => (
-  <SimpleLineIcons
-    name="handbag"
+  <Entypo
+    name="ticket"
     color={tintColor}
     size={Platform.OS === 'ios' ? 22 : 22}
   />
@@ -104,7 +104,7 @@ const TabNavigator = createBottomTabNavigator({
   tickets: {
     screen: TicketStack,
     navigationOptions: {
-      tabBarLabel: 'Tickets',
+      tabBarLabel: 'RSVP',
       tabBarIcon: TicketsTabIcon,
     },
   },
