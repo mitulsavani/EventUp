@@ -178,6 +178,3 @@ const styles = StyleSheet.create({
   }
 });
 
-
-export default withNavigationFocus(RsvpScreen);
-
