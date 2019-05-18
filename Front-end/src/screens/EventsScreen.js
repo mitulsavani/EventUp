@@ -145,18 +145,23 @@ class EventsScreen extends React.Component {
             <Text style={styles.titleStyling}>{item.Name}</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: "#333", fontSize: 14 }}>
+            <Text style={{ color: "gray", fontSize: 14, fontFamily: 'Futura-Medium' }}>
               {item.LocationName}
+            </Text>
+            <Text style={{ color: "gray", fontSize: 14, fontFamily: 'Futura-Medium' }}>
+              {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
             </Text>
           </View>
           <View
             style={{
-              alignItems: "flex-end",
+              alignSelf: "flex-end",
               justifyContent: "center",
-              padding: 5
+
+              width: 80, 
+              height: 40,
             }}
           >
-            <Text style={{ color: "#330033", fontSize: 20 }}>
+            <Text style={{ color: "#463077", fontSize: 20, fontFamily: 'Futura' }}>
               {moment.utc(item.StartDate).format("MMMM DD")}
             </Text>
           </View>
@@ -214,9 +219,9 @@ const styles = StyleSheet.create({
     marginLeft: 40
   },
   titleStyling: {
-    fontFamily: "Verdana",
+    fontFamily: "Futura",
     fontSize: 20,
-    color: "#48474C"
+    color: "#333"
   },
   buttonStyling: {
     width: 60,

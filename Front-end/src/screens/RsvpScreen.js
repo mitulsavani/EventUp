@@ -82,24 +82,49 @@ export default class RsvpScreen extends React.Component {
       <TouchableOpacity
         style={styles.cardContainer}
         key={item}
+        onPress={() => this.props.navigation.navigate("detailEvent", { item })}
         activeOpacity={0.8}
         onPress={() => this.props.navigation.navigate("detailEvent", { item })}
       >
-        <View style={{ flex: 1, marginLeft: 10 }}>
+        <View
+          style={{ flex: 2, justifyContent: "center", alignItems: "center" }}
+        >
           <Image
-            source= {{uri:"http://"+item.Image}}
+            source={{ uri: "http://" + item.Image }}
             style={styles.imageEx}
           />
         </View>
-        <View style={{ flex: 1 }}>
-          <View style={{ marginTop: 15 }}>
+        <View
+          style={{
+            flex: 3,
+            flexDirection: "column",
+            justifyContent: "center",
+            marginLeft: 20,
+            marginRight: 10
+          }}
+        >
+          <View style={{ flex: 1, justifyContent: "center" }}>
             <Text style={styles.titleStyling}>{item.Name}</Text>
-            <Text style={{ color: "#333" }}>
-              {moment.utc(item.StartDate).format("MMMM DD")}
-              {" | "}
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: "gray", fontSize: 14, fontFamily: 'Futura-Medium' }}>
+              {item.LocationName}
+            </Text>
+            <Text style={{ color: "gray", fontSize: 14, fontFamily: 'Futura-Medium' }}>
               {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
             </Text>
-            <Text style={{ color: "#333" }}>{item.LocationName}</Text>
+          </View>
+          <View
+            style={{
+              alignSelf: "flex-end",
+              justifyContent: "center",
+              width: 80, 
+              height: 40,
+            }}
+          >
+            <Text style={{ color: "#463077", fontSize: 20, fontFamily: 'Futura' }}>
+              {moment.utc(item.StartDate).format("MMMM DD")}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -133,8 +158,9 @@ const styles = StyleSheet.create({
     height: 120
   },
   titleStyling: {
-    fontFamily: "Verdana",
-    fontSize: 18
+    fontFamily: "Futura",
+    fontSize: 20,
+    color: "#333"
   },
   cardContainer: {
     margin: 10,

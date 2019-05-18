@@ -127,12 +127,12 @@ export default class ProfileScreen extends React.Component {
           />
           <View style={{ flex: 1, paddingLeft: 30 }}>
             <Text style={styles.titleStyling}>{item.Name}</Text>
-            <Text style={{ color: "#333" }}>
+            <Text style={{ color: "gray", fontFamily: 'Futura-Medium' }}>
               {moment.utc(item.StartDate).format("MMMM DD")}
               {" | "}
               {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
             </Text>
-            <Text style={{ color: "#333" }}>{item.LocationName}</Text>
+            <Text style={{ color: "gray", fontFamily: 'Futura-Medium' }}>{item.LocationName}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -195,7 +195,8 @@ const styles = StyleSheet.create({
 
   baseText: {
     fontSize: 25,
-    fontWeight: "bold"
+    fontFamily: 'Futura-CondensedExtraBold',
+    color: '#333'
   },
 
   container: {
@@ -209,7 +210,8 @@ const styles = StyleSheet.create({
   },
 
   titleStyling: {
-    fontSize: 18,
-    marginBottom: 5
-  }
+    fontFamily: "Futura",
+    fontSize: 20,
+    color: "#333"
+  },
 });
