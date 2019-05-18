@@ -11,7 +11,7 @@ export const emailValidator = (email) => {
 };
 
 // Colors
-export const PRIMARY_COLOR = '#39CA74';
+export const PRIMARY_COLOR = '#330033';
 export const DARK_GRAY = '#757575';
 export const BLACK = '#000000';
 export const WHITE = '#ffffff';
@@ -21,14 +21,14 @@ class SignupScreen extends Component {
     return {
       title: 'Sign Up',
       headerBackTitle: ' ',
-      headerTintColor: BLACK,
+      headerTintColor: '#330033',
       headerStyle: {
         borderBottomWidth: 0,
         backgroundColor: WHITE
       },
     headerTitleStyle: {
       fontSize: 20,
-      color: BLACK,
+      color: '#330033',
     }
     };
   }

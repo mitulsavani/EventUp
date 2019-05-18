@@ -21,10 +21,10 @@ export default class ProfileScreen extends React.Component {
       headerTintColor: "white",
       headerTitleStyle: {
         fontWeight: "bold",
-        color: "white"
+        color: "#FFCC33"
       },
       headerStyle: {
-        backgroundColor: "#39CA74"
+        backgroundColor: "#330033"
       },
       headerRight: (
         <TouchableOpacity onPress={() => params.handleSignOut()}>
@@ -32,7 +32,7 @@ export default class ProfileScreen extends React.Component {
             name="sign-out"
             type="octicon"
             color="#fff"
-            iconStyle={{ marginRight: 15 }}
+            iconStyle={{ color: '#FFCC33', marginRight: 15 }}
           />
         </TouchableOpacity>
       )

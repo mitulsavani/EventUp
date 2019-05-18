@@ -18,10 +18,10 @@ export default class EventsScreen extends React.Component {
     headerTintColor: "white",
     headerTitleStyle: {
       fontWeight: "bold",
-      color: "white"
+      color: "#FFCC33"
     },
     headerStyle: {
-      backgroundColor: "#39CA74"
+      backgroundColor: "#330033"
     }
   };
 
@@ -122,7 +122,7 @@ export default class EventsScreen extends React.Component {
         </View>
         <View style={{ flex: 3.5, flexDirection: 'row', height: 80 }}>
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 5 }}>
-            <Text style={{ color: "#463077", fontSize: 21}}>
+            <Text style={{ color: "#330033", fontSize: 21}}>
               {moment.utc(item.StartDate).format("MMMM DD")}
             </Text>
             {/* <Text>
@@ -191,7 +191,8 @@ const styles = StyleSheet.create({
   },
   titleStyling: {
     fontFamily: "Verdana",
-    fontSize: 20
+    fontSize: 20,
+    color: '#48474C'
   },
   buttonStyling: {
     width: 60,
@@ -202,7 +203,6 @@ const styles = StyleSheet.create({
   cardContainer: {
     flex: 1,
     borderColor: 'lightgrey',
-    borderWidth: 1,
     margin: 10,
     height: 150,
     backgroundColor: "#fff",

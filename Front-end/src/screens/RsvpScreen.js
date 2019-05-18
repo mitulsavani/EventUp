@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,21 +6,26 @@ import {
   AsyncStorage,
   TouchableOpacity,
   FlatList,
-  Image
+  Image,
+  createAppContainer,
+  createStackNavigator
 } from "react-native";
+import { withNavigationFocus } from "react-navigation";
 import { format } from 'date-fns';
 import moment from 'moment';
 
-export default class MyEventsScreen extends React.Component {
+class RsvpScreen extends React.Component {
   static navigationOptions = {
-    title: "Tickets",
-    headerTintColor: "white",
+    title: `My Tickets`,
     headerTitleStyle: {
       fontWeight: "bold",
-      color: "white"
+      color: "#FFCC33"
+    },
+    headerTintStyle: {
+      color: '#FFCC33'
     },
     headerStyle: {
-      backgroundColor: "#39CA74"
+      backgroundColor: "#330033"
     }
   };
 
@@ -32,7 +37,8 @@ export default class MyEventsScreen extends React.Component {
       events: []
     };
   }
-  async componentDidMount() {
+
+  loadRSVPEvents = async () => {
     this.setState({ isLoading: true });
     try {
       const token = await AsyncStorage.getItem("userToken");
@@ -62,6 +68,19 @@ export default class MyEventsScreen extends React.Component {
       }
     } catch (e) {
       console.log("AsyncStorage failed to retrieve token:", e);
+    }
+  }
+
+  async componentDidMount() {
+    this.loadRSVPEvents()
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { navigation } = this.props;
+
+    if((prevProps.isFocused !== this.props.isFocused) && this.props.isFocused) {
+      console.log("Reloading RSVP'd Events");
+      this.loadRSVPEvents()
     }
   }
 
@@ -136,3 +155,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1
   }
 });
+
+export default withNavigationFocus(RsvpScreen);
