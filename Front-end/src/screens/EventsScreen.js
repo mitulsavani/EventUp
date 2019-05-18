@@ -57,7 +57,6 @@ export default class EventsScreen extends React.Component {
         response.json().then(result => {
           console.log(result);
           this.setState({ eventsData: result.data, isLoading: false });
-          
         });
       } catch (error) {
         this.setState({ response: error });
@@ -114,31 +113,43 @@ export default class EventsScreen extends React.Component {
         onPress={() => this.props.navigation.navigate("detailEvent", { item })}
         activeOpacity={0.8}
       >
-        <View style={{ flex: 2, justifyContent: "center", alignItems: 'center'}}>
+        <View
+          style={{ flex: 2, justifyContent: "center", alignItems: "center" }}
+        >
           <Image
-            source= {{uri:"http://"+item.Image}}
+            source={{ uri: "http://" + item.Image }}
             style={styles.imageEx}
           />
         </View>
-        <View style={{ flex: 3.5, flexDirection: 'row', height: 80 }}>
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 5 }}>
-            <Text style={{ color: "#330033", fontSize: 21}}>
+        <View
+          style={{
+            flex: 3,
+            flexDirection: "column",
+            justifyContent: "center",
+            marginLeft: 20,
+            marginRight: 10
+          }}
+        >
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            <Text style={styles.titleStyling}>{item.Name}</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: "#333", fontSize: 14 }}>
+              {item.LocationName}
+            </Text>
+          </View>
+          <View
+            style={{
+              alignItems: "flex-end",
+              justifyContent: "center",
+              padding: 5
+            }}
+          >
+            <Text style={{ color: "#330033", fontSize: 20 }}>
               {moment.utc(item.StartDate).format("MMMM DD")}
             </Text>
-            {/* <Text>
-              {format("January 01, 2019 " + item.StartTime, "hh:mm a")} }
-            </Text> */}
           </View>
-          <View style={{ flex: 3, flexDirection: 'column', justifyContent: 'center', marginRight: 10 }}>
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-              <Text style={styles.titleStyling}>{item.Name}</Text>
-            </View>
-            <View style={{flex: 1, }}>
-              <Text style={{ color: "#333", fontSize: 14 }}>{item.LocationName}</Text>
-            </View>
-
-          </View>
-          </View>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -192,7 +203,7 @@ const styles = StyleSheet.create({
   titleStyling: {
     fontFamily: "Verdana",
     fontSize: 20,
-    color: '#48474C'
+    color: "#48474C"
   },
   buttonStyling: {
     width: 60,
@@ -202,7 +213,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     flex: 1,
-    borderColor: 'lightgrey',
+    borderColor: "lightgrey",
     margin: 10,
     height: 150,
     backgroundColor: "#fff",
