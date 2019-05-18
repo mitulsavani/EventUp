@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 
 exports.getAllEvents = (req, res, next) => {
     let userId = req.userData.id;
-    console.log("test: " + userId);
     db.query('SELECT Event.*, '+
     'Category.Name AS CategoryName, Location.Name AS LocationName, Location.Longitude, Location.Latitude,'+
     ' RSVP.isRSVP AS isRSVP'+

@@ -130,12 +130,15 @@ exports.revoke = (req, res, next) => {
         })
 }
 exports.getPosts = (req, res, next) => {
+    let userId = req.userData.id;
     db.query('SELECT Event.*, ' +
-        'Category.Name AS CategoryName, Location.Name AS LocationName' +
-        ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category ' +
-        'ON Event.CategoryId = Category.id' +
-        ' WHERE Event.UserId = ?', [req.body.UserId])
-        .then(([result, fields]) => {
+        'Category.Name AS CategoryName, Location.Name AS LocationName,' +
+        ' RSVP.isRSVP AS isRSVP'+
+        ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category' +
+        ' ON Event.CategoryId = Category.id' +
+        ' LEFT JOIN RSVP ON RSVP.UserId = ? AND RSVP.EventId = Event.id'+
+        ' WHERE Event.UserId = ?', [userId ,userId])
+        .then(([result,_]) => {
             res.status(200).json({
                 status: true,
                 data: result,
@@ -151,13 +154,15 @@ exports.getPosts = (req, res, next) => {
 }
 
 exports.getRSVP = (req, res, next) => {
+    let userId = req.userData.id;
     db.query('SELECT Event.*, ' +
-        'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude' +
+        'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude,' +
+        ' RSVP.isRSVP AS isRSVP'+
         ' FROM Event JOIN RSVP ON Event.id = RSVP.EventId' +
         ' JOIN Location ON Event.LocationId = Location.id JOIN Category' +
         ' ON Event.CategoryId = Category.id' +
         ' WHERE EXISTS (SELECT RSVP.* FROM RSVP' +
-        ' WHERE RSVP.EventId = Event.id AND RSVP.UserId = ?)', [req.params.UserId])
+        ' WHERE RSVP.EventId = Event.id AND RSVP.UserId = ?)', [userId])
         .then(([data, _]) => {
             const response = {
                 status: true,

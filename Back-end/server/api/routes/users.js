@@ -12,12 +12,12 @@ router.get('/', checkAuth, userController.getUsers);
 
 router.get('/:id(\\d+)', checkAuth, userController.getUser); 
 
-router.get('/RSVP/:UserId(\\d+)', userController.getRSVP);
+router.get('/RSVP/:UserId(\\d+)',checkAuth, userController.getRSVP);
 
-router.post('/RSVP', userController.RSVP);
+router.post('/RSVP',checkAuth, userController.RSVP);
 
-router.delete('/RSVP', userController.revoke);
+router.delete('/RSVP',checkAuth, userController.revoke);
 
-router.post('/posts', userController.getPosts);
+router.post('/posts',checkAuth, userController.getPosts);
 
 module.exports = router; 
