@@ -91,9 +91,6 @@ class DetailEventScreen extends React.Component {
   componentDidUpdate(prevProps) {
     if(this.props.isFocused)
       this.checkRSVP();
-    // if((prevProps.isFocused !== this.props.isFocused) && this.props.isFocused) {
-    //   this.checkRSVP();
-    // }
   }
 
   async fetchComments() {

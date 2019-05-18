@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   AsyncStorage,
   FlatList,
@@ -8,11 +8,12 @@ import {
   Image,
   TouchableOpacity
 } from "react-native";
+import { withNavigationFocus } from "react-navigation";
 import { Button } from "react-native-elements";
 import { format } from "date-fns";
 import moment from "moment";
 
-export default class EventsScreen extends React.Component {
+class EventsScreen extends React.Component {
   static navigationOptions = {
     title: "Events",
     headerTintColor: "white",
@@ -35,7 +36,19 @@ export default class EventsScreen extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if((prevProps.isFocused !== this.props.isFocused) && this.props.isFocused)
+    {
+      console.log("Updating events");
+      this.getEvents();
+    }
+  }
+
   async componentDidMount() {
+    this.getEvents();
+  }
+
+  async getEvents() {
     this.setState({ isLoading: true });
 
     try {
@@ -207,3 +220,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1
   }
 });
+
+export default withNavigationFocus(EventsScreen);
