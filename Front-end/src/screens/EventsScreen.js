@@ -19,10 +19,10 @@ class EventsScreen extends React.Component {
     headerTintColor: "white",
     headerTitleStyle: {
       fontWeight: "bold",
-      color: "white"
+      color: "#FFCC33"
     },
     headerStyle: {
-      backgroundColor: "#39CA74"
+      backgroundColor: "#330033"
     }
   };
 
@@ -45,12 +45,12 @@ class EventsScreen extends React.Component {
   }
 
   async componentDidMount() {
-    this.getEvents();
+    this.getEvents()
   }
 
-  async getEvents() {
-    this.setState({ isLoading: true });
-
+  getEvents = async () => {
+    console.log('Refreshing')
+    this.setState({ isLoading: true})
     try {
       const token = await AsyncStorage.getItem("userToken");
       const userId = await AsyncStorage.getItem("userId");
@@ -67,9 +67,8 @@ class EventsScreen extends React.Component {
           }
         );
 
-        response.json().then(result => {          
+        response.json().then(result => {
           this.setState({ eventsData: result.data, isLoading: false });
-          
         });
       } catch (error) {
         this.setState({ response: error });
@@ -79,7 +78,6 @@ class EventsScreen extends React.Component {
       console.log("AsyncStorage failed to retrieve token:", e);
     }
   }
-
   onAddCalendarEvent = async item => {
     try {
       //Prompt the user to provide access to the calendar
@@ -126,22 +124,41 @@ class EventsScreen extends React.Component {
         onPress={() => this.props.navigation.navigate("detailEvent", { item })}
         activeOpacity={0.8}
       >
-        <View style={{ flex: 1, marginLeft: 10 }}>
+        <View
+          style={{ flex: 2, justifyContent: "center", alignItems: "center" }}
+        >
           <Image
-            //source={require("../img/sample_image.jpg")}
-            source= {{uri:"http://"+item.Image}}
+            source={{ uri: "http://" + item.Image }}
             style={styles.imageEx}
           />
         </View>
-        <View style={{ flex: 1 }}>
-          <View style={{ marginTop: 15 }}>
+        <View
+          style={{
+            flex: 3,
+            flexDirection: "column",
+            justifyContent: "center",
+            marginLeft: 20,
+            marginRight: 10
+          }}
+        >
+          <View style={{ flex: 1, justifyContent: "center" }}>
             <Text style={styles.titleStyling}>{item.Name}</Text>
-            <Text style={{ color: "#333" }}>
-              {moment.utc(item.StartDate).format("MMMM DD")}
-              {" | "}
-              {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: "#333", fontSize: 14 }}>
+              {item.LocationName}
             </Text>
-            <Text style={{ color: "#333" }}>{item.LocationName}</Text>
+          </View>
+          <View
+            style={{
+              alignItems: "flex-end",
+              justifyContent: "center",
+              padding: 5
+            }}
+          >
+            <Text style={{ color: "#330033", fontSize: 20 }}>
+              {moment.utc(item.StartDate).format("MMMM DD")}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -149,7 +166,7 @@ class EventsScreen extends React.Component {
   };
 
   render() {
-    const { eventsData, isLoading } = this.state;
+    const { eventsData } = this.state;
 
     return (
       <View style={{ flex: 1 }}>
@@ -159,6 +176,8 @@ class EventsScreen extends React.Component {
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => this._renderEvents(item)}
             keyExtractor={(item, index) => index.toString()}
+            onRefresh={() => this.getEvents()}
+            refreshing={this.state.isLoading}
           />
         </View>
 
@@ -196,7 +215,8 @@ const styles = StyleSheet.create({
   },
   titleStyling: {
     fontFamily: "Verdana",
-    fontSize: 18
+    fontSize: 20,
+    color: "#48474C"
   },
   buttonStyling: {
     width: 60,
@@ -205,6 +225,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#39CA74"
   },
   cardContainer: {
+    flex: 1,
+    borderColor: "lightgrey",
     margin: 10,
     height: 150,
     backgroundColor: "#fff",
@@ -212,7 +234,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     borderRadius: 5,
-    borderColor: "lightgrey",
     position: "relative",
     shadowOffset: { width: 3, height: 3 },
     shadowColor: "black",

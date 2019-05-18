@@ -28,20 +28,25 @@ class DetailEventScreen extends React.Component {
     
     return {
       title: "Details",
-      headerTintColor: "#FFF",
+      headerTintColor: "#FFCC33",
+      headerTitleStyle: {
+        fontWeight: "bold",
+        color: "#FFCC33"
+      },
       headerStyle: {
-        backgroundColor: "#39CA74",
+        backgroundColor: "#330033",
         borderBottomWidth: 0,
         headerTintColor: "#FFF",
       },
       headerRight: (
-      <Icon
-        name='share'
-        type='material'
-        color='#fff'
-        iconStyle={{ marginRight: 15 }} 
-        onPress={ () => handleShare()}
-      />
+      <TouchableOpacity onPress={ () => handleShare()}>  
+        <Icon
+          name='share'
+          type='material'
+          color='#fff'
+          iconStyle={{ color: '#FFCC33', marginRight: 15 }} 
+        />
+      </TouchableOpacity>
       )
     };
   };
@@ -450,7 +455,7 @@ class DetailEventScreen extends React.Component {
                 onPress={() => this.onAddCalendarEvent(event)}
                 activeOpacity={0.8}
               >
-                <SimpleLineIcons name="calendar" size={25} />
+                <SimpleLineIcons name="calendar" size={25}  color='#330033'/>
                 <View style={styles.subDetailColumnContainer}>
                   <Text style={styles.detailMainText}>
                     {moment.utc(event.StartDate).format("MMMM DD")}
@@ -460,8 +465,20 @@ class DetailEventScreen extends React.Component {
                   </Text>
                 </View>
               </TouchableOpacity>
+              <View style={styles.detailContainer}>
+                <SimpleLineIcons 
+                  name='location-pin'
+                  size={25}
+                  color='#330033'
+                >
+
+                </SimpleLineIcons>
+                <View style={styles.subDetailColumnContainer}>
+                  <Text style={styles.detailMainText}>{event.LocationName}</Text>
+                </View>
+              </View>
                 <View style={styles.detailContainer}>
-                  <SimpleLineIcons name="tag" size={25} />
+                  <SimpleLineIcons name="tag" size={25} color='#330033' />
                   <View style={styles.subDetailColumnContainer}>
                     <Text style={styles.detailMainText}>Free</Text>
                     <Text style={styles.detailSubText}>on EventUp</Text>
@@ -713,14 +730,15 @@ const styles = StyleSheet.create({
   rsvpAddButton: {
     width: 375,
     height: 70,
-    backgroundColor: "#39CA74"
-  },
+    backgroundColor: "#FFCC33"
+},
 
   rsvpRemoveButton: {
     width: 375,
     height: 70,
     backgroundColor: "#FF0000"
   },
+
 
   commentButton: {
     width: 80,

@@ -123,10 +123,10 @@ const TabNavigator = createBottomTabNavigator({
   tabBarOptions: {
     showIcon: true,
     showLabel: true,
-    activeTintColor: '#E8787B',
+    activeTintColor: '#FFCA13',
     inactiveTintColor: '#999',
     style: {
-      backgroundColor: '#FFF',
+      backgroundColor: '#330033',
       padding: Platform.OS === 'ios' ? 5 : 0,
     },
     indicatorStyle: {

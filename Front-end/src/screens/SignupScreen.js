@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { StyleSheet, View, StatusBar, Alert, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
 import { TextInput } from 'react-native-paper';
-import axios from 'axios';
 
 // Shared Utils
 export const emailValidator = (email) => {
@@ -12,7 +11,7 @@ export const emailValidator = (email) => {
 };
 
 // Colors
-export const PRIMARY_COLOR = '#39CA74';
+export const PRIMARY_COLOR = '#330033';
 export const DARK_GRAY = '#757575';
 export const BLACK = '#000000';
 export const WHITE = '#ffffff';
@@ -22,14 +21,14 @@ class SignupScreen extends Component {
     return {
       title: 'Sign Up',
       headerBackTitle: ' ',
-      headerTintColor: BLACK,
+      headerTintColor: '#330033',
       headerStyle: {
         borderBottomWidth: 0,
         backgroundColor: WHITE
       },
     headerTitleStyle: {
       fontSize: 20,
-      color: BLACK,
+      color: '#330033',
     }
     };
   }
@@ -50,10 +49,26 @@ class SignupScreen extends Component {
     this.signupAction = this.signupAction.bind(this);
   }
 
-  _signInAsync = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
-    this.props.navigation.navigate('App');
+  _signInAsync = async (token, userId) => {
+    try{
+      await AsyncStorage.setItem('userToken', token);
+      await AsyncStorage.setItem('userId', userId);
+      this.props.navigation.navigate('App');
+    } catch(e) {
+      console.log("Async storage failed to store token, error: ", e);
+    }
   };
+  
+  _retrieveTokenAsync = async() => {
+    try {
+
+      const token = await AsyncStorage.getItem('userToken');
+      
+      console.log("token: ", token);
+    } catch(e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
+    }
+  }
 
   updateSignupFieldState(key, value) {
     this.setState({ [key]: value }, this.checkEnabled);
@@ -70,7 +85,7 @@ class SignupScreen extends Component {
 
       try {
         let response = await fetch('http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/register', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
         },
@@ -85,12 +100,13 @@ class SignupScreen extends Component {
 
       response.json().then(result => {
         //Sign Up Successful
-        if (result.message == "success") {
+        console.log("RESULT", result)
+        if (result.status == true) {
           Alert.alert(
             'Alert!',
-            'You have successfully logged in',
+            `${result.message}`,
             [
-              { text: 'OK', onPress: () => this._signInAsync() }
+              { text: 'OK', onPress: () => this._signInAsync(result.token, result.id.toString()) }
             ],
             { cancelable: false }
           );

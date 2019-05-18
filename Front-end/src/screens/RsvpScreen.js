@@ -14,16 +14,19 @@ import { withNavigationFocus } from "react-navigation";
 import { format } from 'date-fns';
 import moment from 'moment';
 
-class RsvpScreen extends React.Component {
+
+export default class RsvpScreen extends React.Component {
   static navigationOptions = {
-    title: "Tickets",
-    headerTintColor: "white",
+    title: `My Tickets`,
     headerTitleStyle: {
       fontWeight: "bold",
-      color: "white"
+      color: "#FFCC33"
+    },
+    headerTintStyle: {
+      color: '#FFCC33'
     },
     headerStyle: {
-      backgroundColor: "#39CA74"
+      backgroundColor: "#330033"
     }
   };
 
@@ -34,6 +37,11 @@ class RsvpScreen extends React.Component {
       isLoading: false,
       events: []
     };
+  }
+
+
+  async componentDidMount() {
+    this.loadRSVPEvents()
   }
 
   loadRSVPEvents = async () => {
@@ -57,7 +65,6 @@ class RsvpScreen extends React.Component {
         );
 
         response.json().then(result => {
-          console.log(result);
           this.setState({ events: result.data, isLoading: false });
         });
       } catch (error) {
@@ -69,18 +76,6 @@ class RsvpScreen extends React.Component {
     }
   }
 
-  async componentDidMount() {
-    this.loadRSVPEvents()
-  }
-
-  async componentDidUpdate(prevProps) {
-    const { navigation } = this.props;
-
-    if((prevProps.isFocused !== this.props.isFocused) && this.props.isFocused) {
-      console.log("Reloading RSVP'd Events");
-      this.loadRSVPEvents()
-    }
-  }
 
   _renderEvents = item => {
     return (
@@ -120,6 +115,8 @@ class RsvpScreen extends React.Component {
             data={events}
             renderItem={({ item }) => this._renderEvents(item)}
             keyExtractor={(item, index) => index.toString()}
+            onRefresh={() => this.loadRSVPEvents()}
+            refreshing={this.state.isLoading}
           />
         </View>
       </View>
@@ -155,4 +152,6 @@ const styles = StyleSheet.create({
   }
 });
 
+
 export default withNavigationFocus(RsvpScreen);
+
