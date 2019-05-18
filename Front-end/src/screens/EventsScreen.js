@@ -114,30 +114,37 @@ export default class EventsScreen extends React.Component {
         onPress={() => this.props.navigation.navigate("detailEvent", { item })}
         activeOpacity={0.8}
       >
-        <View style={{ flex: 1, marginLeft: 10 }}>
+        <View style={{ flex: 2, justifyContent: "center", alignItems: 'center'}}>
           <Image
-            //source={require("../img/sample_image.jpg")}
             source= {{uri:"http://"+item.Image}}
             style={styles.imageEx}
           />
         </View>
-        <View style={{ flex: 1 }}>
-          <View style={{ marginTop: 15 }}>
-            <Text style={styles.titleStyling}>{item.Name}</Text>
-            <Text style={{ color: "#333" }}>
+        <View style={{ flex: 3.5, flexDirection: 'row', height: 80 }}>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 5 }}>
+            <Text style={{ color: "#463077", fontSize: 21}}>
               {moment.utc(item.StartDate).format("MMMM DD")}
-              {" | "}
-              {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
             </Text>
-            <Text style={{ color: "#333" }}>{item.LocationName}</Text>
+            {/* <Text>
+              {format("January 01, 2019 " + item.StartTime, "hh:mm a")} }
+            </Text> */}
           </View>
-        </View>
+          <View style={{ flex: 3, flexDirection: 'column', justifyContent: 'center', marginRight: 10 }}>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text style={styles.titleStyling}>{item.Name}</Text>
+            </View>
+            <View style={{flex: 1, }}>
+              <Text style={{ color: "#333", fontSize: 14 }}>{item.LocationName}</Text>
+            </View>
+
+          </View>
+          </View>
       </TouchableOpacity>
     );
   };
 
   render() {
-    const { eventsData, isLoading } = this.state;
+    const { eventsData } = this.state;
 
     return (
       <View style={{ flex: 1 }}>
@@ -184,7 +191,7 @@ const styles = StyleSheet.create({
   },
   titleStyling: {
     fontFamily: "Verdana",
-    fontSize: 18
+    fontSize: 20
   },
   buttonStyling: {
     width: 60,
@@ -193,6 +200,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#39CA74"
   },
   cardContainer: {
+    flex: 1,
+    borderColor: 'lightgrey',
+    borderWidth: 1,
     margin: 10,
     height: 150,
     backgroundColor: "#fff",
@@ -200,7 +210,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     borderRadius: 5,
-    borderColor: "lightgrey",
     position: "relative",
     shadowOffset: { width: 3, height: 3 },
     shadowColor: "black",
