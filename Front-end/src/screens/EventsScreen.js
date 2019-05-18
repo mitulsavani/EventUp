@@ -36,8 +36,12 @@ export default class EventsScreen extends React.Component {
   }
 
   async componentDidMount() {
-    this.setState({ isLoading: true });
+    this.getEvents()
+  }
 
+  getEvents = async () => {
+    console.log('Refreshing')
+    this.setState({ isLoading: true})
     try {
       const token = await AsyncStorage.getItem("userToken");
       const userId = await AsyncStorage.getItem("userId");
@@ -55,7 +59,6 @@ export default class EventsScreen extends React.Component {
         );
 
         response.json().then(result => {
-          console.log(result);
           this.setState({ eventsData: result.data, isLoading: false });
         });
       } catch (error) {
@@ -66,7 +69,6 @@ export default class EventsScreen extends React.Component {
       console.log("AsyncStorage failed to retrieve token:", e);
     }
   }
-
   onAddCalendarEvent = async item => {
     try {
       //Prompt the user to provide access to the calendar
@@ -165,6 +167,8 @@ export default class EventsScreen extends React.Component {
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => this._renderEvents(item)}
             keyExtractor={(item, index) => index.toString()}
+            onRefresh={() => this.getEvents()}
+            refreshing={this.state.isLoading}
           />
         </View>
 
