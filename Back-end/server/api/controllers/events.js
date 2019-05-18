@@ -3,11 +3,15 @@ const fs = require('file-system')
 const jwt = require('jsonwebtoken');
 
 exports.getAllEvents = (req, res, next) => {
+    let userId = req.userData.id;
+    console.log("test: " + userId);
     db.query('SELECT Event.*, '+
-    'Category.Name AS CategoryName, Location.Name AS LocationName, Location.Longitude, Location.Latitude'+
+    'Category.Name AS CategoryName, Location.Name AS LocationName, Location.Longitude, Location.Latitude,'+
+    ' RSVP.isRSVP AS isRSVP'+
     ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
-    'ON Event.CategoryId = Category.id'+
-    ' LIMIT 25').then( ([result, fields]) => {
+    'ON Event.CategoryId = Category.id '+
+    'LEFT JOIN RSVP ON RSVP.UserId = ? AND RSVP.EventId = Event.id'+
+    ' LIMIT 25', [userId]).then( ([result, fields]) => {
         res.status(200).json({
             status: true,
             message: "All events queried",
