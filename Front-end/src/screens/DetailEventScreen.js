@@ -64,9 +64,10 @@ class DetailEventScreen extends React.Component {
   componentDidMount() {
     const { event } = this.state;
     this.props.navigation.setParams({ handleShare: this.onShare });
-
+    
     this.setState({ isLoading: true });
 
+    this.setState({isRSVP:event.isRSVP});
     if (event === null) {
       Alert.alert(
         "Unable to display Post!",
@@ -82,16 +83,15 @@ class DetailEventScreen extends React.Component {
         { cancelable: false }
       );
     } else {
-      this.setState({ isLoading: false });
-      //console.log("HERE", event);
+      this.setState({ isLoading: false });      
     }
     this.fetchComments();
   }
 
-  componentDidUpdate(prevProps) {
-    if(this.props.isFocused)
-      this.checkRSVP();
-  }
+  // componentDidUpdate(prevProps) {
+  //   if(this.props.isFocused)
+  //     this.checkRSVP();
+  // }
 
   async fetchComments() {
     try {
@@ -165,8 +165,7 @@ class DetailEventScreen extends React.Component {
           }
         );
 
-        response.json().then(result => {
-          //console.log(result);
+        response.json().then(result => {          
 
           if (result.status == true) {
             Alert.alert(
@@ -224,8 +223,7 @@ class DetailEventScreen extends React.Component {
           }
         );
 
-        response.json().then(result => {
-          //console.log(result);
+        response.json().then(result => {          
 
           if (result.status == true) {
             Alert.alert(
@@ -260,72 +258,78 @@ class DetailEventScreen extends React.Component {
     }
   }
 
-  async checkRSVP() {
-    const { event } = this.state;
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      const userId = await AsyncStorage.getItem('userId');
+  // async checkRSVP() {
+  //   const { event } = this.state;
+  //   try {
+  //     const token = await AsyncStorage.getItem("userToken");
+  //     const userId = await AsyncStorage.getItem('userId');
 
-      try {
-        let response = await fetch(
-          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/checkRSVP",
-          //"http://localhost:3000/users/checkRSVP",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json; charset=utf-8",
-              Authorization: token
-            },
+  //     try {
+  //       let response = await fetch(
+  //         "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/checkRSVP",
+  //         //"http://localhost:3000/users/checkRSVP",
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json; charset=utf-8",
+  //             Authorization: token
+  //           },
 
-            body: JSON.stringify({
-              UserId: userId,
-              EventId: event.id
-            })
-          }
-        );
+  //           body: JSON.stringify({
+  //             UserId: userId,
+  //             EventId: event.id
+  //           })
+  //         }
+  //       );
 
-        response.json().then(result => {
-          if (result.status == true) {
-            console.log("isRSVP: ", result.exists);
-            this.setState({ isRSVP: result.exists });
-          } else {
-            console.log("There was an error checking RSVP");
-          }
-        });
-      } catch (e) {
-        console.log("Something failed with response", e);
+  //       response.json().then(result => {
+  //         if (result.status == true) {
+  //           console.log("isRSVP: ", result.data.isRSVP);
+  //           this.setState({ isRSVP: result.data.isRSVP });
+  //         } else {
+  //           console.log("There was an error checking RSVP");
+  //         }
+  //       });
+  //     } catch (e) {
+  //       console.log("Something failed with response", e);
 
-        Alert.alert(
-          "Alert!",
-          "Error, Server Issue",
-          [{ text: "OK" }],
-          { cancelable: false }
-        );
-      }
-    } catch (e) {
-      console.log("AsynStorage failed", e);
+  //       Alert.alert(
+  //         "Alert!",
+  //         "Error, Server Issue",
+  //         [{ text: "OK" }],
+  //         { cancelable: false }
+  //       );
+  //     }
+  //   } catch (e) {
+  //     console.log("AsynStorage failed", e);
+  //   }
+  // }
+
+  async onRsvpButtonPress() {
+    if(!this.state.isRSVP){
+      this.addRSVP();
+    }
+    else {
+      this.removeRsvp();
     }
   }
 
-  async onRsvpButtonPress() {
-    if(!this.state.isRSVP)
-      this.addRSVP();
-    else
-      this.removeRsvp();
-  }
-
   getRsvpButtonTitle = () => {
-    if(!this.state.isRSVP)
+    if(!this.state.isRSVP){
       return "RSVP";
-    else
+    }
+    else{
       return "Remove RSVP";
+    }
   }
 
   getRsvpButtonStyle = () => {
-    if(!this.state.isRSVP)
+    if(!this.state.isRSVP){
       return styles.rsvpAddButton;
-    else
+    }
+    else{
       return styles.rsvpRemoveButton;
+    }
   }
 
   loadingView = () => {
@@ -416,7 +420,8 @@ class DetailEventScreen extends React.Component {
 
   contentView = () => {
       const { isLoading, event, commentsText } = this.state;
-  
+      console.log("isRSVP: ", event.isRSVP);
+      
       return (
 
         <View style={styles.mainContainer}>
@@ -589,7 +594,7 @@ class DetailEventScreen extends React.Component {
   }
 
   render() {
-    const { isLoading } = this.state;
+    const { isLoading } = this.state;    
     return (
       <View style={styles.mainContainer}>
         {isLoading ? this.loadingView() : this.contentView()}

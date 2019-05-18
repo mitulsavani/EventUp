@@ -67,8 +67,7 @@ class EventsScreen extends React.Component {
           }
         );
 
-        response.json().then(result => {
-          console.log(result);
+        response.json().then(result => {          
           this.setState({ eventsData: result.data, isLoading: false });
           
         });

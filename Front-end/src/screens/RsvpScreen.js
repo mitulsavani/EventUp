@@ -88,6 +88,7 @@ class RsvpScreen extends React.Component {
         style={styles.cardContainer}
         key={item}
         activeOpacity={0.8}
+        onPress={() => this.props.navigation.navigate("detailEvent", { item })}
       >
         <View style={{ flex: 1, marginLeft: 10 }}>
           <Image
