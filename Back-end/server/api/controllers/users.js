@@ -137,7 +137,8 @@ exports.getPosts = (req, res, next) => {
         ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category' +
         ' ON Event.CategoryId = Category.id' +
         ' LEFT JOIN RSVP ON RSVP.UserId = ? AND RSVP.EventId = Event.id'+
-        ' WHERE Event.UserId = ?', [userId ,userId])
+        ' WHERE Event.UserId = ?'+
+        ' ORDER BY Event.id DESC', [userId ,userId])
         .then(([result,_]) => {
             res.status(200).json({
                 status: true,
@@ -162,7 +163,8 @@ exports.getRSVP = (req, res, next) => {
         ' JOIN Location ON Event.LocationId = Location.id JOIN Category' +
         ' ON Event.CategoryId = Category.id' +
         ' WHERE EXISTS (SELECT RSVP.* FROM RSVP' +
-        ' WHERE RSVP.EventId = Event.id AND RSVP.UserId = ?)', [userId])
+        ' WHERE RSVP.EventId = Event.id AND RSVP.UserId = ?)'+
+        ' ORDER BY Event.id DESC', [userId])
         .then(([data, _]) => {
             const response = {
                 status: true,

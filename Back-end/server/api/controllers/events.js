@@ -10,6 +10,7 @@ exports.getAllEvents = (req, res, next) => {
     ' FROM Event JOIN Location ON Event.LocationId = Location.id JOIN Category '+
     'ON Event.CategoryId = Category.id '+
     'LEFT JOIN RSVP ON RSVP.UserId = ? AND RSVP.EventId = Event.id'+
+    ' ORDER BY Event.id DESC'+
     ' LIMIT 25', [userId]).then( ([result, fields]) => {
         res.status(200).json({
             status: true,
