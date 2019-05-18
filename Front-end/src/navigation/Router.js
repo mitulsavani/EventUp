@@ -49,7 +49,7 @@ EventStack.navigationOptions = ({ navigation }) => {
 };
 
 const TicketStack = createStackNavigator({
-  myEvents: {
+  Rsvp: {
     screen: RsvpScreen
   }
 });

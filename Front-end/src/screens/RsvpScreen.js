@@ -14,6 +14,7 @@ import { withNavigationFocus } from "react-navigation";
 import { format } from 'date-fns';
 import moment from 'moment';
 
+
 export default class RsvpScreen extends React.Component {
   static navigationOptions = {
     title: `My Tickets`,
@@ -37,6 +38,7 @@ export default class RsvpScreen extends React.Component {
       events: []
     };
   }
+
 
   async componentDidMount() {
     this.loadRSVPEvents()
@@ -81,6 +83,7 @@ export default class RsvpScreen extends React.Component {
         style={styles.cardContainer}
         key={item}
         activeOpacity={0.8}
+        onPress={() => this.props.navigation.navigate("detailEvent", { item })}
       >
         <View style={{ flex: 1, marginLeft: 10 }}>
           <Image
@@ -148,3 +151,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1
   }
 });
+
+
+export default withNavigationFocus(RsvpScreen);
+
