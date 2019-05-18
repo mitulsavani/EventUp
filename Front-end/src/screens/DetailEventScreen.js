@@ -376,19 +376,20 @@ export default class DetailEventScreen extends React.Component {
                   </View>
                 </View>
               </View>
-              <Divider style={{ backgroundColor: 'lightgrey', margin: 15, borderWidth: 0.2}} />
+              <Divider style={{ backgroundColor: 'lightgrey', margin: 15, borderWidth: 0.2, marginTop: 30}} />
             {/* generalInformationContainer End */}
   
             <View style={styles.aboutEventContainer}>
               <Text style={styles.containerHeading}>Details</Text>
               <Text
                 style={styles.descriptionStyle}
-                numberOfLines={4}
                 ellipsizeMode="tail"
               >
                 {event.Description}
               </Text>
             </View>
+
+            <Divider style={{ backgroundColor: 'lightgrey', margin: 15, borderWidth: 0.2, marginTop: 30}} />
             {/* aboutEventContainer End */}
   
             <View style={styles.locationContainer}>
@@ -436,9 +437,9 @@ export default class DetailEventScreen extends React.Component {
               />
             </View>
             <Button
-              title="Comment"
-              type="outline"
-              titleStyle={{ fontSize: 12, color: "#330033" }}
+              title="Send"
+              type="solid"
+              titleStyle={{ fontSize: 15, color: "#330033" }}
               containerStyle={{
                 marginTop: 20,
                 marginBottom: 40,
@@ -504,11 +505,13 @@ const styles = StyleSheet.create({
   generalInformationContainer: {
     flex: 2,
     width: "100%",
-    height: 330,
+    height: 300,
   },
   generalInformationHeaderTitleStyle: {
     fontSize: 30,
+    fontFamily: 'Futura',
     fontWeight: 'bold',
+    color: '#333',
     textAlign: "left",
     marginTop: 30,
     marginLeft: 15
@@ -540,21 +543,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     width: "100%",
-    height: 100,
     marginTop: 20
   },
   containerHeading: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
     marginLeft: 15,
-    marginRight: 15
-
+    marginRight: 15,
+    color: '#333'
   },
   descriptionStyle: {
     marginTop: 10,
     marginLeft: 15,
-    marginRight: 15
+    marginRight: 15,
+    fontFamily: 'Futura-Medium',
+    color: 'gray'
   },
 
   locationContainer: {
@@ -562,13 +566,15 @@ const styles = StyleSheet.create({
     width: "100%",
     height:320
   },
+
   locationSubTitleStyle: {
-    fontSize: 15,
+    fontSize: 16,
     marginTop: 30,
     marginBottom: 10,
     marginLeft: 15,
     marginRight: 15,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    color: '#333'
   },
   mapImageContainer: {
     padding: 10,
@@ -621,7 +627,8 @@ const styles = StyleSheet.create({
   baseText: {
     fontSize: 32,
     fontWeight: 'bold',
-    paddingBottom: 20
+    paddingBottom: 20,
+    color: '#333'
   },
 
   avatarView: {
