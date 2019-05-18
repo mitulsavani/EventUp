@@ -155,7 +155,7 @@ exports.getPosts = (req, res, next) => {
 
 exports.getRSVP = (req, res, next) => {
     let userId = req.userData.id;
-    db.query('SELECT Event.*, ' +
+    db.query('SELECT DISTINCT Event.*, ' +
         'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude,' +
         ' RSVP.isRSVP AS isRSVP'+
         ' FROM Event JOIN RSVP ON Event.id = RSVP.EventId' +
