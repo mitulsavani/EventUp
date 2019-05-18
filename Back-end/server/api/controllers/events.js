@@ -96,11 +96,18 @@ exports.deleteEvent = (req, res, next) => {
 }
 
 exports.filterEvents = (req, res, next) => {
-    db.query('SELECT * FROM Event WHERE StartDate > NOW() AND CategoryId = ? ORDER BY StartDate ASC, StartTime ASC', [req.params.id])
+    db.query('SELECT Event.*,'+
+    'Category.Name AS CategoryName ,Location.Name AS LocationName, Location.Longitude, Location.Latitude,' +
+    ' RSVP.isRSVP AS isRSVP'+
+    ' FROM Event LEFT JOIN RSVP ON Event.id = RSVP.EventId' +
+    ' JOIN Location ON Event.LocationId = Location.id JOIN Category' +
+    ' ON Event.CategoryId = Category.id' +
+    ' WHERE StartDate > NOW() AND CategoryId = ?'+
+    ' ORDER BY StartDate ASC, StartTime ASC', [req.params.id])
     .then( (events) => {
         res.status(200).json({
             status: true,
-            events: events[0]
+            data: events[0]
         })
     })
     .catch( (err) => {
