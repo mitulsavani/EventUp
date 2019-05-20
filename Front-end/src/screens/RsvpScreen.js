@@ -7,13 +7,9 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  createAppContainer,
-  createStackNavigator
 } from "react-native";
-import { withNavigationFocus } from "react-navigation";
-import { format } from 'date-fns';
-import moment from 'moment';
-
+import { format } from "date-fns";
+import moment from "moment";
 
 export default class RsvpScreen extends React.Component {
   static navigationOptions = {
@@ -23,7 +19,7 @@ export default class RsvpScreen extends React.Component {
       color: "#FFCC33"
     },
     headerTintStyle: {
-      color: '#FFCC33'
+      color: "#FFCC33"
     },
     headerStyle: {
       backgroundColor: "#330033"
@@ -39,9 +35,8 @@ export default class RsvpScreen extends React.Component {
     };
   }
 
-
   async componentDidMount() {
-    this.loadRSVPEvents()
+    this.loadRSVPEvents();
   }
 
   loadRSVPEvents = async () => {
@@ -74,8 +69,7 @@ export default class RsvpScreen extends React.Component {
     } catch (e) {
       console.log("AsyncStorage failed to retrieve token:", e);
     }
-  }
-
+  };
 
   _renderEvents = item => {
     return (
@@ -107,10 +101,22 @@ export default class RsvpScreen extends React.Component {
             <Text style={styles.titleStyling}>{item.Name}</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: "gray", fontSize: 14, fontFamily: 'Futura-Medium' }}>
+            <Text
+              style={{
+                color: "gray",
+                fontSize: 14,
+                fontFamily: "Futura-Medium"
+              }}
+            >
               {item.LocationName}
             </Text>
-            <Text style={{ color: "gray", fontSize: 14, fontFamily: 'Futura-Medium' }}>
+            <Text
+              style={{
+                color: "gray",
+                fontSize: 14,
+                fontFamily: "Futura-Medium"
+              }}
+            >
               {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
             </Text>
           </View>
@@ -118,11 +124,13 @@ export default class RsvpScreen extends React.Component {
             style={{
               alignSelf: "flex-end",
               justifyContent: "center",
-              width: 80, 
-              height: 40,
+              width: 80,
+              height: 40
             }}
           >
-            <Text style={{ color: "#463077", fontSize: 20, fontFamily: 'Futura' }}>
+            <Text
+              style={{ color: "#463077", fontSize: 20, fontFamily: "Futura" }}
+            >
               {moment.utc(item.StartDate).format("MMMM DD")}
             </Text>
           </View>
@@ -151,7 +159,7 @@ export default class RsvpScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#f8f8f8"
   },
   imageEx: {
     width: 120,
@@ -177,4 +185,3 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1
   }
 });
-

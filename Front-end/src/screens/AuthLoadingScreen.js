@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 import {
   ActivityIndicator,
   AsyncStorage,
   StatusBar,
   StyleSheet,
-  View,
-} from 'react-native';
+  View
+} from "react-native";
 
 export default class AuthLoadingScreen extends React.Component {
   constructor(props) {
@@ -15,10 +15,10 @@ export default class AuthLoadingScreen extends React.Component {
 
   _bootstrapAsync = async () => {
     const { navigation } = this.props;
-  
-    const userToken = await AsyncStorage.getItem('userToken');
-    this.props.navigation.navigate(userToken ? 'App' : 'Auth');
-  }
+
+    const userToken = await AsyncStorage.getItem("userToken");
+    this.props.navigation.navigate(userToken ? "App" : "Auth");
+  };
 
   render() {
     return (
@@ -33,7 +33,7 @@ export default class AuthLoadingScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    alignItems: "center",
+    justifyContent: "center"
+  }
 });
