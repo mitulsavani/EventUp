@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   AsyncStorage,
   FlatList,
@@ -8,36 +8,49 @@ import {
   Image,
   TouchableOpacity
 } from "react-native";
+import { withNavigationFocus } from "react-navigation";
+import { Dropdown } from "react-native-material-dropdown";
 import { Button } from "react-native-elements";
 import { format } from "date-fns";
 import moment from "moment";
 
-export default class EventsScreen extends React.Component {
+class EventsScreen extends React.Component {
   static navigationOptions = {
     title: "Events",
     headerTintColor: "white",
     headerTitleStyle: {
       fontWeight: "bold",
-      color: "white"
+      color: "#FFCC33"
     },
     headerStyle: {
-      backgroundColor: "#39CA74"
+      backgroundColor: "#330033"
     }
   };
 
   constructor(props) {
     super(props);
+    this.onChangeText = this.onChangeText.bind(this);
+    this.categoryRef = this.updateRef.bind(this, "categoryName");
 
     this.state = {
       eventsData: [],
       isLoading: false,
-      error: null
+      error: null,
+      categoryName: "",
+      categoryData: [],
+      categoriesMap: undefined
     };
   }
 
   async componentDidMount() {
-    this.setState({ isLoading: true });
+    this.getEvents();
+  }
 
+  getEvents = async () => {
+    console.log("Refreshing");
+    this.setState({ isLoading: true });
+    var categoryNames = new Array();
+    var categoriesMap = new Map();
     try {
       const token = await AsyncStorage.getItem("userToken");
       const userId = await AsyncStorage.getItem("userId");
@@ -55,9 +68,35 @@ export default class EventsScreen extends React.Component {
         );
 
         response.json().then(result => {
-          console.log(result);
           this.setState({ eventsData: result.data, isLoading: false });
-          
+        });
+      } catch (error) {
+        this.setState({ response: error });
+        console.log(error);
+      }
+
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/categories",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: token
+            }
+          }
+        );
+
+        response.json().then(result => {
+          categoryNames.push({ value: "All" });
+          categoriesMap.set("All", "0");
+
+          result.data.forEach(function(category) {
+            categoryNames.push({ value: category.Name });
+            categoriesMap.set(category.Name, category.id);
+          });
+          this.setState({ categoryData: categoryNames });
+          this.setState({ categoriesMap: categoriesMap });
         });
       } catch (error) {
         this.setState({ response: error });
@@ -66,7 +105,7 @@ export default class EventsScreen extends React.Component {
     } catch (e) {
       console.log("AsyncStorage failed to retrieve token:", e);
     }
-  }
+  };
 
   onAddCalendarEvent = async item => {
     try {
@@ -106,6 +145,55 @@ export default class EventsScreen extends React.Component {
     }
   };
 
+  async onChangeText(text) {
+    ["categoryName"]
+      .map(name => ({ name, ref: this[name] }))
+      .filter(({ ref }) => ref && ref.isFocused())
+      .forEach(({ name, ref }) => {
+        this.setState({ [name]: text });
+      });
+    let categoryId = this.state.categoriesMap.get(this.state.categoryName);
+    console.log("Category selected :", categoryId);
+
+    if (categoryId == "0") {
+      this.getEvents();
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem("userId");
+
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/events/filter/" +
+            categoryId,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: token
+            }
+          }
+        );
+
+        response.json().then(result => {
+          console.log(result.data);
+          this.setState({ eventsData: result.data, isLoading: false });
+        });
+      } catch (error) {
+        this.setState({ response: error });
+        console.log(error);
+      }
+    } catch (e) {
+      console.log("AsyncStorage failed to retrieve token:", e);
+    }
+  }
+
+  updateRef(name, ref) {
+    this[name] = ref;
+  }
+
   _renderEvents = item => {
     return (
       <TouchableOpacity
@@ -114,22 +202,59 @@ export default class EventsScreen extends React.Component {
         onPress={() => this.props.navigation.navigate("detailEvent", { item })}
         activeOpacity={0.8}
       >
-        <View style={{ flex: 1, marginLeft: 10 }}>
+        <View
+          style={{ flex: 2, justifyContent: "center", alignItems: "center" }}
+        >
           <Image
-            //source={require("../img/sample_image.jpg")}
-            source= {{uri:"http://"+item.Image}}
+            source={{ uri: "http://" + item.Image }}
             style={styles.imageEx}
           />
         </View>
-        <View style={{ flex: 1 }}>
-          <View style={{ marginTop: 15 }}>
+        <View
+          style={{
+            flex: 3,
+            flexDirection: "column",
+            justifyContent: "center",
+            marginLeft: 20,
+            marginRight: 10
+          }}
+        >
+          <View style={{ flex: 1, justifyContent: "center" }}>
             <Text style={styles.titleStyling}>{item.Name}</Text>
-            <Text style={{ color: "#333" }}>
-              {moment.utc(item.StartDate).format("MMMM DD")}
-              {" | "}
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                color: "gray",
+                fontSize: 14,
+                fontFamily: "Futura-Medium"
+              }}
+            >
+              {item.LocationName}
+            </Text>
+            <Text
+              style={{
+                color: "gray",
+                fontSize: 14,
+                fontFamily: "Futura-Medium"
+              }}
+            >
               {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
             </Text>
-            <Text style={{ color: "#333" }}>{item.LocationName}</Text>
+          </View>
+          <View
+            style={{
+              alignSelf: "flex-end",
+              justifyContent: "center",
+              width: 80,
+              height: 40
+            }}
+          >
+            <Text
+              style={{ color: "#463077", fontSize: 20, fontFamily: "Futura" }}
+            >
+              {moment.utc(item.StartDate).format("MMMM DD")}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -137,23 +262,34 @@ export default class EventsScreen extends React.Component {
   };
 
   render() {
-    const { eventsData, isLoading } = this.state;
+    const { eventsData, categoryData } = this.state;
 
     return (
       <View style={{ flex: 1 }}>
+        <View style={{ alignItems: "flex-end" }}>
+          <Dropdown
+            ref={this.categoryRef}
+            label="Filter By"
+            data={categoryData}
+            containerStyle={{ width: 150 }}
+            onChangeText={this.onChangeText}
+          />
+        </View>
         <View style={styles.container}>
           <FlatList
             data={eventsData}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => this._renderEvents(item)}
             keyExtractor={(item, index) => index.toString()}
+            onRefresh={() => this.getEvents()}
+            refreshing={this.state.isLoading}
           />
         </View>
 
         <View style={{ position: "absolute", right: 10, bottom: 30 }}>
           <Button
             title="+"
-            titleStyle={{ fontSize: 28 }}
+            titleStyle={{ fontSize: 28, height: "120%" }}
             containerStyle={{}}
             buttonStyle={{
               width: 50,
@@ -177,22 +313,14 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120
   },
-  buttonContainerStyle: {
-    marginTop: 20,
-    marginBottom: 30,
-    marginLeft: 40
-  },
   titleStyling: {
-    fontFamily: "Verdana",
-    fontSize: 18
-  },
-  buttonStyling: {
-    width: 60,
-    height: 40,
-    borderRadius: 5,
-    backgroundColor: "#39CA74"
+    fontFamily: "Futura",
+    fontSize: 20,
+    color: "#333"
   },
   cardContainer: {
+    flex: 1,
+    borderColor: "lightgrey",
     margin: 10,
     height: 150,
     backgroundColor: "#fff",
@@ -200,10 +328,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     borderRadius: 5,
-    borderColor: "lightgrey",
     position: "relative",
     shadowOffset: { width: 3, height: 3 },
     shadowColor: "black",
     shadowOpacity: 0.1
   }
 });
+
+export default withNavigationFocus(EventsScreen);

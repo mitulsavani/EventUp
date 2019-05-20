@@ -7,7 +7,6 @@ import {
   Text,
   View,
   Image,
-  Share
 } from "react-native";
 import { Avatar, Icon, Divider } from "react-native-elements";
 import { format } from "date-fns";
@@ -21,19 +20,20 @@ export default class ProfileScreen extends React.Component {
       headerTintColor: "white",
       headerTitleStyle: {
         fontWeight: "bold",
-        color: "white"
+        color: "#FFCC33"
       },
       headerStyle: {
-        backgroundColor: "#39CA74"
+        backgroundColor: "#330033"
       },
       headerRight: (
-        <Icon
-          name="sign-out"
-          type="octicon"
-          color="#fff"
-          iconStyle={{ marginRight: 15 }}
-          onPress={() => params.handleSignOut()}
-        />
+        <TouchableOpacity onPress={() => params.handleSignOut()}>
+          <Icon
+            name="sign-out"
+            type="octicon"
+            color="#fff"
+            iconStyle={{ color: "#FFCC33", marginRight: 15 }}
+          />
+        </TouchableOpacity>
       )
     };
   };
@@ -49,6 +49,11 @@ export default class ProfileScreen extends React.Component {
       error: null
     };
   }
+
+  _signOutAsync = async () => {
+    await AsyncStorage.clear();
+    this.props.navigation.navigate("Auth");
+  };
 
   async componentDidMount() {
     this.setState({ isLoading: true });
@@ -67,12 +72,13 @@ export default class ProfileScreen extends React.Component {
               Authorization: token
             },
             body: JSON.stringify({
-              UserId: "35"
+              UserId: userId
             })
           }
         );
 
         response.json().then(result => {
+          console.log(result);
           this.setState({ eventsData: result.data });
         });
       } catch (error) {
@@ -105,11 +111,6 @@ export default class ProfileScreen extends React.Component {
     }
   }
 
-  _signOutAsync = async () => {
-    await AsyncStorage.clear();
-    this.props.navigation.navigate("Auth");
-  };
-
   _renderEvents = item => {
     return (
       <TouchableOpacity
@@ -120,17 +121,19 @@ export default class ProfileScreen extends React.Component {
       >
         <View style={{ flexDirection: "row", paddingTop: 30 }}>
           <Image
-            source={require("../img/sample_image.jpg")}
+            source={{ uri: "http://" + item.Image }}
             style={styles.imageEx}
           />
           <View style={{ flex: 1, paddingLeft: 30 }}>
             <Text style={styles.titleStyling}>{item.Name}</Text>
-            <Text style={{ color: "#333" }}>
+            <Text style={{ color: "gray", fontFamily: "Futura-Medium" }}>
               {moment.utc(item.StartDate).format("MMMM DD")}
               {" | "}
               {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
             </Text>
-            <Text style={{ color: "#333" }}>{item.LocationName}</Text>
+            <Text style={{ color: "gray", fontFamily: "Futura-Medium" }}>
+              {item.LocationName}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -139,7 +142,6 @@ export default class ProfileScreen extends React.Component {
 
   render() {
     const { eventsData, firstName, lastName } = this.state;
-
     return (
       <View style={{ flex: 1 }}>
         <View style={{ alignItems: "center" }}>
@@ -154,16 +156,30 @@ export default class ProfileScreen extends React.Component {
             {firstName} {lastName}
           </Text>
         </View>
-        <View style={styles.container}>
-          <Text style={styles.baseText}>My Events</Text>
-          <Divider style={{ backgroundColor: "black", marginTop: 10, marginBottom: 15, height: 1.5, width: 120 }} />
-          <FlatList
-            data={eventsData}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => this._renderEvents(item)}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </View>
+        {eventsData.length > 0 ? (
+          <View style={styles.container}>
+            <Text style={styles.baseText}>My Events</Text>
+            <Divider
+              style={{
+                backgroundColor: "black",
+                marginTop: 10,
+                marginBottom: 15,
+                height: 1.5,
+                width: 120
+              }}
+            />
+            <FlatList
+              data={eventsData}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => this._renderEvents(item)}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+        ) : (
+          <View style={styles.container}>
+            <Text style={styles.baseText}>No Post Available</Text>
+          </View>
+        )}
       </View>
     );
   }
@@ -180,7 +196,8 @@ const styles = StyleSheet.create({
 
   baseText: {
     fontSize: 25,
-    fontWeight: "bold"
+    fontFamily: "Futura-CondensedExtraBold",
+    color: "#333"
   },
 
   container: {
@@ -193,20 +210,9 @@ const styles = StyleSheet.create({
     height: 120
   },
 
-  buttonContainerStyle: {
-    marginTop: 20,
-    marginBottom: 30,
-    marginLeft: 40
-  },
-
   titleStyling: {
-    fontSize: 18,
-    marginBottom: 5
-  },
-  buttonStyling: {
-    width: 60,
-    height: 40,
-    borderRadius: 5,
-    backgroundColor: "#39CA74"
+    fontFamily: "Futura",
+    fontSize: 20,
+    color: "#333"
   }
 });

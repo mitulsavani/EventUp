@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   AsyncStorage,
   StyleSheet,
@@ -10,37 +10,42 @@ import {
   Alert,
   Share,
   TextInput,
-  SafeAreaView,
-  FlatList,
+  FlatList
 } from "react-native";
+import { withNavigationFocus } from "react-navigation";
 import { SimpleLineIcons } from "@expo/vector-icons";
-import { Button, Avatar, Icon } from "react-native-elements";
+import { Button, Avatar, Icon, Divider } from "react-native-elements";
 import moment from "moment";
 import { format } from "date-fns";
 import MapView, { Marker } from "react-native-maps";
 import openMap, { createOpenLink } from "react-native-open-maps";
-import { Permissions, Calendar, Localization, Alarm } from "expo";
+import { Permissions, Calendar, Localization } from "expo";
 
-export default class DetailEventScreen extends React.Component {
+class DetailEventScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
-    const {handleShare } = navigation.state.params;
-    
+    const { handleShare } = navigation.state.params;
+
     return {
       title: "Details",
-      headerTintColor: "#FFF",
+      headerTintColor: "#FFCC33",
+      headerTitleStyle: {
+        fontWeight: "bold",
+        color: "#FFCC33"
+      },
       headerStyle: {
-        backgroundColor: "#39CA74",
+        backgroundColor: "#330033",
         borderBottomWidth: 0,
-        headerTintColor: "#FFF",
+        headerTintColor: "#FFF"
       },
       headerRight: (
-      <Icon
-        name='share'
-        type='material'
-        color='#fff'
-        iconStyle={{ marginRight: 15 }} 
-        onPress={ () => handleShare()}
-      />
+        <TouchableOpacity onPress={() => handleShare()}>
+          <Icon
+            name="share"
+            type="material"
+            color="#fff"
+            iconStyle={{ color: "#FFCC33", marginRight: 15 }}
+          />
+        </TouchableOpacity>
       )
     };
   };
@@ -52,19 +57,18 @@ export default class DetailEventScreen extends React.Component {
       event: event || null,
       isLoading: false,
       commentsData: [],
-
-      commentsText: '',
+      commentsText: "",
+      isRSVP: false
     };
   }
-
-
-
 
   componentDidMount() {
     const { event } = this.state;
     this.props.navigation.setParams({ handleShare: this.onShare });
 
     this.setState({ isLoading: true });
+
+    this.setState({ isRSVP: event.isRSVP });
     if (event === null) {
       Alert.alert(
         "Unable to display Post!",
@@ -81,43 +85,42 @@ export default class DetailEventScreen extends React.Component {
       );
     } else {
       this.setState({ isLoading: false });
-      console.log("HERE", event);
     }
     this.fetchComments();
   }
 
   async fetchComments() {
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      const userId = await AsyncStorage.getItem('userId');
+      const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem("userId");
       try {
         let response = await fetch(
-          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/messages/" + this.state.event.id,
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/messages/" +
+            this.state.event.id,
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json; charset=utf-8",
               Authorization: token
-            },
+            }
           }
         );
 
         response.json().then(result => {
-          this.setState({ commentsData: result.data })
+          this.setState({ commentsData: result.data });
         });
       } catch (error) {
         this.setState({ loading: false, response: error });
         console.log(error);
       }
-
     } catch (e) {
       console.log("AsyncStorage failed to retrieve token:", e);
     }
   }
 
-  onShare = async ()  => {
+  onShare = async () => {
     const { event } = this.state;
-    
+
     const str =
       "Event name: " +
       event.Name +
@@ -126,7 +129,7 @@ export default class DetailEventScreen extends React.Component {
       ".";
 
     try {
-      const result =  await Share.share({
+      const result = await Share.share({
         title: "Checkout this event from EventUp",
         message: str
       });
@@ -135,11 +138,11 @@ export default class DetailEventScreen extends React.Component {
     }
   };
 
-  async onTicketButtonPress() {
+  async addRSVP() {
     const { event } = this.state;
     try {
       const token = await AsyncStorage.getItem("userToken");
-      const userId = await AsyncStorage.getItem('userId');
+      const userId = await AsyncStorage.getItem("userId");
 
       try {
         let response = await fetch(
@@ -159,8 +162,6 @@ export default class DetailEventScreen extends React.Component {
         );
 
         response.json().then(result => {
-          console.log(result);
-
           if (result.status == true) {
             Alert.alert(
               "Alert!",
@@ -174,25 +175,110 @@ export default class DetailEventScreen extends React.Component {
               { cancelable: false }
             );
           } else {
-            Alert.alert("Alert!", "Failed to RSVP, Please try again later", [{ text: "OK" }], {
-              cancelable: false
-            });
+            Alert.alert(
+              "Alert!",
+              "Failed to RSVP, Please try again later",
+              [{ text: "OK" }],
+              {
+                cancelable: false
+              }
+            );
           }
         });
       } catch (e) {
         console.log("Something failed with response", e);
 
-        Alert.alert(
-          "Alert!",
-          "Error, Server Issue",
-          [{ text: "OK" }],
-          { cancelable: false }
-        );
+        Alert.alert("Alert!", "Error, Server Issue", [{ text: "OK" }], {
+          cancelable: false
+        });
       }
     } catch (e) {
       console.log("AsynStorage failed", e);
     }
   }
+
+  async removeRsvp() {
+    const { event } = this.state;
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem("userId");
+
+      try {
+        let response = await fetch(
+          "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/users/RSVP",
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              Authorization: token
+            },
+
+            body: JSON.stringify({
+              UserId: userId,
+              EventId: event.id
+            })
+          }
+        );
+
+        response.json().then(result => {
+          if (result.status == true) {
+            Alert.alert(
+              "Alert!",
+              "Successfully removed RSVP",
+              [
+                {
+                  text: "OK",
+                  onPress: () => this.props.navigation.navigate("events")
+                }
+              ],
+              { cancelable: false }
+            );
+          } else {
+            Alert.alert(
+              "Alert!",
+              "Failed to delete RSVP, Please try again later",
+              [{ text: "OK" }],
+              {
+                cancelable: false
+              }
+            );
+          }
+        });
+      } catch (e) {
+        console.log("Something failed with response", e);
+
+        Alert.alert("Alert!", "Error, Server Issue", [{ text: "OK" }], {
+          cancelable: false
+        });
+      }
+    } catch (e) {
+      console.log("AsynStorage failed", e);
+    }
+  }
+
+  async onRsvpButtonPress() {
+    if (!this.state.isRSVP) {
+      this.addRSVP();
+    } else {
+      this.removeRsvp();
+    }
+  }
+
+  getRsvpButtonTitle = () => {
+    if (!this.state.isRSVP) {
+      return "RSVP";
+    } else {
+      return "Remove RSVP";
+    }
+  };
+
+  getRsvpButtonStyle = () => {
+    if (!this.state.isRSVP) {
+      return styles.rsvpAddButton;
+    } else {
+      return styles.rsvpRemoveButton;
+    }
+  };
 
   loadingView = () => {
     return (
@@ -205,8 +291,8 @@ export default class DetailEventScreen extends React.Component {
   onCommentButtonPress = async () => {
     const { event, commentsText } = this.state;
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      const userId = await AsyncStorage.getItem('userId');
+      const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem("userId");
       try {
         let response = await fetch(
           "http://ec2-54-183-219-162.us-west-1.compute.amazonaws.com:3000/messages/send",
@@ -216,11 +302,10 @@ export default class DetailEventScreen extends React.Component {
               "Content-Type": "application/json; charset=utf-8",
               Authorization: token
             },
-            body:
-            JSON.stringify({
-              "SenderUserId": userId,
-              "ReceiverEventId": event.id,
-              "Message": commentsText
+            body: JSON.stringify({
+              SenderUserId: userId,
+              ReceiverEventId: event.id,
+              Message: commentsText
             })
           }
         );
@@ -229,17 +314,14 @@ export default class DetailEventScreen extends React.Component {
           console.log("Message Sent :", result);
           this.fetchComments();
           this.state.commentsText = "";
-
         });
       } catch (error) {
         this.setState({ loading: false, response: error });
         console.log(error);
       }
-
     } catch (e) {
       console.log("AsyncStorage failed to retrieve token:", e);
     }
-
   };
 
   onAddCalendarEvent = async item => {
@@ -280,78 +362,132 @@ export default class DetailEventScreen extends React.Component {
     }
   };
 
-  contentView = () => {
-      const { isLoading, event, commentsText } = this.state;
-  
-      return (
+  _renderComment = item => {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          marginBottom: 25
+        }}
+      >
+        <View style={styles.avatarView}>
+          <Avatar
+            size="small"
+            rounded
+            title={
+              item.FirstName.substring(0, 1) + item.LastName.substring(0, 1)
+            }
+          />
+        </View>
+        <View style={{}}>
+          <View style={{ flexDirection: "row", paddingBottom: 5 }}>
+            <Text style={styles.commentName}>
+              {" "}
+              {item.FirstName} {item.LastName}
+            </Text>
+            <Text style={styles.commentTimestamp}>
+              {" "}
+              {moment.utc(item.Timestamp).format("MMMM DD")} {" | "}{" "}
+              {format(item.Timestamp, "hh:mm a")}{" "}
+            </Text>
+          </View>
 
-        <View style={styles.mainContainer}>
-          <ScrollView style={styles.scrollViewContainer}>
-            <View style={styles.bannerImageContainer}>
-              <Image
-                // source={require("../img/sample_image.jpg")}
-                source={{ uri: "http://" + event.Image }}
-                style={{
-                  flex: 1,
-                  height: 200,
-                  width: "100%"
-                }}
-                resizeMode="cover"
-              />
-            </View>
-  
-            <View style={styles.generalInformationContainer}>
-              <Text style={styles.generalInformationHeaderTitleStyle}>
-                {event.Name}
-              </Text>
-              <Text style={styles.byTextStyle}>{event.CategoryName}</Text>
-  
-              <TouchableOpacity
-                style={styles.detailContainer}
-                onPress={() => this.onAddCalendarEvent(event)}
-                activeOpacity={0.8}
-              >
-                <SimpleLineIcons name="calendar" size={25} />
-                <View style={styles.subDetailColumnContainer}>
-                  <Text style={styles.detailMainText}>
-                    {moment.utc(event.StartDate).format("MMMM DD")}
-                  </Text>
-                  <Text style={styles.detailSubText}>
-                    {format("January 01, 2019 " + event.StartTime, "hh:mm a")}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-                <View style={styles.detailContainer}>
-                  <SimpleLineIcons name="tag" size={25} />
-                  <View style={styles.subDetailColumnContainer}>
-                    <Text style={styles.detailMainText}>Free</Text>
-                    <Text style={styles.detailSubText}>on EventUp</Text>
-                  </View>
-                </View>
+          <Text
+            numberOfLines={5}
+            style={{
+              flex: 1,
+              width: 300
+            }}
+          >
+            {" "}
+            {item.Message}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
+  contentView = () => {
+    const { isLoading, event, commentsText } = this.state;
+    console.log("isRSVP: ", event.isRSVP);
+
+    return (
+      <View style={styles.mainContainer}>
+        <ScrollView style={styles.scrollViewContainer}>
+          <View style={styles.bannerImageContainer}>
+            <Image
+              // source={require("../img/sample_image.jpg")}
+              source={{ uri: "http://" + event.Image }}
+              style={{
+                flex: 1,
+                height: 200,
+                width: "100%"
+              }}
+              resizeMode="cover"
+            />
+          </View>
+
+          <View style={styles.generalInformationContainer}>
+            <Text style={styles.generalInformationHeaderTitleStyle}>
+              {event.Name}
+            </Text>
+
+            <TouchableOpacity
+              style={styles.detailContainer}
+              onPress={() => this.onAddCalendarEvent(event)}
+              activeOpacity={0.8}
+            >
+              <SimpleLineIcons name="calendar" size={25} color="#330033" />
+              <View style={styles.subDetailColumnContainer}>
+                <Text style={styles.detailMainText}>
+                  {moment.utc(event.StartDate).format("MMMM DD")}
+                </Text>
+                <Text style={styles.detailSubText}>
+                  {format("January 01, 2019 " + event.StartTime, "hh:mm a")}
+                </Text>
               </View>
-            {/* generalInformationContainer End */}
-  
-            <View style={styles.aboutEventContainer}>
-              <Text style={styles.aboutTitleStyle}>About</Text>
-              <Text
-                style={styles.descriptionStyle}
-                numberOfLines={4}
-                ellipsizeMode="tail"
-              >
-                {event.Description}
-              </Text>
+            </TouchableOpacity>
+            <View style={styles.detailContainer}>
+              <SimpleLineIcons name="location-pin" size={25} color="#330033" />
+              <View style={styles.subDetailColumnContainer}>
+                <Text style={styles.detailMainText}>{event.LocationName}</Text>
+                <Text style={styles.detailSubText}>
+                  San Francisco State University
+                </Text>
+              </View>
             </View>
-            {/* aboutEventContainer End */}
-  
-            <View style={styles.locationContainer}>
-              <Text style={styles.locationTitleStyle}>Location</Text>
-              <Text style={styles.locationSubTitleStyle}>
-                {event.LocationName}
-              </Text>
-              <View style={styles.mapImageContainer}>
-  
-                <MapView
-                style={{flex: 1}}
+            <View style={styles.detailContainer}>
+              <SimpleLineIcons name="tag" size={25} color="#330033" />
+              <View style={styles.subDetailColumnContainer}>
+                <Text style={styles.detailMainText}>{event.CategoryName}</Text>
+                <Text style={styles.detailSubText}>Category</Text>
+              </View>
+            </View>
+          </View>
+          <Divider
+            style={styles.dividerStyle}
+          />
+          {/* generalInformationContainer End */}
+
+          <View style={styles.aboutEventContainer}>
+            <Text style={styles.containerHeading}>Details</Text>
+            <Text style={styles.descriptionStyle} ellipsizeMode="tail">
+              {event.Description}
+            </Text>
+          </View>
+
+          <Divider
+            style={styles.dividerStyle}
+          />
+          {/* aboutEventContainer End */}
+
+          <View style={styles.locationContainer}>
+            <Text style={styles.locationSubTitleStyle}>
+              {event.LocationName}
+            </Text>
+            <View style={styles.mapImageContainer}>
+              <MapView
+                style={{ flex: 1 }}
                 region={{
                   latitude: event.Latitude,
                   longitude: event.Longitude,
@@ -359,98 +495,78 @@ export default class DetailEventScreen extends React.Component {
                   longitudeDelta: 0.0421
                 }}
                 showsUserLocation={true}
-                >
-              <MapView.Marker
-                  coordinate= {
-                    {latitude: event.Latitude,
-                    longitude: event.Longitude}
-                  }
-                  onPress= { createOpenLink({end: `${event.Latitude} ${event.Longitude}` }) }
-              />
+              >
+                <MapView.Marker
+                  coordinate={{
+                    latitude: event.Latitude,
+                    longitude: event.Longitude
+                  }}
+                  onPress={createOpenLink({
+                    end: `${event.Latitude} ${event.Longitude}`
+                  })}
+                />
               </MapView>
-              </View>
             </View>
-            {/* locationContainer End */}
-  
-            {/* Comments Section Start */}
-  
-            <View style={styles.commentsInput}>
-              <TextInput
-                placeholder="Leave a comment..."
-                style={{ paddingLeft: 5, paddingRight: 5, height: 80, borderColor: 'gray', borderWidth: 1 }}
-                onChangeText={(text) => this.setState({ commentsText: text })}
-                value={commentsText}
-                editable={true}
-                multiline={true}
-                numberOfLines={4}
-              />
-            </View>
-            <Button
-              title="Comment"
-              type="outline"
-              titleStyle={{ fontSize: 12, color: "white" }}
-              containerStyle={{
-                marginTop: 20,
-                marginBottom: 40,
-                marginLeft: 20,
-                alignSelf: "center"
+          </View>
+          {/* locationContainer End */}
+
+          {/* Comments Section Start */}
+
+          <View style={styles.commentsInput}>
+            <Text style={styles.baseText}>Comments</Text>
+            <TextInput
+              placeholder="Leave a comment..."
+              style={{
+                paddingLeft: 5,
+                paddingRight: 5,
+                height: 80,
+                borderColor: "gray",
+                borderWidth: 1
               }}
-              buttonStyle={styles.commentButton}
-              onPress={() => this.onCommentButtonPress()}
+              onChangeText={text => this.setState({ commentsText: text })}
+              value={commentsText}
+              editable={true}
+              multiline={true}
+              numberOfLines={4}
             />
-            <Text style={styles.baseText}>
-              Comments
-            </Text>
-  
+          </View>
+          <Button
+            title="Send"
+            type="solid"
+            titleStyle={{ fontSize: 15, color: "#330033" }}
+            containerStyle={{
+              marginTop: 20,
+              marginBottom: 40,
+              marginRight: 10,
+              alignSelf: "flex-end"
+            }}
+            buttonStyle={styles.commentButton}
+            onPress={() => this.onCommentButtonPress()}
+          />
+          <ScrollView style={{ height: 240, padding: 5 }}>
             <FlatList
               data={this.state.commentsData}
               style={styles.commentsList}
               keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginBottom: 25,
-                  }}>
-                  <View
-                    style={styles.avatarView}>
-                    <Avatar
-                      size="small"
-                      rounded
-                      title={item.FirstName.substring(0, 1) + item.LastName.substring(0, 1)}
-                    />
-                  </View>
-                  <View style={{}}>
-                    <View style={{ flexDirection: "row", paddingBottom: 5 }}>
-                      <Text style={styles.commentName}> {item.FirstName}{" "}{item.LastName}</Text>
-                      <Text style={styles.commentTimestamp}>  {moment.utc(item.Timestamp).format("MMMM DD")} {" | "} {format(item.Timestamp, "hh:mm a")} </Text>
-                    </View>
-  
-                    <Text numberOfLines={5} style={{
-                      flex: 1, width: 300,
-                    }}>{" "}{item.Message}</Text>
-  
-                  </View>
-                </View>
-              )}
+              renderItem={({ item }) => this._renderComment(item)}
             />
-          
           </ScrollView>
-          {/* Comments Section End */}
-          <View style={styles.purchaseContainer}>
-            <TouchableOpacity>
-              <Button
-                onPress={() => this.onTicketButtonPress()}
-                title="RSVP"
-                buttonStyle={styles.rsvpButton}
-                titleStyle={{ fontSize: 25, fontFamily: "Futura" }}
-                rounded
-              />
-            </TouchableOpacity>
-          </View>
+        </ScrollView>
+        {/* Comments Section End */}
+        <View style={styles.purchaseContainer}>
+          <TouchableOpacity>
+            <Button
+              onPress={() => this.onRsvpButtonPress()}
+              title={this.getRsvpButtonTitle()}
+              buttonStyle={this.getRsvpButtonStyle()}
+              titleStyle={{ fontSize: 25, fontFamily: "Futura" }}
+              rounded
+            />
+          </TouchableOpacity>
         </View>
-      );
-  }
+      </View>
+    );
+  };
 
   render() {
     const { isLoading } = this.state;
@@ -462,8 +578,9 @@ export default class DetailEventScreen extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+export default withNavigationFocus(DetailEventScreen);
 
+const styles = StyleSheet.create({
   mainContainer: {
     flex: 1
   },
@@ -477,15 +594,18 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200
   },
-  // banner end
 
+  // banner end
   generalInformationContainer: {
     flex: 2,
     width: "100%",
-    height: 375
+    height: 300
   },
   generalInformationHeaderTitleStyle: {
-    fontSize: 25,
+    fontSize: 30,
+    fontFamily: "Futura",
+    fontWeight: "bold",
+    color: "#333",
     textAlign: "left",
     marginTop: 30,
     marginLeft: 15
@@ -511,104 +631,102 @@ const styles = StyleSheet.create({
   detailSubText: {
     color: "gray"
   },
-  // general information end
 
+  // general information end
   aboutEventContainer: {
     flex: 1,
     justifyContent: "flex-start",
     width: "100%",
-    height: 200
+    marginTop: 20
   },
-  aboutTitleStyle: {
-    fontSize: 15,
-    marginTop: 30,
+  containerHeading: {
+    fontSize: 16,
+    fontWeight: "bold",
     marginBottom: 10,
     marginLeft: 15,
-    marginRight: 15
+    marginRight: 15,
+    color: "#333"
   },
   descriptionStyle: {
     marginTop: 10,
     marginLeft: 15,
-    marginRight: 15
+    marginRight: 15,
+    fontFamily: "Futura-Medium",
+    color: "gray"
   },
-  // about event end
-
   locationContainer: {
     flex: 2,
     width: "100%",
-    height: 400
-  },
-  locationTitleStyle: {
-    fontSize: 15,
-    marginTop: 30,
-    marginBottom: 10,
-    marginLeft: 15,
-    marginRight: 15
+    height: 320
   },
   locationSubTitleStyle: {
-    fontSize: 15,
+    fontSize: 16,
     marginTop: 30,
     marginBottom: 10,
     marginLeft: 15,
     marginRight: 15,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    color: "#333"
   },
   mapImageContainer: {
     padding: 10,
     width: "100%",
     height: 200
   },
-  // location information end
 
+  // location information end
   purchaseContainer: {
     width: "100%",
     height: 60,
     alignItems: "center",
     marginBottom: 5
   },
-
-  rsvpButton: {
+  rsvpAddButton: {
     width: 375,
     height: 70,
-    backgroundColor: "#39CA74"
-},
-
+    backgroundColor: "#FFCC33"
+  },
+  rsvpRemoveButton: {
+    width: 375,
+    height: 70,
+    backgroundColor: "#FF0000"
+  },
   commentButton: {
     width: 80,
     height: 40,
     borderRadius: 5,
-    backgroundColor: "#39CA74"
+    backgroundColor: "#FFCC33"
   },
-
   commentsInput: {
     paddingLeft: 10,
     paddingRight: 10
   },
-
   commentsList: {
     paddingLeft: 20,
     paddingRight: 20
   },
-
   commentName: {
     fontWeight: "500",
     paddingRight: 10,
     fontSize: 12.5
-
   },
-
   commentTimestamp: {
     color: "grey",
     fontSize: 12
   },
   baseText: {
     fontSize: 32,
-    marginLeft: 10,
-    fontWeight: 'bold',
-    paddingBottom: 20
+    fontWeight: "bold",
+    paddingBottom: 20,
+    color: "#333"
   },
-
   avatarView: {
-    paddingRight: 10,   
-  }
+    paddingRight: 10
+  },
+  dividerStyle: {
+    backgroundColor: "lightgrey",
+    margin: 15,
+    borderWidth: 0.2,
+    marginTop: 30
+  },
 });
