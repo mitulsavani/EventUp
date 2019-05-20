@@ -7,7 +7,6 @@ import {
   Text,
   View,
   Image,
-  Share
 } from "react-native";
 import { Avatar, Icon, Divider } from "react-native-elements";
 import { format } from "date-fns";
@@ -32,7 +31,7 @@ export default class ProfileScreen extends React.Component {
             name="sign-out"
             type="octicon"
             color="#fff"
-            iconStyle={{ color: '#FFCC33', marginRight: 15 }}
+            iconStyle={{ color: "#FFCC33", marginRight: 15 }}
           />
         </TouchableOpacity>
       )
@@ -50,6 +49,11 @@ export default class ProfileScreen extends React.Component {
       error: null
     };
   }
+
+  _signOutAsync = async () => {
+    await AsyncStorage.clear();
+    this.props.navigation.navigate("Auth");
+  };
 
   async componentDidMount() {
     this.setState({ isLoading: true });
@@ -107,11 +111,6 @@ export default class ProfileScreen extends React.Component {
     }
   }
 
-  _signOutAsync = async () => {
-    await AsyncStorage.clear();
-    this.props.navigation.navigate("Auth");
-  };
-
   _renderEvents = item => {
     return (
       <TouchableOpacity
@@ -127,12 +126,14 @@ export default class ProfileScreen extends React.Component {
           />
           <View style={{ flex: 1, paddingLeft: 30 }}>
             <Text style={styles.titleStyling}>{item.Name}</Text>
-            <Text style={{ color: "gray", fontFamily: 'Futura-Medium' }}>
+            <Text style={{ color: "gray", fontFamily: "Futura-Medium" }}>
               {moment.utc(item.StartDate).format("MMMM DD")}
               {" | "}
               {format("January 01, 2019 " + item.StartTime, "hh:mm a")}
             </Text>
-            <Text style={{ color: "gray", fontFamily: 'Futura-Medium' }}>{item.LocationName}</Text>
+            <Text style={{ color: "gray", fontFamily: "Futura-Medium" }}>
+              {item.LocationName}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -195,8 +196,8 @@ const styles = StyleSheet.create({
 
   baseText: {
     fontSize: 25,
-    fontFamily: 'Futura-CondensedExtraBold',
-    color: '#333'
+    fontFamily: "Futura-CondensedExtraBold",
+    color: "#333"
   },
 
   container: {
@@ -213,5 +214,5 @@ const styles = StyleSheet.create({
     fontFamily: "Futura",
     fontSize: 20,
     color: "#333"
-  },
+  }
 });
