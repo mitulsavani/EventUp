@@ -9,7 +9,7 @@
 
 ## Scan QR Code to load prototype
 
-[Scan QR Code](https://expo.io/@mitulsavani/EventUp "Link to App")
+[Scan QR Code](https://exp.host/@mitulsavani/Front-end "Link to App")
 
 
-> Updated on: 04/17/19, Cory Lewis
+> Updated on: 05/20/19, Mitul Savani
