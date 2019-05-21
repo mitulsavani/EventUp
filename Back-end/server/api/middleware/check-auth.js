@@ -1,3 +1,5 @@
+//Middleware to verify if a user's JWT token is present and valid
+
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {

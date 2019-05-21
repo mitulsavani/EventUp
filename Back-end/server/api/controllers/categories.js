@@ -1,3 +1,8 @@
+/*Category Controller
+    -Handles requests from category router
+    -Handles database logic associated with categories
+*/
+
 const db = require('../models/database.js');
 
 exports.getAllCategories = (req, res, next) => {

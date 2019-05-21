@@ -1,3 +1,7 @@
+/*Events Router
+    sends requests to respective controller functions
+*/ 
+
 const express = require('express');
 const router = express.Router();
 

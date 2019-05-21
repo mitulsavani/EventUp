@@ -1,3 +1,8 @@
+/*Messages Controller
+    -Handles requests from messages router
+    -Handles database logic associated with messages
+*/
+
 const db = require('../models/database.js');
 let checkAuth = require('../middleware/check-auth.js');
 const jwt = require('jsonwebtoken');

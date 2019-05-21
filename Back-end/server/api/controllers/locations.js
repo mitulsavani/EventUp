@@ -1,3 +1,8 @@
+/*Location Controller
+    -Handles requests from location router
+    -Handles database logic associated with locations
+*/
+
 const db = require('../models/database.js');
 
 exports.getAllLocations = (req, res, next) => {

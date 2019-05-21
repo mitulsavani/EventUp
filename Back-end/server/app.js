@@ -1,3 +1,7 @@
+/*Create express server to handle API requests
+  -apply neccessary modules to access request inormation.
+*/
+
 const express = require('express');
 const app = express();  
 

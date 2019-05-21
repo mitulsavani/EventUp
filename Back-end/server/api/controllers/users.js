@@ -1,3 +1,9 @@
+/*User Controller
+    -Handles requests from user router
+    -Handles registration and login for incoming users
+    -Handles database logic associated with categories
+*/
+
 const db = require('../models/database.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');

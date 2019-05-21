@@ -1,3 +1,8 @@
+/*Events Controller
+    -Handles requests from event routes
+    -Handles database logic associated with events
+*/
+
 const db = require('../models/database.js');
 const fs = require('file-system')
 const jwt = require('jsonwebtoken');
