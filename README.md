@@ -9,12 +9,11 @@ EventUp mobile app
 </h3>
 
 <p align="center">
-Daug is a social network for pets.
+EventsUp is a Social Media App for Events
 </p>
 
 ## What's EventUp?
 
-**EventsUp is a Social Media App for Events**
 
 Event Up is a social media app for events which is accessible in both platforms i.e. iOS and Android. This app can be used by any university student to post, browse, and RSVP for events around campus.
 
@@ -35,15 +34,16 @@ Event Up is a social media app for events which is accessible in both platforms 
 - Users can add event details to their calendar for notification
 - Users can access direction to the venue from the app
 
-We used [React Native Elements](https://github.com/react-native-training/react-native-elements) library to build UI, [React Navigation](https://reactnavigation.org/) library to handle navigation, and various packages. and [React-Native-Maps](https://github.com/react-native-community/react-native-maps) to integrate Map View and redirect users to native maps for diretions to the event.
+We used [React Native Elements](https://github.com/react-native-training/react-native-elements) library to build UI, [React Navigation](https://reactnavigation.org/) library to handle navigation, and various packages. and [React-Native-Maps](https://github.com/react-native-community/react-native-maps) to integrate Map View and redirect users to native maps for directions to the event.
 
 
 ## Getting Started
-
+> On Expo
 * Download Expo Client app from the IOS or Android store
 [Android App](https://play.google.com/store/apps/details?id=host.exp.exponent "Link to App"),
 [IOS App](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8 "Link to App")
 
+> Locally
 ```
 git clone https://github.com/csc667-02-sp19/csc667-sp19-Team04.git
 
