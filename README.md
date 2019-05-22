@@ -134,3 +134,7 @@ Response:&nbsp;&nbsp; login status, response message, and event ID of the create
 ## Feedback
 For any other questions about this repo in general please reach out to anyone [**@mitulsavani**](https://github.com/mitulsavani), [**@mecharmor**](https://github.com/mecharmor), [**@chinn17**](https://github.com/chinn17), [**@yungvinsantos**](https://github.com/yungvinsantos), [**@AlexWolski**](https://github.com/AlexWolski) on Github. <br>
 PS: Feel free to fork it if you find our app interesting.
+
+
+
+> Updated on: 04/21/19, Mitul Savani

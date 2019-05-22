@@ -1,0 +1,32 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.442.0",
+    "axios": "^0.18.0",
+    "date-fns": "^1.30.1",
+    "expo": "^32.0.0",
+    "json-server": "^0.14.2",
+    "moment": "^2.24.0",
+    "react": "16.5.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-elements": "^1.1.0",
+    "react-native-fs": "^2.13.3",
+    "react-native-image-picker": "^0.28.1",
+    "react-native-maps": "^0.24.2",
+    "react-native-material-dropdown": "^0.11.1",
+    "react-native-modal-datetime-picker": "^7.4.0",
+    "react-native-open-maps": "^0.3.3",
+    "react-native-paper": "^2.15.2",
+    "react-navigation": "^3.5.1"
+  },
+  "devDependencies": {
+    "babel-preset-expo": "^5.0.0"
+  },
+  "private": true
+}
