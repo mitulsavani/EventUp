@@ -1,6 +1,6 @@
 <p align="center">
 <a href="https://github.com/csc667-02-sp19/csc667-sp19-Team04">
-<img alt="EventUp" src="https://github.com/csc667-02-sp19/csc667-sp19-Team04/blob/readme/update/Front-end/assets/sfsulogo.png" width="250">
+<img alt="EventUp" src="https://github.com/mitulsavani/EventUp/blob/master/Front-end/assets/sfsulogo.png" width="250">
 </a>
 </p>
 
@@ -22,7 +22,7 @@ Event Up is a social media app for events which is accessible in both platforms 
 - They can also **comment** on any events for host to repond to their questions.
 
 ### [Demo - Try it on Expo](https://exp.host/@mitulsavani/Front-end)
-![daug_demo](https://github.com/csc667-02-sp19/csc667-sp19-Team04/blob/readme/update/Front-end/assets/%20eventup.gif)
+![EventUp_demo](https://github.com/mitulsavani/EventUp/blob/master/Front-end/assets/%20eventup.gif)
 
 
 ## Functionality
@@ -45,7 +45,7 @@ We used [React Native Elements](https://github.com/react-native-training/react-n
 
 > Locally
 ```
-git clone https://github.com/csc667-02-sp19/csc667-sp19-Team04.git
+git clone https://github.com/mitulsavani/EventUp.git
 
 cd Front-end
 
@@ -137,4 +137,4 @@ PS: Feel free to fork it if you find our app interesting.
 
 
 
-> Updated on: 05/22/19, Mitul Savani
+> Updated on: 08/28/19, Mitul Savani
