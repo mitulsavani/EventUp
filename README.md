@@ -1,6 +1,6 @@
 <p align="center">
 <a href="https://github.com/mitulsavani/EventUp">
-<img alt="EventUp" src="./Front-end/assets/sfsulogo.png" width="250">
+<img alt="EventUp" src="./Front-end/assets/sfsulogo2.png" width="250">
 </a>
 </p>
 
@@ -8,7 +8,20 @@
 EventUp
 </h3>
 
-## What's EventUp?
+## Table of Contents
+
+- [ Overview ](#overview)
+- [ Functionality ](#functionality)
+- [ Demo ](#demo)
+- [ Getting Started ](#getting-started)
+    - [ Installation ](#installation)
+    - [ Build ](#build)
+- [ Screens ](#screens)
+- [ Details ](#details)
+- [ API Routes ](#api-routes)
+- [ Feedback ](#feedback)
+
+## Overview
 
 Event Up is a event posting social media app which is accessible for both platforms; iOS and Android. The product could be used by any university student to plan, post, browse, and RSVP for events around campus.
 
@@ -22,13 +35,19 @@ Event Up is a event posting social media app which is accessible for both platfo
 - Users can get **travel directions** from their geo-location to venue on google/apple maps.
 - Users can start conversation by posting **comments/queries** on any events for host to respond.
 
-### [Demo - Try it on Expo](https://exp.host/@mitulsavani/Front-end)
+## Demo
+
 ![EventUp_demo](./Front-end/assets/eventup.gif)
+<br/>
+[Try it on Expo](https://exp.host/@mitulsavani/Front-end)
+<br/>
 
 We used [React Native Elements](https://github.com/react-native-training/react-native-elements) library to build Screen and Components, [React Navigation](https://reactnavigation.org/) library to handle navigation, and various packages. and [React-Native-Maps](https://github.com/react-native-community/react-native-maps) to integrate Map View and redirect users to native maps for directions to the event.
 
 
 ## Getting Started
+
+### Installation
 
 ```
 git clone https://github.com/mitulsavani/EventUp.git
@@ -41,13 +60,14 @@ yarn run start (ios)
 
 yarn run android (android)
 ```
+
 > On Expo
 * Download Expo Client app from the IOS or Android store
 [Android App](https://play.google.com/store/apps/details?id=host.exp.exponent "Link to App"),
 [IOS App](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8 "Link to App")
 
 
-## Build
+### Build
 
 - Through the console: `expo start iOS`<br/>
 If you have an iOS simulator installed on XCode, it will automatically launch.<br/>
@@ -58,6 +78,8 @@ Otherwise you can scan the generated QR code on an iOS device.
 ## Screens
 
 <img width="250" src="./Front-end/assets/screenshots/login.png"> <img width="250" src="./Front-end/assets/screenshots/signup.png"> <img width="250" src="./Front-end/assets/screenshots/categories.png"> <img width="250" src="./Front-end/assets/screenshots/events.png"> <img width="250" src="./Front-end/assets/screenshots/details.png"> <img width="250" src="./Front-end/assets/screenshots/details2.png"> <img width="250" src="./Front-end/assets/screenshots/rsvp.png"> <img width="250" src="./Front-end/assets/screenshots/profile.png">
+
+## Details
 
 - **Login**
 <br/>Login with an e-mail and password, or through Google and Facebook. The user is then redirected to the Events Screen.
@@ -127,7 +149,5 @@ Response:&nbsp;&nbsp; login status, response message, and event ID of the create
 ## Feedback
 For any other questions about this repo in general please reach out to anyone [**@mitulsavani**](https://github.com/mitulsavani), [**@mecharmor**](https://github.com/mecharmor), [**@chinn17**](https://github.com/chinn17), [**@yungvinsantos**](https://github.com/yungvinsantos), [**@AlexWolski**](https://github.com/AlexWolski) on Github. <br>
 PS: Feel free to fork it if you find our app interesting.
-
-
 
 > Updated on: 04/13/2020, Mitul Savani
