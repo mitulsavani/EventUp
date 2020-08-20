@@ -16,7 +16,7 @@
   "author": "Vincent Santos, Alex Wolski, Cory Lewis",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "file-system": "^2.2.2",
