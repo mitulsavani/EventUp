@@ -18,7 +18,7 @@
   "dependencies": {
     "bcrypt": "^3.0.4",
     "body-parser": "^1.18.3",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "file-system": "^2.2.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.5",
